@@ -1,4 +1,4 @@
-package samples.effects
+package arrow.effects
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx

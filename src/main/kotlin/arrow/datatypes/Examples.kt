@@ -1,7 +1,6 @@
-package samples.datatypes
+package arrow.datatypes
 
 import arrow.core.*
-import samples.effects.runEffects
 
 fun playWithId() {
 	val id = Id("foo")

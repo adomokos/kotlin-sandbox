@@ -5,7 +5,7 @@ plugins {
 }
 
 application {
-    mainClassName = "samples.HelloWorldKt"
+    mainClassName = "MainKt"
 }
 
 val spekVersion = "2.1.0-alpha.0.13+397dc38"
