@@ -1,8 +1,7 @@
-package samples
+package samples.datatypes
 
 import arrow.core.*
 import samples.effects.runEffects
-import samples.datatypes.runDataTypes
 
 fun playWithId() {
 	val id = Id("foo")
@@ -97,7 +96,14 @@ fun extractAnswer(result: Either<ComputeProblem, Int>): String {
 	}
 }
 
-fun main() {
-	runEffects()
-	runDataTypes()
+fun runDataTypes() {
+	playWithId()
+	playWithOption()
+	playWithEither()
+	playWithEval()
+	println(computeWithOption("8"))
+	println(computeWithOption("a"))
+	println(extractAnswer(computeWithEither("8")))
+	println(extractAnswer(computeWithEither("7")))
+	println(extractAnswer(computeWithEither("a")))
 }
