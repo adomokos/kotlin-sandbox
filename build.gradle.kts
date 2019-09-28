@@ -15,6 +15,10 @@ val arrowVersion = "0.10.1-SNAPSHOT"
 dependencies {
     compile(kotlin("stdlib"))
 
+	// Exposed - db access
+	compile("org.jetbrains.exposed:exposed:0.16.1")
+	compile("org.xerial:sqlite-jdbc:3.21.0.1")
+
 	// Arrow
 	compile("io.arrow-kt:arrow-core:$arrowVersion")
     compile("io.arrow-kt:arrow-syntax:$arrowVersion")
