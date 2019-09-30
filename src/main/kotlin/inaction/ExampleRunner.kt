@@ -7,8 +7,9 @@ import inaction.chap05.*
 import inaction.chap06.*
 import inaction.chap07.*
 import inaction.chap08.*
+import inaction.chap09.runChap09
 
 fun runExamples() {
   // runChap02()
-  runChap08()
+  runChap09()
 }
