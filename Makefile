@@ -16,7 +16,7 @@ build: ## Build with Gradle
 .PHONY: build
 
 test: ## Run the tests
-	./gradlew clean test
+	./gradlew cleanTest test
 .PHONY: test
 
 run: build ## Run app locally

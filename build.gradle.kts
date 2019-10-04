@@ -2,10 +2,15 @@ plugins {
     application
     kotlin("jvm") version "1.3.21"
 	kotlin("kapt") version "1.3.50"
+	id("com.adarshr.test-logger") version "1.7.0"
 }
 
 application {
     mainClassName = "MainKt"
+}
+
+apply {
+	plugin("com.adarshr.test-logger")
 }
 
 val spekVersion = "2.1.0-alpha.0.13+397dc38"
@@ -34,10 +39,15 @@ dependencies {
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 }
 
+
 tasks {
 	withType<Test> {
 		useJUnitPlatform {
 			includeEngines("spek2")
+		}
+
+		testlogger {
+			setTheme("mocha") // project level
 		}
 	}
 }
