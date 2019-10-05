@@ -15,9 +15,13 @@ build: ## Build with Gradle
 	./gradlew build
 .PHONY: build
 
-test: ## Run the tests
-	./gradlew cleanTest test
+test: ## Run a sigle test
+	./gradlew test --tests arrow.ApplicativeSpec
 .PHONY: test
+
+tests: ## Run all the tests
+	./gradlew cleanTest test
+.PHONY: tests
 
 run: build ## Run app locally
 	./gradelew run
