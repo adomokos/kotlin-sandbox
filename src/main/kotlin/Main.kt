@@ -3,7 +3,7 @@ import exposed.runExamples as runExposedExamples
 import inaction.runExamples as runInactionExamples
 
 fun main() {
-	runArrowExamples()
-	// runExposedExamples()
-	/* runInactionExamples() */
+    runArrowExamples()
+    // runExposedExamples()
+    /* runInactionExamples() */
 }

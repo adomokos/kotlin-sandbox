@@ -24,7 +24,7 @@ tests: ## Run all the tests
 .PHONY: tests
 
 run: build ## Run app locally
-	./gradelew run
+	./gradlew run
 .PHONY: run
 
 help: ## Prints this help command
