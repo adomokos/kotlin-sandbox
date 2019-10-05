@@ -3,6 +3,7 @@ plugins {
     kotlin("jvm") version "1.3.21"
 	kotlin("kapt") version "1.3.50"
 	id("com.adarshr.test-logger") version "1.7.0"
+    id("com.gradle.build-scan") version "2.1"
 }
 
 application {
@@ -58,4 +59,9 @@ repositories {
 	maven(url = "https://dl.bintray.com/spekframework/spek-dev/")
 	maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
 	maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
+}
+
+buildScan {
+    termsOfServiceUrl = "https://gradle.com/terms-of-service"
+    termsOfServiceAgree = "yes"
 }
