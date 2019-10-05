@@ -9,24 +9,24 @@ import arrow.typeclasses.*
 import arrow.fx.extensions.fx
 
 fun returnLastElement(): Int {
-	return IO.fx {
-		1
-	}.fix().unsafeRunSync()
+    return IO.fx {
+        1
+    }.fix().unsafeRunSync()
 }
 
 fun secondOperation(): Int {
-	return IO.fx {
-		val (a) = IO.invoke { 1 }
-		a + 1
-	}.fix().unsafeRunSync()
+    return IO.fx {
+        val (a) = IO.invoke { 1 }
+        a + 1
+    }.fix().unsafeRunSync()
 }
 
 fun withoutBind(): Int {
-	return IO.invoke { 1 }
-		.flatMap { result ->
-			IO.just(result + 1)
-		}
-		.fix().unsafeRunSync()
+    return IO.invoke { 1 }
+        .flatMap { result ->
+            IO.just(result + 1)
+        }
+        .fix().unsafeRunSync()
 }
 
 object MonadComprehensionsSpec: Spek({
@@ -39,8 +39,8 @@ object MonadComprehensionsSpec: Spek({
             assertEquals(2, secondOperation())
         }
 
-		it ("returns without the bind") {
+        it ("returns without the bind") {
             assertEquals(2, withoutBind())
-		}
+        }
     }
 })
