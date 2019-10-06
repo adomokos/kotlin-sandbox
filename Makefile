@@ -15,8 +15,9 @@ build: ## Build with Gradle
 	./gradlew build
 .PHONY: build
 
-test: ## Run a sigle test
-	./gradlew test --tests arrow.ApplicativeSpec
+test: ## Run a sigle test, pass TEST=something.MySpec to run it
+	 @test $(TEST) || (echo "TEST argument is required" ; exit 1)
+	./gradlew test --tests $(TEST)
 .PHONY: test
 
 tests: ## Run all the tests
