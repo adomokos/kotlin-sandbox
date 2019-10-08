@@ -25,8 +25,64 @@ fun callGenericHigherOrderFunction() {
 	println(members.filter { it !in otherMembers })
 }
 
+// Type parameter constraint
+fun <T: Number> oneHalf(value: T): Double {
+    return value.toDouble() / 2.0
+}
+
+fun <T: Comparable<T>> max(first: T, second: T): T {
+    return if (first > second) first else second
+}
+
+// Multiple type parameters
+fun <T> ensureTrailingPeriod(seq: T)
+where T : CharSequence, T : Appendable {
+    if (!seq.endsWith(',')) {
+        seq.append('.')
+    }
+}
+
+fun runTrailingDotExample() {
+    val helloWorld = StringBuilder("Hello World")
+    ensureTrailingPeriod(helloWorld)
+    println(helloWorld)
+}
+
+// Nullable parameter type
+class Processor<T> {
+    fun process(value: T): Int? {
+        // T is nullable, we need to call it with safe-call operator
+        return value?.hashCode()
+    }
+}
+
+// Non nullable parameter type
+class NonNullProcessor<T : Any> { // Any guarantees to be not null
+    fun process(value: T): Int {
+        return value.hashCode()
+    }
+}
+
+fun runProcessor() {
+    val processor = Processor<String?>()
+    println(processor.process("hello"))
+    println(processor.process(null))
+
+    val nonNullP = NonNullProcessor<String>()
+    println(nonNullP.process("hello"))
+    // println(nonNullP.process(null)) // must be not null
+}
+
 fun runChap09() {
 	// val exampleList: List<String> = listOf("John", 2)
 	sliceWithChar()
 	callGenericHigherOrderFunction()
+    println(oneHalf(3))
+
+    println(max("kotlin", "java"))
+    println(max(1, 10))
+    // println(max(1, "kotlin")) // This throws an exception
+    runTrailingDotExample()
+    
+    runProcessor()
 }

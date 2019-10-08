@@ -24,7 +24,7 @@ tests: ## Run all the tests
 	./gradlew cleanTest test
 .PHONY: tests
 
-run: build ## Run app locally
+run: ## Run app locally
 	./gradlew run
 .PHONY: run
 
