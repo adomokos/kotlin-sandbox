@@ -1,3 +1,4 @@
 .gradle/
 build/
 db/explorer-db.sqlt
+.kotlintest/

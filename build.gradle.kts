@@ -17,6 +17,7 @@ apply {
 val spekVersion = "2.1.0-alpha.0.13+397dc38"
 val kotlinVersion = "1.3.21"
 val arrowVersion = "0.10.1-SNAPSHOT"
+val kotlinTestJunitVersion = "3.3.2"
 
 dependencies {
     compile(kotlin("stdlib"))
@@ -34,18 +35,18 @@ dependencies {
 	// assertion
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 
+	// kotlintest
+	testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestJunitVersion")
+
 	//spek2
     testImplementation("org.spekframework.spek2:spek-dsl-jvm:$spekVersion")
     testRuntimeOnly("org.spekframework.spek2:spek-runner-junit5:$spekVersion")
     testRuntimeOnly("org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion")
 }
 
-
 tasks {
 	withType<Test> {
-		useJUnitPlatform {
-			includeEngines("spek2")
-		}
+		useJUnitPlatform()
 
 		testlogger {
 			setTheme("mocha") // project level
