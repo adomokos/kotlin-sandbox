@@ -26,7 +26,7 @@ class CalculatorTests : StringSpec({
         result shouldBe 4
     }
 
-    "startsWith should test for a prefix" {
+    "f:startsWith should test for a prefix" {
         "world" should startWith("wor")
     }
 })
