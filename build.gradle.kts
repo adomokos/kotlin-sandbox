@@ -16,7 +16,7 @@ apply {
 
 val kotlinVersion = "1.3.21"
 val arrowVersion = "0.10.1-SNAPSHOT"
-val kotlinTestJunitVersion = "3.3.2"
+val kotlinTestVersion = "3.4.2"
 
 dependencies {
     compile(kotlin("stdlib"))
@@ -35,7 +35,13 @@ dependencies {
     testImplementation("org.jetbrains.kotlin:kotlin-test:$kotlinVersion")
 
 	// kotlintest
-	testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestJunitVersion")
+    testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion") {
+        // https://github.com/kotlintest/kotlintest/issues/1026
+        exclude("io.arrow-kt")
+    }
+    testImplementation("io.kotlintest:kotlintest-assertions-arrow:$kotlinTestVersion") {
+        exclude("io.arrow-kt")
+    }
 }
 
 tasks {

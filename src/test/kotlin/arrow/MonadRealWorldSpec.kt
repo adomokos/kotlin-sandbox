@@ -2,6 +2,8 @@ package arrow
 
 import arrow.core.*
 import arrow.core.extensions.fx
+import io.kotlintest.assertions.arrow.either.shouldBeRight
+import io.kotlintest.assertions.arrow.either.shouldBeLeft
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -124,14 +126,10 @@ class MonadRealWorldSpec : StringSpec({
                                         areaCode=230,
                                         prefix=665,
                                         lineNumber=4456))
-        firstUser shouldBe Right(expectedUser)
+        firstUser shouldBeRight expectedUser
 
-        // TODO: user arrow matcher here
-        // val secondUser = result[1]
+        val secondUser = result[1]
 
-        // when (secondUser) {
-            // is Either.Left -> assertTrue(true)
-            // is Either.Right -> fail("2nd user wasn't a Left<Exception>")
-        // }
+        secondUser.shouldBeLeft()
     }
 })
