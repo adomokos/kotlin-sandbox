@@ -1,9 +1,11 @@
 package arrow
 
-import arrow.core.*
+import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
 import arrow.core.extensions.fx
-import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.assertions.arrow.either.shouldBeLeft
+import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -89,7 +91,6 @@ fun phoneNumberFrom(phone: String): Either<Exception, PhoneNumber> {
         }
     }
 
-
     return Left(Exception("$phone is not the accepted format!"))
 }
 
@@ -118,14 +119,14 @@ class MonadRealWorldSpec : StringSpec({
         result.size shouldBe 3
 
         val firstUser = result[0]
-        val expectedUser = 
+        val expectedUser =
             DomainUser(
-                person=Person(firstName="Roth",
-                              lastName="Drake"),
-                phoneNumber=PhoneNumber(countryCode=1,
-                                        areaCode=230,
-                                        prefix=665,
-                                        lineNumber=4456))
+                person = Person(firstName = "Roth",
+                    lastName = "Drake"),
+                phoneNumber = PhoneNumber(countryCode = 1,
+                    areaCode = 230,
+                    prefix = 665,
+                    lineNumber = 4456))
         firstUser shouldBeRight expectedUser
 
         val secondUser = result[1]

@@ -1,12 +1,16 @@
 package exposed
 
-import org.jetbrains.exposed.dao.Entity
-import org.jetbrains.exposed.dao.EntityClass
-import org.jetbrains.exposed.dao.EntityID
-import org.jetbrains.exposed.dao.IntIdTable
-import org.jetbrains.exposed.sql.*
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.File
+import org.jetbrains.exposed.dao.IntIdTable
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.ResultRow
+import org.jetbrains.exposed.sql.StdOutSqlLogger
+import org.jetbrains.exposed.sql.Table
+import org.jetbrains.exposed.sql.addLogger
+import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
+import org.jetbrains.exposed.sql.selectAll
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object People : Table("people") {
     val id = integer("id").autoIncrement().primaryKey()
@@ -41,8 +45,8 @@ fun mapToPersonDto(it: ResultRow) = PersonDto(
 
 object GithubInfos : IntIdTable() {
     val peopleId = integer("people_id")
-    val login = varchar("login", length=255).uniqueIndex()
-    val name = varchar("name", length=255)
+    val login = varchar("login", length = 255).uniqueIndex()
+    val name = varchar("name", length = 255)
     val accountCreatedAt = datetime("account_created_at")
 }
 
@@ -72,7 +76,7 @@ fun insertPerson(person: PersonDto): Int {
 
 fun runExamples() {
     val filePath = File("db/explorer-db.sqlt").getAbsolutePath()
-    Database.connect("jdbc:sqlite:${filePath}", "org.sqlite.JDBC")
+    Database.connect("jdbc:sqlite:$filePath", "org.sqlite.JDBC")
 
     val newPerson = PersonDto(
         id = null,
@@ -90,7 +94,7 @@ fun runExamples() {
         println("Found person with id 1: ${findPerson(1)}")
 
         val personId = insertPerson(newPerson)
-        println("Insert a person, new ID is: ${personId}")
+        println("Insert a person, new ID is: $personId")
 
         rollback()
     }

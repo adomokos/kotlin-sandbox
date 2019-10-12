@@ -10,13 +10,13 @@ class Calculator {
         return a + b
     }
 
-	fun subtract(a: Int, b: Int): Int {
-		return a - b
-	}
+    fun subtract(a: Int, b: Int): Int {
+        return a - b
+    }
 
-	fun multiply(a: Int, b: Int): Int {
-		return a * b
-	}
+    fun multiply(a: Int, b: Int): Int {
+        return a * b
+    }
 }
 
 class CalculatorSpec : StringSpec({
@@ -39,12 +39,12 @@ class CalculatorSpec : StringSpec({
             // assertEquals(3, calculator.add(1, 2))
         // }
 
-		// it ("can subtract two numbers") {
-			// assertEquals(1, calculator.subtract(3, 2))
-		// }
+        // it ("can subtract two numbers") {
+            // assertEquals(1, calculator.subtract(3, 2))
+        // }
 
-		// it ("can multiply two numbers") {
-			// assertEquals(6, calculator.multiply(2, 3))
-		// }
+        // it ("can multiply two numbers") {
+            // assertEquals(6, calculator.multiply(2, 3))
+        // }
     // }
 // })

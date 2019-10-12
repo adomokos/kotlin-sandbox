@@ -1,9 +1,8 @@
 package arrow
 
-import arrow.*
-import arrow.fx.*
-import arrow.typeclasses.*
+import arrow.fx.IO
 import arrow.fx.extensions.fx
+import arrow.fx.fix
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 

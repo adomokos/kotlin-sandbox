@@ -1,6 +1,6 @@
 package arrow
 
-import arrow.core.*
+import arrow.core.NonEmptyList
 import arrow.core.extensions.fx
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
@@ -20,13 +20,13 @@ class NonEmptyListSpec : StringSpec({
     }
 
     "can fold left and right" {
-        val nel = NonEmptyList.of(1,1,1,1)
+        val nel = NonEmptyList.of(1, 1, 1, 1)
         sumNel(nel) shouldBe 4
     }
 
     "can compute over the contents of multiple" {
-        val nelOne: NonEmptyList<Int> = NonEmptyList.of(1,2)
-        val nelTwo: NonEmptyList<Int> = NonEmptyList.of(3,4)
+        val nelOne: NonEmptyList<Int> = NonEmptyList.of(1, 2)
+        val nelTwo: NonEmptyList<Int> = NonEmptyList.of(3, 4)
 
         val result = nelOne.flatMap { one ->
             nelTwo.map { two ->
@@ -34,7 +34,7 @@ class NonEmptyListSpec : StringSpec({
             }
         }
 
-        result shouldBe NonEmptyList.of(4,5,5,6)
+        result shouldBe NonEmptyList.of(4, 5, 5, 6)
     }
 
     "can be used with monad bindings" {

@@ -1,14 +1,14 @@
 package inaction.chap03
 
-import strings.lastChar as last
 import strings.joinToString as joinTS
+import strings.lastChar as last
 
 fun <T> joinToString(
     collection: Collection<T>,
     separator: String,
     prefix: String,
     postfix: String
-) : String {
+): String {
     val result = StringBuilder(prefix)
 
     for ((index, element) in collection.withIndex()) {
@@ -25,7 +25,7 @@ fun <T> joinToString2(
     separator: String = ", ",
     prefix: String = "",
     postfix: String = ""
-) : String {
+): String {
     return joinToString(collection,
                         separator,
                         prefix,
@@ -36,7 +36,7 @@ open class View {
     open fun click() = println("View clicked")
 }
 
-class Button: View() {
+class Button : View() {
     override fun click() = println("Button clicked")
 }
 
@@ -105,9 +105,11 @@ fun saveUser(user: User) {
 }
 
 fun saveUser2(user: User) {
-    fun validate(user: User,
-                value: String,
-                fieldName: String) {
+    fun validate(
+        user: User,
+        value: String,
+        fieldName: String
+    ) {
                     if (value.isEmpty()) {
                     throw IllegalArgumentException(
                         "Can't save user ${user.id}: empty $fieldName"
@@ -148,12 +150,12 @@ fun User.validateBeforeSave() {
 }
 
 fun runChap03() {
-    val list = listOf(1,2,3)
+    val list = listOf(1, 2, 3)
     println(joinToString(list, "; ", "(", ")"))
     println(joinToString(list, "; ", "", ""))
     println(joinToString2(list))
-    println(joinToString2(list, postfix=";", prefix="# "))
-    println(list.joinTS(postfix=";", prefix="# "))
+    println(joinToString2(list, postfix = ";", prefix = "# "))
+    println(list.joinTS(postfix = ";", prefix = "# "))
 
     println("Kotlin".last())
 

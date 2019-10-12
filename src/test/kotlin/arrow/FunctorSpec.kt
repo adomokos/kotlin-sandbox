@@ -1,7 +1,11 @@
 package arrow
 
-import arrow.core.*
-import arrow.core.extensions.option.functor.*
+import arrow.core.Either
+import arrow.core.None
+import arrow.core.Option
+import arrow.core.Some
+import arrow.core.extensions.option.functor.functor
+import arrow.core.none
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 

@@ -9,16 +9,16 @@ fun helloWorld(): String = "Hello World"
 
 // suspend composition
 suspend fun sayGoodBye(): Unit =
-	println("Good bye World!")
+    println("Good bye World!")
 
 suspend fun sayHello(): Unit =
-	println(helloWorld())
+    println(helloWorld())
 
 fun greet(): IO<Unit> =
-	IO.fx {
-		!effect { sayHello() }
-		!effect { sayGoodBye() }
-	}
+    IO.fx {
+        !effect { sayHello() }
+        !effect { sayGoodBye() }
+    }
 /*
 	// Lazy evaluation
 	IO.fx {
@@ -28,12 +28,12 @@ fun greet(): IO<Unit> =
 */
 
 fun sayInIO(s: String): IO<Unit> =
-	IO { println(s) }
+    IO { println(s) }
 
 fun greet2(): IO<Unit> =
-	IO.fx {
-		sayInIO("Hello World").bind()
-	}
+    IO.fx {
+        sayInIO("Hello World").bind()
+    }
 
 /*
 	Executing effectful programs
@@ -45,5 +45,5 @@ fun greet2(): IO<Unit> =
 */
 
 fun runEffects() {
-	unsafe { runBlocking { greet() } }
+    unsafe { runBlocking { greet() } }
 }

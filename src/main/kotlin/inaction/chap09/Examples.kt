@@ -12,25 +12,25 @@ Java does, Kotlin does not support raw types.
 */
 
 fun sliceWithChar() {
-	val letters = ('a'..'z').toList()
-	println(letters.slice<Char>(0..2))
-	println(letters.slice(10..13))
+    val letters = ('a'..'z').toList()
+    println(letters.slice<Char>(0..2))
+    println(letters.slice(10..13))
 }
 
 fun callGenericHigherOrderFunction() {
-	val members = listOf("John", "Paul", "George")
-	val otherMembers = mutableListOf<String>("Paul", "Linda", "Mick")
+    val members = listOf("John", "Paul", "George")
+    val otherMembers = mutableListOf<String>("Paul", "Linda", "Mick")
 
-	// fun <T> List<T>.filter(predicate: (T) -> Boolean): List<T>
-	println(members.filter { it !in otherMembers })
+    // fun <T> List<T>.filter(predicate: (T) -> Boolean): List<T>
+    println(members.filter { it !in otherMembers })
 }
 
 // Type parameter constraint
-fun <T: Number> oneHalf(value: T): Double {
+fun <T : Number> oneHalf(value: T): Double {
     return value.toDouble() / 2.0
 }
 
-fun <T: Comparable<T>> max(first: T, second: T): T {
+fun <T : Comparable<T>> max(first: T, second: T): T {
     return if (first > second) first else second
 }
 
@@ -74,15 +74,15 @@ fun runProcessor() {
 }
 
 fun runChap09() {
-	// val exampleList: List<String> = listOf("John", 2)
-	sliceWithChar()
-	callGenericHigherOrderFunction()
+    // val exampleList: List<String> = listOf("John", 2)
+    sliceWithChar()
+    callGenericHigherOrderFunction()
     println(oneHalf(3))
 
     println(max("kotlin", "java"))
     println(max(1, 10))
     // println(max(1, "kotlin")) // This throws an exception
     runTrailingDotExample()
-    
+
     runProcessor()
 }
