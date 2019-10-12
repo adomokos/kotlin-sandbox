@@ -17,7 +17,7 @@ build: ## Build with Gradle
 
 test: ## Run a sigle test, pass TEST=something.MySpec to run it
 	 @test $(TEST) || (echo "TEST argument is required" ; exit 1)
-	./gradlew test --tests $(TEST)
+	./gradlew test --tests "$(TEST)"
 .PHONY: test
 
 tests: ## Run all the tests

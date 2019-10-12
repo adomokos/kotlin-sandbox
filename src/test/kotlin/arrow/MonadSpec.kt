@@ -1,33 +1,30 @@
 package arrow
 
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
 import arrow.core.*
 import arrow.core.extensions.fx
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.StringSpec
 
-object MonadSpec: Spek({
-    describe("Monads") {
-        it ("works with the Option type - Some values") {
-            val result = Option.fx {
-                val (a) = Some(1)
-                val (b) = Some(1+a)
-                val (c) = Some(1+b)
-                a + b + c
-            }
-
-            assertEquals(Some(6), result)
+class MonadSpec : StringSpec({
+    "works with the Option type - Some values" {
+        val result = Option.fx {
+            val (a) = Some(1)
+            val (b) = Some(1+a)
+            val (c) = Some(1+b)
+            a + b + c
         }
 
-        it ("works with the Option type - None value") {
-            val result = Option.fx {
-                val (a) = none<Int>()
-                val (b) = Some(1+a)
-                val (c) = Some(1+b)
-                a + b + c
-            }
+        result shouldBe Some(6)
+    }
 
-            assertEquals(None, result)
+    "works with the Option type - None value" {
+        val result = Option.fx {
+            val (a) = none<Int>()
+            val (b) = Some(1+a)
+            val (c) = Some(1+b)
+            a + b + c
         }
+
+        result shouldBe None
     }
 })

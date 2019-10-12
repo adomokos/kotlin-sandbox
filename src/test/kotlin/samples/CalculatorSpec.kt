@@ -19,7 +19,7 @@ class Calculator {
 	}
 }
 
-class CalculatorTests : StringSpec({
+class CalculatorSpec : StringSpec({
     "can add two numbers" {
         val calc = Calculator()
         val result = calc.add(1, 3)

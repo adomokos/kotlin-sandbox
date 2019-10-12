@@ -1,12 +1,11 @@
 package arrow
 
-import org.spekframework.spek2.Spek
-import org.spekframework.spek2.style.specification.describe
-import kotlin.test.assertEquals
 import arrow.*
 import arrow.fx.*
 import arrow.typeclasses.*
 import arrow.fx.extensions.fx
+import io.kotlintest.shouldBe
+import io.kotlintest.specs.StringSpec
 
 fun returnLastElement(): Int {
     return IO.fx {
@@ -29,18 +28,16 @@ fun withoutBind(): Int {
         .fix().unsafeRunSync()
 }
 
-object MonadComprehensionsSpec: Spek({
-    describe("Monad Comprehensions") {
-        it ("returns the last element") {
-            assertEquals(1, returnLastElement())
-        }
+class MonadComprehensionSpec : StringSpec({
+    "returns the last element" {
+        returnLastElement() shouldBe 1
+    }
 
-        it ("returns the result of 2 operations") {
-            assertEquals(2, secondOperation())
-        }
+    "returns the result of 2 operations" {
+        secondOperation() shouldBe 2
+    }
 
-        it ("returns without the bind") {
-            assertEquals(2, withoutBind())
-        }
+    "returns without the bind" {
+        withoutBind() shouldBe 2
     }
 })
