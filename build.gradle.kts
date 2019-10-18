@@ -19,16 +19,16 @@ val arrowVersion = "0.10.1-SNAPSHOT"
 val kotlinTestVersion = "3.4.2"
 
 dependencies {
-    compile(kotlin("stdlib"))
+    implementation(kotlin("stdlib"))
 
     // Exposed - db access
-    compile("org.jetbrains.exposed:exposed:0.16.1")
-    compile("org.xerial:sqlite-jdbc:3.21.0.1")
+    implementation("org.jetbrains.exposed:exposed:0.16.1")
+    implementation("org.xerial:sqlite-jdbc:3.21.0.1")
 
     // Arrow
-    compile("io.arrow-kt:arrow-core:$arrowVersion")
-    compile("io.arrow-kt:arrow-syntax:$arrowVersion")
-    compile("io.arrow-kt:arrow-fx:$arrowVersion")
+    implementation("io.arrow-kt:arrow-core:$arrowVersion")
+    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
 
     // kotlintest
