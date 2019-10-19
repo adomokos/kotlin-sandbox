@@ -1,8 +1,7 @@
-
-import inaction.runExamples as runInactionExamples
+import arrow.runExamples as runArrowExamples
 
 fun main() {
-    // runArrowExamples()
+    runArrowExamples()
     // runExposedExamples()
-    runInactionExamples()
+    // runInactionExamples()
 }

@@ -31,6 +31,9 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
 
+    // Coroutins
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
+
     // kotlintest
     testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion") {
         // https://github.com/kotlintest/kotlintest/issues/1026
