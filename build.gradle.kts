@@ -51,6 +51,8 @@ tasks {
 
         testlogger {
             setTheme("mocha") // project level
+            // setShowSimpleNames(true)
+            // setShowStandardStreams(true)
         }
     }
 }
