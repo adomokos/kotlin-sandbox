@@ -1,8 +1,8 @@
 package arrow
 
+import arrow.concurrent.runConcurrent
 import arrow.core.Option
 import arrow.core.andThen
-import arrow.concurrent.runConcurrent
 import arrow.datatypes.runDataTypes
 import arrow.effects.runEffects
 

@@ -1,8 +1,7 @@
 package arrow
 
 // import io.kotlintest.shouldBe
-import arrow.optics.dsl.*
-import arrow.optics.Optional
+// import arrow.optics.Optional
 import arrow.optics.optics
 import io.kotlintest.specs.StringSpec
 
@@ -17,7 +16,7 @@ class OpticsSpec : StringSpec({
     "can modify a field".config(enabled = false) {
         val john = Employee("John Doe",
             Company("Kategory",
-            Address("Functional city", Street (42, "lambda street"))))
+            Address("Functional city", Street(42, "lambda street"))))
         // optional.modify(john, String::toUpperCase)
     }
 })

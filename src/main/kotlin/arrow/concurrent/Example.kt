@@ -2,8 +2,8 @@ package arrow.concurrent
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import arrow.unsafe
 import arrow.fx.extensions.io.unsafeRun.runBlocking
+import arrow.unsafe
 import kotlinx.coroutines.newSingleThreadContext
 
 val contextA = newSingleThreadContext("A")
@@ -56,7 +56,7 @@ suspend fun threadName(i: Int): String =
 
 val program4 = IO.fx {
     val result: List<String> = !
-    listOf(1,2,3).parTraverse { i ->
+    listOf(1, 2, 3).parTraverse { i ->
         effect { threadName(i) }
     }
     !effect { println(result) }
