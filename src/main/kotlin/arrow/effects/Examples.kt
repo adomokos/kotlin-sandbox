@@ -6,6 +6,7 @@ import arrow.fx.extensions.io.unsafeRun.runBlocking
 import arrow.unsafe
 
 fun helloWorld(): String = "Hello World"
+fun helloWorldWithName(name: String): String = "Hello $name"
 
 // suspend composition
 suspend fun sayGoodBye(): Unit =
@@ -14,7 +15,19 @@ suspend fun sayGoodBye(): Unit =
 suspend fun sayHello(): Unit =
     println(helloWorld())
 
+suspend fun sayHelloWithName(name: String): Unit =
+    println(helloWorldWithName(name))
+
 fun greet(): IO<Unit> =
+    IO.fx {
+        val name = "John"
+        val pureHello = effect { sayHelloWithName(name) }
+        val pureGoodBye = effect { sayGoodBye() }
+        !pureHello // Call the effect
+        !pureGoodBye
+    }
+
+fun greet2(): IO<Unit> =
     IO.fx {
         !effect { sayHello() }
         !effect { sayGoodBye() }
@@ -30,7 +43,7 @@ fun greet(): IO<Unit> =
 fun sayInIO(s: String): IO<Unit> =
     IO { println(s) }
 
-fun greet2(): IO<Unit> =
+fun greet3(): IO<Unit> =
     IO.fx {
         sayInIO("Hello World").bind()
     }
@@ -46,4 +59,6 @@ fun greet2(): IO<Unit> =
 
 fun runEffects() {
     unsafe { runBlocking { greet() } }
+    unsafe { runBlocking { greet2() } }
+    unsafe { runBlocking { greet3() } }
 }
