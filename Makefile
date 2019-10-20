@@ -28,6 +28,11 @@ run: ## Run app locally
 	./gradlew run
 .PHONY: run
 
+fix-style: ## Fixed ktlint errors with spotless
+	./gradlew spotlessApply
+.PHONY: fix-style
+
+
 help: ## Prints this help command
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) |\
 		sort | \

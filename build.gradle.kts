@@ -4,6 +4,7 @@ plugins {
     id("com.adarshr.test-logger") version "1.7.1"
     id("com.gradle.build-scan") version "2.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.0.0"
+    id("com.diffplug.gradle.spotless") version "3.25.0"
     application
 }
 
@@ -13,6 +14,15 @@ application {
 
 apply {
     plugin("com.adarshr.test-logger")
+}
+
+spotless {
+    kotlin {
+        ktlint()
+    }
+    kotlinGradle {
+        ktlint()
+    }
 }
 
 val arrowVersion = "0.10.1-SNAPSHOT"
