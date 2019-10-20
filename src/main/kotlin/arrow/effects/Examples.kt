@@ -40,8 +40,14 @@ fun greet2(): IO<Unit> =
 	}
 */
 
+fun getName(): IO<String> =
+    IO { "John" }
+
 fun sayInIO(s: String): IO<Unit> =
-    IO { println(s) }
+    IO.fx {
+        val (name) = getName()
+        println("$s and $name")
+    }
 
 fun greet3(): IO<Unit> =
     IO.fx {
