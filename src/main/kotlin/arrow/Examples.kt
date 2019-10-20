@@ -1,9 +1,7 @@
 package arrow
 
-import arrow.concurrent.runConcurrent
 import arrow.core.Option
 import arrow.core.andThen
-import arrow.datatypes.runDataTypes
 import arrow.effects.runEffects
 
 fun compositionExample() {
@@ -22,9 +20,9 @@ fun compositionExample() {
 
 fun runExamples() {
     runEffects()
-    runDataTypes()
-    compositionExample()
+    // runDataTypes()
+    // compositionExample()
 
-    println("-- run concurrent examples --")
-    runConcurrent()
+    // println("-- run concurrent examples --")
+    // runConcurrent()
 }
