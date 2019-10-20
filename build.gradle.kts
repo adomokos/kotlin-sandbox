@@ -40,6 +40,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx:$arrowVersion")
     implementation("io.arrow-kt:arrow-optics:$arrowVersion")
+    implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
 
     // Coroutins
