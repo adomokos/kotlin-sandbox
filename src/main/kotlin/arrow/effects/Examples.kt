@@ -1,5 +1,6 @@
 package arrow.effects
 
+import arrow.core.Either
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.extensions.io.unsafeRun.runBlocking
@@ -43,10 +44,30 @@ fun greet2(): IO<Unit> =
 fun getName(): IO<String> =
     IO { "John" }
 
+fun allUpper(name: String): String =
+    name.toUpperCase()
+
+sealed class BizError {
+    data class LetterNotFound(val name: String) : BizError()
+}
+
+typealias LetterNotFound = BizError.LetterNotFound
+
+fun hasJInIt(name: String): Either<BizError, String> =
+    if (name.contains('J')) {
+        Either.right(name)
+    } else {
+        Either.left(LetterNotFound(name))
+    }
+
 fun sayInIO(s: String): IO<Unit> =
     IO.fx {
-        val (name) = getName()
-        println("$s and $name")
+        val (result) = getName().map(::allUpper).map(::hasJInIt)
+
+        when (result) {
+            is Either.Left -> println("No 'J' was found in the name")
+            is Either.Right -> println("$s and ${result.b}")
+        }
     }
 
 fun greet3(): IO<Unit> =
