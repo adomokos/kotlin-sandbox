@@ -1,0 +1,6 @@
+[*.{kt,kts}]
+
+# possible values: number (e.g. 2), "unset" (makes ktlint ignore indentation completely)  
+indent_size=4
+
+disabled_rules=import-ordering
