@@ -27,6 +27,7 @@ spotless {
 
 val arrowVersion = "0.10.1-SNAPSHOT"
 val kotlinTestVersion = "3.4.2"
+val klaxonVersion = "5.0.1"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -34,6 +35,9 @@ dependencies {
     // Exposed - db access
     implementation("org.jetbrains.exposed:exposed:0.16.1")
     implementation("org.xerial:sqlite-jdbc:3.21.0.1")
+
+    // JSON parsing
+    implementation("com.beust:klaxon:$klaxonVersion")
 
     // Arrow
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
