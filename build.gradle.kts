@@ -25,7 +25,7 @@ spotless {
     }
 }
 
-val arrowVersion = "0.10.1-SNAPSHOT"
+val arrowVersion = "0.10.2"
 val kotlinTestVersion = "3.4.2"
 val klaxonVersion = "5.0.1"
 
