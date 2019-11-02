@@ -1,7 +1,10 @@
-import arrow.runExamples as runArrowExamples
+// import arrow.runExamples as runArrowExamples
+import github.explorer.run as runExplorer
 
-fun main() {
-    runArrowExamples()
+@Suppress("UNUSED_PARAMETER")
+fun main(args: Array<String>) {
+    // runArrowExamples()
     // runExposedExamples()
     // runInactionExamples()
+    runExplorer(args)
 }

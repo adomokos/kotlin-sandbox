@@ -6,11 +6,13 @@ import arrow.fx.extensions.io.unsafeRun.runBlocking
 import arrow.unsafe
 import kotlinx.coroutines.newSingleThreadContext
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 val contextA = newSingleThreadContext("A")
 
 suspend fun printThreadName(): Unit =
     println(Thread.currentThread().name)
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 val program = IO.fx {
     continueOn(contextA)
     !effect { printThreadName() }
@@ -74,6 +76,7 @@ val program5 = IO.fx {
     !effect { println(result) }
 }
 
+@kotlinx.coroutines.ObsoleteCoroutinesApi
 fun runConcurrent() {
     unsafe { runBlocking { program } }
     unsafe { runBlocking { program2 } }
