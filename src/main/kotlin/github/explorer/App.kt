@@ -4,7 +4,6 @@ import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.leftIfNull
 import arrow.fx.IO
-import arrow.fx.extensions.fx
 import arrow.fx.handleError
 import com.beust.klaxon.Converter
 import com.beust.klaxon.Json
@@ -80,11 +79,9 @@ private fun addStarRating(userInfo: UserInfo): Either<AppError, UserInfo> {
 }
 
 fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
-    IO.fx {
-        val (userData) = ApiClient().callApi(username) // Unbind from IO context
-        extractUserInfo(userData)
-            .flatMap(::addStarRating)
-    }
+    ApiClient().callApi(username)
+        .map(::extractUserInfo)
+        .map{ it.flatMap(::addStarRating) } // Need to go 2 level deep - IO and Either
 
 class ApiClient {
     fun callApi(username: String): IO<String> =
@@ -98,8 +95,8 @@ class ApiClient {
         }
     }
 
-fun handleAppError(error: AppError): Unit = println("The app error is: $error")
-fun handleFailure(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
+fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
+fun handleFailure(error: AppError): Unit = println("The app error is: $error")
 fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo")
 
 fun run(args: Array<String>) {
@@ -111,12 +108,12 @@ fun run(args: Array<String>) {
         .map { it }.map {
             result ->
                 when (result) {
-                    is Either.Left -> handleAppError(result.a)
+                    is Either.Left -> handleFailure(result.a)
                     is Either.Right -> handleSuccess(result.b)
                 }
         }
         .handleError { error ->
-            handleFailure(error)
+            handleAppError(error)
         }
 
     // Run the program asynchronously
