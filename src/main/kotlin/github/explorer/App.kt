@@ -58,7 +58,7 @@ private fun createKlaxon() = Klaxon()
             """ { "date" : $dateValue } """
     })
 
-fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
+private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
     try {
         Either.right(createKlaxon().parse<UserInfo>(userInfoData))
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
@@ -72,21 +72,21 @@ fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
         .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
     */
 
-fun addStarRating(userInfo: UserInfo): Either<AppError, UserInfo> {
+private fun addStarRating(userInfo: UserInfo): Either<AppError, UserInfo> {
     if (userInfo.publicReposCount > 20) {
         userInfo.username = userInfo.username + " ⭐"
     }
     return Either.right(userInfo)
 }
 
-class ApiClient {
-    fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
-        IO.fx {
-            val (userData) = callApi(username) // Unbind from IO context
-            extractUserInfo(userData)
-                .flatMap(::addStarRating)
-        }
+fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
+    IO.fx {
+        val (userData) = ApiClient().callApi(username) // Unbind from IO context
+        extractUserInfo(userData)
+            .flatMap(::addStarRating)
+    }
 
+class ApiClient {
     fun callApi(username: String): IO<String> =
         IO {
             val client = HttpClient.newBuilder().build()
@@ -107,7 +107,7 @@ fun run(args: Array<String>) {
 
     val apiClient = ApiClient()
 
-    val program = apiClient.getUserInfo(username ?: "adomokos")
+    val program = getUserInfo(username ?: "adomokos")
         .map { it }.map {
             result ->
                 when (result) {
