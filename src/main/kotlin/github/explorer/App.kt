@@ -102,7 +102,6 @@ fun handleAppError(error: AppError): Unit = println("The app error is: $error")
 fun handleFailure(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
 fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo")
 
-@Suppress("UNUSED_PARAMETER")
 fun run(args: Array<String>) {
     val username = args.firstOrNull()
 
