@@ -80,8 +80,9 @@ private fun addStarRating(userInfo: UserInfo): Either<AppError, UserInfo> {
 
 fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
     ApiClient().callApi(username)
-        .map(::extractUserInfo)
-        .map{ it.flatMap(::addStarRating) } // Need to go 2 level deep - IO and Either
+        .map { // In the IO context
+            extractUserInfo(it).flatMap(::addStarRating)
+        }
 
 class ApiClient {
     fun callApi(username: String): IO<String> =
