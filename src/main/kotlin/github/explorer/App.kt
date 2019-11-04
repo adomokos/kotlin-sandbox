@@ -75,11 +75,12 @@ private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
         .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
     */
 
-private fun addStarRating(userInfo: UserInfo): Either<AppError, UserInfo> {
+private fun addStarRating(userInfo: UserInfo): UserInfo {
     if (userInfo.publicReposCount > 20) {
         userInfo.username = userInfo.username + " ⭐"
     }
-    return Either.right(userInfo)
+    return userInfo
+    // return Either.right(userInfo)
 }
 
 private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
@@ -87,7 +88,7 @@ private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
         val (apiResult) = ApiClient().callApi(username)
         apiResult
             .flatMap(::extractUserInfo)
-            .flatMap(::addStarRating)
+            .map(::addStarRating)
     }
 
 class ApiClient {
@@ -116,7 +117,7 @@ fun run(args: Array<String>) {
     val username = args.firstOrNull()
 
     val program = getUserInfo(username ?: "adomokos")
-        .map { it }.map {
+        .map {
             result ->
                 when (result) {
                     is Either.Left -> handleFailure(result.a)
