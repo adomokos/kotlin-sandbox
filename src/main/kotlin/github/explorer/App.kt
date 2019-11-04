@@ -53,6 +53,7 @@ private fun createKlaxon() = Klaxon()
                 throw KlaxonException("Couldn't parse date: ${jv.string}")
             }
 
+        @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
         override fun toJson(dateValue: Any) =
             """ { "date" : $dateValue } """
     })
@@ -102,8 +103,6 @@ fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo"
 
 fun run(args: Array<String>) {
     val username = args.firstOrNull()
-
-    val apiClient = ApiClient()
 
     val program = getUserInfo(username ?: "adomokos")
         .map { it }.map {
