@@ -28,6 +28,7 @@ spotless {
 val arrowVersion = "0.10.2"
 val kotlinTestVersion = "3.4.2"
 val klaxonVersion = "5.0.1"
+val coroutinesVersion = "1.3.2"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -47,8 +48,8 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
 
-    // Coroutins
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.0.0")
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
     // kotlintest
     testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion") {
