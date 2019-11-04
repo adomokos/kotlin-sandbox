@@ -5,19 +5,14 @@ import arrow.core.flatMap
 import arrow.core.leftIfNull
 import arrow.core.right
 import arrow.fx.IO
-import arrow.fx.extensions.fx
 import arrow.fx.handleError
-import com.beust.klaxon.Converter
 import com.beust.klaxon.Json
-import com.beust.klaxon.JsonValue
-import com.beust.klaxon.Klaxon
 import com.beust.klaxon.KlaxonException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 // https://jorgecastillo.dev/please-try-to-use-io
 
@@ -44,23 +39,6 @@ data class UserInfo(
     val memberSince: LocalDateTime?
 )
 
-// ZOMG to parse 8601 UTC Date Time
-private fun createKlaxon() = Klaxon()
-    .fieldConverter(KlaxonDate::class, object : Converter {
-        override fun canConvert(cls: Class<*>) = cls == LocalDateTime::class.java
-
-        override fun fromJson(jv: JsonValue) =
-            if (jv.string != null) {
-                LocalDateTime.parse(jv.string, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-            } else {
-                throw KlaxonException("Couldn't parse date: ${jv.string}")
-            }
-
-        @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-        override fun toJson(dateValue: Any) =
-            """ { "date" : $dateValue } """
-    })
-
 private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
     try {
         Either.right(createKlaxon().parse<UserInfo>(userInfoData))
@@ -84,10 +62,8 @@ private fun addStarRating(userInfo: UserInfo): UserInfo {
 }
 
 private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
-    IO.fx {
-        val (apiResult) = ApiClient().callApi(username)
-        apiResult
-            .flatMap(::extractUserInfo)
+    ApiClient().callApi(username).map {
+        it.flatMap(::extractUserInfo)
             .map(::addStarRating)
     }
 
