@@ -12,16 +12,17 @@ db.console: ## Open the db-console
 .PHONY: db-console
 
 build: ## Build with Gradle
-	./gradlew build
+	./gradlew build -x test
 .PHONY: build
 
-test: ## Run a sigle test, pass TEST=something.MySpec to run it
-	 @test $(TEST) || (echo "TEST argument is required" ; exit 1)
-	./gradlew test --tests "$(TEST)"
+test: ## Run the tests
+	./gradlew test
 .PHONY: test
 
-tests: ## Run all the tests
-	./gradlew cleanTest test
+single-test: ## Run a sigle test, pass TEST=something.MySpec to run it
+	 @test $(TEST) || (echo "TEST argument is required" ; exit 1)
+	./gradlew test --tests "$(TEST)"
+
 .PHONY: tests
 
 run: ## Run app locally
