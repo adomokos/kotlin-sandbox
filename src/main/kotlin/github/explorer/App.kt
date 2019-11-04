@@ -8,6 +8,7 @@ import arrow.fx.IO
 import arrow.fx.handleError
 import com.beust.klaxon.Json
 import com.beust.klaxon.KlaxonException
+import java.net.ConnectException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -18,6 +19,7 @@ import java.time.LocalDateTime
 
 sealed class AppError {
     data class UserNotFound(val errorInfo: String) : AppError()
+    data class GitHubConnectionFailed(val errorInfo: String) : AppError()
     data class UserDataJsonParseFailed(val errorInfo: String) : AppError()
 }
 
@@ -62,27 +64,31 @@ private fun addStarRating(userInfo: UserInfo): UserInfo {
 }
 
 private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
-    ApiClient().callApi(username).map {
-        it.flatMap(::extractUserInfo)
+    callApi(username)
+        .map {
+            it.flatMap(::extractUserInfo)
             .map(::addStarRating)
     }
 
-class ApiClient {
-    fun callApi(username: String): IO<Either<AppError, String>> {
-        val client = HttpClient.newBuilder().build()
-        val request = HttpRequest.newBuilder()
-            .uri(URI.create("https://api.github.com/users/$username"))
-            .build()
+private fun callApi(username: String): IO<Either<AppError, String>> {
+    val client = HttpClient.newBuilder().build()
+    val request = HttpRequest.newBuilder()
+        .uri(URI.create("https://api.github.com/users/$username"))
+        .build()
+
+    val result = try {
         val response = client.send(request, BodyHandlers.ofString())
 
-        val result = if (response.statusCode() == 404) {
+        if (response.statusCode() == 404) {
             Either.Left(AppError.UserNotFound("The user $username was not found on GitHub"))
         } else {
             response.body().right()
         }
-
-        return IO { result }
+    } catch (_: ConnectException) {
+        Either.Left(AppError.GitHubConnectionFailed("Couldn't reach github.com"))
     }
+
+    return IO { result }
 }
 
 private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
