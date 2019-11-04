@@ -3,7 +3,9 @@ package github.explorer
 import arrow.core.Either
 import arrow.core.flatMap
 import arrow.core.leftIfNull
+import arrow.core.right
 import arrow.fx.IO
+import arrow.fx.extensions.fx
 import arrow.fx.handleError
 import com.beust.klaxon.Converter
 import com.beust.klaxon.Json
@@ -20,6 +22,7 @@ import java.time.format.DateTimeFormatter
 // https://jorgecastillo.dev/please-try-to-use-io
 
 sealed class AppError {
+    data class UserNotFound(val errorInfo: String) : AppError()
     data class UserDataJsonParseFailed(val errorInfo: String) : AppError()
 }
 
@@ -79,27 +82,35 @@ private fun addStarRating(userInfo: UserInfo): Either<AppError, UserInfo> {
     return Either.right(userInfo)
 }
 
-fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
-    ApiClient().callApi(username)
-        .map { // In the IO context
-            extractUserInfo(it).flatMap(::addStarRating)
-        }
-
-class ApiClient {
-    fun callApi(username: String): IO<String> =
-        IO {
-            val client = HttpClient.newBuilder().build()
-            val request = HttpRequest.newBuilder()
-                .uri(URI.create("https://api.github.com/users/$username"))
-                .build()
-            val response = client.send(request, BodyHandlers.ofString())
-            response.body()
-        }
+private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
+    IO.fx {
+        val (apiResult) = ApiClient().callApi(username)
+        apiResult
+            .flatMap(::extractUserInfo)
+            .flatMap(::addStarRating)
     }
 
-fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
-fun handleFailure(error: AppError): Unit = println("The app error is: $error")
-fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo")
+class ApiClient {
+    fun callApi(username: String): IO<Either<AppError, String>> {
+        val client = HttpClient.newBuilder().build()
+        val request = HttpRequest.newBuilder()
+            .uri(URI.create("https://api.github.com/users/$username"))
+            .build()
+        val response = client.send(request, BodyHandlers.ofString())
+
+        val result = if (response.statusCode() == 404) {
+            Either.Left(AppError.UserNotFound("The user $username was not found on GitHub"))
+        } else {
+            response.body().right()
+        }
+
+        return IO { result }
+    }
+}
+
+private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
+private fun handleFailure(error: AppError): Unit = println("The app error is: $error")
+private fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo")
 
 fun run(args: Array<String>) {
     val username = args.firstOrNull()
