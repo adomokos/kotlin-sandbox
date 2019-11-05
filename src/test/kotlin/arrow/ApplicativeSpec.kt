@@ -10,21 +10,25 @@ import io.kotlintest.specs.DescribeSpec
 
 class ApplicativeSpec : DescribeSpec({
     describe("for Option") {
-        it("can map over Option") {
-            val resultx = Some(3).ap(Some<(Int) -> Int>(::inc))
-            resultx shouldBe Some(4)
+        it("can map over a function wrapped in Option") {
+            val result = Some(3).ap(Some<(Int) -> Int>(::inc))
+            result shouldBe Some(4)
+        }
 
+        it("can map over applicative instance") {
             val addNumbers = fun(x: Int, y: Int) = x + y
 
-            val resultx2 = Option.applicative().map(Some(3), Some(4)) { (x, y) -> addNumbers(x, y) }
-            resultx2 shouldBe Some(7)
+            val result = Option.applicative().map(Some(3), Some(4)) { (x, y) -> addNumbers(x, y) }
+            result shouldBe Some(7)
+        }
 
+        it("can be executed with tupled") {
             val add3: Option<(Int) -> Int> = Some { x: Int -> x + 3 }
-            val result2 = tupled(add3, Some(3)).map { it.a(it.b) }
-            val result3 = Some(3).ap(Some<(Int) -> Int> { it -> it + 2 })
+            val result = tupled(add3, Some(3)).map { it.a(it.b) }
+            val result2 = Some(3).ap(Some<(Int) -> Int> { it + 2 })
 
-            result2 shouldBe Some(6)
-            result3 shouldBe Some(5)
+            result shouldBe Some(6)
+            result2 shouldBe Some(5)
         }
 
         it("works with Kind<F, A>#ap combinator") {
