@@ -2,6 +2,7 @@ package github.explorer
 
 import arrow.core.Either
 import arrow.core.flatMap
+import arrow.core.left
 import arrow.core.leftIfNull
 import arrow.core.right
 import arrow.fx.IO
@@ -39,14 +40,21 @@ data class UserInfo(
     @Json(name = "created_at")
     @KlaxonDate
     val memberSince: LocalDateTime?
-)
+) {
+    companion object {
+        fun deserializeFromJson(userInfoData: String) : UserInfo? =
+            createKlaxon().parse<UserInfo>(userInfoData)
+    }
+}
 
 private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
     try {
-        Either.right(createKlaxon().parse<UserInfo>(userInfoData))
+        UserInfo
+            .deserializeFromJson(userInfoData)
+            .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
     } catch (ex: KlaxonException) {
-        Either.left(AppError.UserDataJsonParseFailed(ex.message ?: "No message"))
+        AppError.UserDataJsonParseFailed(ex.message ?: "No message").left()
     }
 
     /*
@@ -72,20 +80,22 @@ private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
 
 private fun callApi(username: String): IO<Either<AppError, String>> {
     val client = HttpClient.newBuilder().build()
-    val request = HttpRequest.newBuilder()
-        .uri(URI.create("https://api.github.com/users/$username"))
-        .build()
+    val request =
+        HttpRequest
+            .newBuilder()
+            .uri(URI.create("https://api.github.com/users/$username"))
+            .build()
 
     val result = try {
         val response = client.send(request, BodyHandlers.ofString())
 
         if (response.statusCode() == 404) {
-            Either.Left(AppError.UserNotFound("The user $username was not found on GitHub"))
+            AppError.UserNotFound("The user $username was not found on GitHub").left()
         } else {
             response.body().right()
         }
     } catch (_: ConnectException) {
-        Either.Left(AppError.GitHubConnectionFailed("Couldn't reach github.com"))
+        AppError.GitHubConnectionFailed("Couldn't reach github.com").left()
     }
 
     return IO { result }
