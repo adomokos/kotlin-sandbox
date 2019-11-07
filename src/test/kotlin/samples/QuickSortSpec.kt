@@ -8,7 +8,7 @@ fun <T : Comparable<T>> quickSort(numbers: List<T>): List<Any?> =
         numbers.isEmpty() -> numbers
         else -> {
             val head = numbers.first()
-            quickSort(numbers.filter {it < head }) +
+            quickSort(numbers.filter { it < head }) +
                 listOf(head) +
                 quickSort(numbers.filter { it > head })
         }

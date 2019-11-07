@@ -42,7 +42,7 @@ data class UserInfo(
     val memberSince: LocalDateTime?
 ) {
     companion object {
-        fun deserializeFromJson(userInfoData: String) : UserInfo? =
+        fun deserializeFromJson(userInfoData: String): UserInfo? =
             createKlaxon().parse<UserInfo>(userInfoData)
     }
 }
