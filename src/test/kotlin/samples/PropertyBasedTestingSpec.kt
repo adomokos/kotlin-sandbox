@@ -23,7 +23,7 @@ class PBPersonGenerator : Gen<PBPerson> {
     }
 }
 
-class KotlintestExamplesSpec : StringSpec() {
+class PropertyBasedTestingSpec : StringSpec() {
     init {
         "can do property-based testing - with 100 examples" {
             assertAll { a: String, b: String ->
