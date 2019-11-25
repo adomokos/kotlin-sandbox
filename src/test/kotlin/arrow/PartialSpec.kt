@@ -23,8 +23,8 @@ class PartialSpec : DescribeSpec({
         }
 
         it("can use bind, which is an alias to partially1") {
-            val footer:(String) -> String = { content -> "<footer>$content</footer>"}
-            val fixFooter:() -> String = footer.bind("Functional Kotlin")
+            val footer: (String) -> String = { content -> "<footer>$content</footer>" }
+            val fixFooter: () -> String = footer.bind("Functional Kotlin")
 
             fixFooter() shouldBe "<footer>Functional Kotlin</footer>"
         }
