@@ -14,6 +14,7 @@ application {
 
 apply {
     plugin("com.adarshr.test-logger")
+    // from(rootProject.file("gradle/generated-kotlin-sources.gradle"))
 }
 
 spotless {
@@ -59,6 +60,7 @@ dependencies {
     testImplementation("io.kotlintest:kotlintest-assertions-arrow:$kotlinTestVersion") {
         exclude("io.arrow-kt")
     }
+    kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
 }
 
 tasks {

@@ -57,8 +57,8 @@ class OpticsSpec : DescribeSpec({
 
         it("can access fields in deeply-nested structures") {
             val laptopX8 = Laptop(500.0, MotherBoard("X", Memory(8)))
-            val laptopX16 = laptopMemorySize.modify(laptopPrice.set(laptopX8, 780.0)) {
-                    size -> size * 2
+            val laptopX16 = laptopMemorySize.modify(laptopPrice.set(laptopX8, 780.0)) { size ->
+                size * 2
             }
             val expectedLaptop =
                 Laptop(780.0, MotherBoard("X", Memory(16)))
