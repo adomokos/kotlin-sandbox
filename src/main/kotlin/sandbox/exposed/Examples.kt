@@ -1,4 +1,4 @@
-package exposed
+package sandbox.exposed
 
 import java.io.File
 import org.jetbrains.exposed.dao.IntIdTable
