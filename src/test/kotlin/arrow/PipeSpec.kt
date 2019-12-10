@@ -1,9 +1,9 @@
 package arrow
 
-import arrow.effects.allUpper
 import arrow.syntax.function.pipe
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec
+import sandbox.arrow.effects.allUpper
 
 class PipeSpec : DescribeSpec({
     val pipeStrong: (String) -> String = { body -> "<strong>$body</strong>" }
