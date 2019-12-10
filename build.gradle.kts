@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm") version "1.3.50"
+    kotlin("jvm") version "1.3.61"
     kotlin("kapt") version "1.3.50"
     id("com.adarshr.test-logger") version "1.7.1"
     id("com.gradle.build-scan") version "2.1"
