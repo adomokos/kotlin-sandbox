@@ -1,4 +1,4 @@
-package github.explorer
+package sandbox.github.explorer
 
 import com.beust.klaxon.Converter
 import com.beust.klaxon.JsonValue

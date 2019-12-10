@@ -1,5 +1,5 @@
 // import arrow.runExamples as runArrowExamples
-import github.explorer.run as runExplorer
+import sandbox.github.explorer.run as runExplorer
 
 @Suppress("UNUSED_PARAMETER")
 fun main(args: Array<String>) {

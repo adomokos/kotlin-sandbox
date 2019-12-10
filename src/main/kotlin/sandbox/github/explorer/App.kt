@@ -1,4 +1,4 @@
-package github.explorer
+package sandbox.github.explorer
 
 import arrow.core.Either
 import arrow.core.flatMap
@@ -49,8 +49,7 @@ data class UserInfo(
 
 private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
     try {
-        UserInfo
-            .deserializeFromJson(userInfoData)
+        UserInfo.deserializeFromJson(userInfoData)
             .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
     } catch (ex: KlaxonException) {
@@ -90,7 +89,8 @@ private fun callApi(username: String): IO<Either<AppError, String>> {
         val response = client.send(request, BodyHandlers.ofString())
 
         if (response.statusCode() == 404) {
-            AppError.UserNotFound("The user $username was not found on GitHub").left()
+            AppError.UserNotFound("The user $username was not found on GitHub")
+                .left()
         } else {
             response.body().right()
         }
