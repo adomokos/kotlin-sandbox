@@ -1,8 +1,8 @@
-package arrow
+package sandbox.arrow
 
 import arrow.core.Option
 import arrow.core.andThen
-import arrow.effects.runEffects
+import sandbox.arrow.effects.runEffects
 
 fun compositionExample() {
     val add5 = { i: Int -> i + 5 }

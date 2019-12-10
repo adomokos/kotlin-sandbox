@@ -1,4 +1,4 @@
-package arrow.concurrent
+package sandbox.arrow.concurrent
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx

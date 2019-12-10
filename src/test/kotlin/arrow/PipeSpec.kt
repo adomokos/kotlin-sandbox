@@ -1,6 +1,6 @@
 package arrow
 
-import arrow.effects.allUpper
+import sandbox.arrow.effects.allUpper
 import arrow.syntax.function.pipe
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec

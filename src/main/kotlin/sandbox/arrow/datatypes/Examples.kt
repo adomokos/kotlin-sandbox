@@ -1,4 +1,4 @@
-package arrow.datatypes
+package sandbox.arrow.datatypes
 
 import arrow.core.Either
 import arrow.core.Eval

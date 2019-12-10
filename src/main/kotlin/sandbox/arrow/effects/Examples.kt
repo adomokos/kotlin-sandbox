@@ -1,4 +1,4 @@
-package arrow.effects
+package sandbox.arrow.effects
 
 import arrow.core.Either
 import arrow.fx.IO
