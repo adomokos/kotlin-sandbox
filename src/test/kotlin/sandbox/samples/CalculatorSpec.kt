@@ -1,4 +1,4 @@
-package samples
+package sandbox.samples
 
 import io.kotlintest.matchers.startWith
 import io.kotlintest.should

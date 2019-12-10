@@ -1,4 +1,4 @@
-package arrow
+package sandbox.arrow
 
 import arrow.optics.Lens
 import arrow.optics.optics

@@ -1,4 +1,4 @@
-package arrow
+package sandbox.arrow
 
 import arrow.syntax.function.bind
 import arrow.syntax.function.partially3

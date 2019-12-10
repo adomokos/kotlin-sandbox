@@ -1,4 +1,4 @@
-package arrow
+package sandbox.arrow
 
 import arrow.core.Either
 import arrow.core.Right

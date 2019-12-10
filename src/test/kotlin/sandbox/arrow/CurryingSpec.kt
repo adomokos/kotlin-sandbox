@@ -1,4 +1,4 @@
-package arrow
+package sandbox.arrow
 
 import arrow.syntax.function.curried
 import arrow.syntax.function.pipe

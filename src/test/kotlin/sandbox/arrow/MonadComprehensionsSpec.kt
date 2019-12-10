@@ -1,4 +1,4 @@
-package arrow
+package sandbox.arrow
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx

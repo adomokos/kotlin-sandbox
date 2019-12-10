@@ -1,4 +1,4 @@
-package samples
+package sandbox.samples
 
 import io.kotlintest.properties.Gen
 import io.kotlintest.properties.assertAll
