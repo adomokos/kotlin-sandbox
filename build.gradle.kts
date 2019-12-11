@@ -30,9 +30,14 @@ val arrowVersion = "0.10.3"
 val kotlinTestVersion = "3.4.2"
 val klaxonVersion = "5.0.1"
 val coroutinesVersion = "1.3.2"
+val kafkaJunit5Version = "3.2.0"
+val kotlinLoggingVersion = "1.7.6"
 
 dependencies {
     implementation(kotlin("stdlib"))
+
+    implementation("io.github.microutils:kotlin-logging:$kotlinLoggingVersion")
+    implementation("org.slf4j:slf4j-log4j12:1.7.28")
 
     // Exposed - db access
     implementation("org.jetbrains.exposed:exposed:0.16.1")
@@ -61,6 +66,11 @@ dependencies {
         exclude("io.arrow-kt")
     }
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
+
+    // Kafka testing
+    testImplementation("org.apache.kafka:kafka_2.11:2.0.1")
+    testImplementation("org.apache.kafka:kafka-clients:2.0.1")
+    testImplementation("com.salesforce.kafka.test:kafka-junit5:$kafkaJunit5Version")
 }
 
 tasks {
