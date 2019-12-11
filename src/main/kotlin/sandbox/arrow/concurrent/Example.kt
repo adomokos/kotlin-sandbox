@@ -21,7 +21,6 @@ val program = IO.fx {
 }
 
 // Fibers
-
 suspend fun threadName(): String =
     Thread.currentThread().name
 
@@ -35,7 +34,6 @@ val program2 = IO.fx {
 }
 
 // parMapN
-
 data class ThreadInfo(
     val threadA: String,
     val threadB: String
@@ -65,7 +63,6 @@ val program4 = IO.fx {
 }
 
 // parSequence
-
 val program5 = IO.fx {
     val result: List<String> = !listOf(
         effect { threadName() },
