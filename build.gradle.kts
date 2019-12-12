@@ -61,6 +61,8 @@ dependencies {
         exclude("io.arrow-kt")
     }
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
+
+    testImplementation("io.github.serpro69:kotlin-faker:1.1")
 }
 
 tasks {
@@ -80,6 +82,7 @@ repositories {
     jcenter()
     maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
     maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
+    maven(url = "https://dl.bintray.com/serpro69/maven/")
 }
 
 buildScan {
