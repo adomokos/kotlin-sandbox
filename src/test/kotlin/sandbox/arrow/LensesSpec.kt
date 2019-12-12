@@ -14,7 +14,7 @@ class LensesSpec : DescribeSpec({
         it("can work with different types") {
             val laptopX8 = LaptopL(500.0, MotherBoardL("X", MemoryL(8)))
             val memoryLens: Lens<LaptopL, GB> = LaptopL.motherBoardL.memoryL.size
-            var updatedLaptop = memoryLens.modify(laptopX8) { x -> 2*x }
+            var updatedLaptop = memoryLens.modify(laptopX8) { x -> 2 * x }
 
             memoryLens.get(updatedLaptop) shouldBe 16
         }

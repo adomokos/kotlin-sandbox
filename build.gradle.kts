@@ -3,7 +3,7 @@ plugins {
     kotlin("kapt") version "1.3.50"
     id("com.adarshr.test-logger") version "2.0.0"
     id("com.gradle.build-scan") version "2.1"
-    id("org.jlleitschuh.gradle.ktlint") version "9.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
     id("com.diffplug.gradle.spotless") version "3.25.0"
     application
 }
