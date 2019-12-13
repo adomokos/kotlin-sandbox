@@ -1,9 +1,10 @@
 package sandbox.arrow
 
-import arrow.core.Tuple2
+import arrow.core.Tuple5
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import io.github.serpro69.kfaker.Faker
+import io.kotlintest.matchers.collections.shouldContainAll
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec
 
@@ -35,27 +36,32 @@ fun findUserInfo(i: Int): IO<UserInfo> =
 val program1 = IO.fx {
     val fiberA = !effect { findUserInfo(1) }.fork(dispatchers().default())
     val fiberB = !effect { findUserInfo(2) }.fork(dispatchers().default())
-    val fiberC = !effect { findUserInfo(3) }.fork(dispatchers().default())
     val (userInfo1) = !fiberA.join()
     val (userInfo2) = !fiberB.join()
-    val (userInfo3) = !fiberC.join()
-    !effect { listOf(userInfo1, userInfo2, userInfo3) }
+    !effect { listOf(userInfo1, userInfo2) }
 }
 
 val program2 = IO.fx {
     val result =
         !dispatchers().default().parMapN(
-            !effect { findUserInfo(1) },
-            !effect { findUserInfo(2) },
-            ::Tuple2
+            findUserInfo(1),
+            findUserInfo(2),
+            findUserInfo(3),
+            findUserInfo(4),
+            findUserInfo(5),
+            ::Tuple5
         )
+
     result
 }
+
+fun findFirstNamesFromProgram2(userInfos: Tuple5<UserInfo, UserInfo, UserInfo, UserInfo, UserInfo>): List<String> =
+    listOf(userInfos.a.firstName, userInfos.b.firstName)
 
 // parTraverse
 val program3 = IO.fx {
     val result = !
-        listOf(1, 2).parTraverse { i ->
+        (1..16).toList().parTraverse { i ->
             findUserInfo(i)
         }
     result
@@ -63,29 +69,28 @@ val program3 = IO.fx {
 
 class ConcurrentDataSpec : DescribeSpec({
     describe("Concurrent Data Manipulation") {
-        it("can fetch data concurrently with forked IO") {
+        it("can fetch data concurrently with forked IO").config(enabled = false) {
             IO.fx {
                 val users = !program1
-                users.size shouldBe 3
+                users.size shouldBe 2
             }.unsafeRunSync()
         }
 
         it("can fetch data with parMapN") {
-            IO.fx {
-                val users = !program2
-                val firstNames = listOf(users.a.firstName, users.b.firstName)
+            val result = program2.unsafeRunSync()
+            val firstNames = listOf(result.a.firstName, result.b.firstName)
 
-                firstNames.sorted() shouldBe listOf("John", "Paul")
-            }.unsafeRunSync()
+            firstNames.sorted() shouldBe listOf("John", "Paul")
         }
 
-        it("can fetch data with parTraverse") {
-            IO.fx {
-                val users = !program3
-                val firstNames = users.map { it.firstName }
+        it("can fetch data with parTraverse").config(enabled = false) {
+            val result = program3.attempt().unsafeRunSync()
 
-                firstNames.sorted() shouldBe listOf("John", "Paul")
-            }.unsafeRunSync()
+            result.map {
+                val firstNames = it.map { userInfo -> userInfo.firstName }
+
+                firstNames shouldContainAll(listOf("John", "Paul"))
+            }
         }
     }
 })
