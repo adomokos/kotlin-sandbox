@@ -77,8 +77,7 @@ class ConcurrentDataSpec : DescribeSpec({
         }
 
         it("can fetch data with parMapN") {
-            val result = program2.unsafeRunSync()
-            val firstNames = listOf(result.a.firstName, result.b.firstName)
+            val firstNames = program2.map(::findFirstNamesFromProgram2).unsafeRunSync()
 
             firstNames.sorted() shouldBe listOf("John", "Paul")
         }
