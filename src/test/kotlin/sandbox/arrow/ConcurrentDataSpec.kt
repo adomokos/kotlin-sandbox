@@ -67,6 +67,9 @@ val program3 = IO.fx {
     result
 }
 
+fun firstNamesFromUserInfos(userInfos: List<UserInfo>): List<String> =
+    userInfos.map { it.firstName }
+
 class ConcurrentDataSpec : DescribeSpec({
     describe("Concurrent Data Manipulation") {
         it("can fetch data concurrently with forked IO").config(enabled = false) {
@@ -83,12 +86,14 @@ class ConcurrentDataSpec : DescribeSpec({
         }
 
         it("can fetch data with parTraverse").config(enabled = false) {
-            val result = program3.attempt().unsafeRunSync()
+            val result =
+                program3
+                    .map(::firstNamesFromUserInfos)
+                    .attempt()
+                    .unsafeRunSync()
 
             result.map {
-                val firstNames = it.map { userInfo -> userInfo.firstName }
-
-                firstNames shouldContainAll(listOf("John", "Paul"))
+                it shouldContainAll(listOf("John", "Paul"))
             }
         }
     }
