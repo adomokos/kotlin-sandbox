@@ -60,8 +60,8 @@ fun findFirstNamesFromProgram2(userInfos: Tuple5<UserInfo, UserInfo, UserInfo, U
 
 // parTraverse
 val program3 = IO.fx {
-    val result = !
-        (1..16).toList().parTraverse { i ->
+    val result =
+        !(1..15).toList().parTraverse { i ->
             findUserInfo(i)
         }
     result
@@ -72,20 +72,20 @@ fun firstNamesFromUserInfos(userInfos: List<UserInfo>): List<String> =
 
 class ConcurrentDataSpec : DescribeSpec({
     describe("Concurrent Data Manipulation") {
-        it("can fetch data concurrently with forked IO").config(enabled = false) {
+        it("can fetch data concurrently with forked IO").config(enabled = true) {
             IO.fx {
                 val users = !program1
                 users.size shouldBe 2
             }.unsafeRunSync()
         }
 
-        it("can fetch data with parMapN") {
+        it("can fetch data with parMapN").config(enabled = true) {
             val firstNames = program2.map(::findFirstNamesFromProgram2).unsafeRunSync()
 
             firstNames.sorted() shouldBe listOf("John", "Paul")
         }
 
-        it("can fetch data with parTraverse").config(enabled = false) {
+        it("can fetch data with parTraverse").config(enabled = true) {
             val result =
                 program3
                     .map(::firstNamesFromUserInfos)
@@ -95,6 +95,14 @@ class ConcurrentDataSpec : DescribeSpec({
             result.map {
                 it shouldContainAll(listOf("John", "Paul"))
             }
+        }
+
+        it("can fetch data with parTraverse, described with fx").config(enabled = true) {
+            IO.fx {
+                val users = !program3
+                val firstNames = users.map { it.firstName}
+                firstNames shouldContainAll(listOf("John", "Paul"))
+            }.unsafeRunSync()
         }
     }
 })
