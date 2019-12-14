@@ -12,7 +12,7 @@ db.console: ## Open the db-console
 .PHONY: db-console
 
 build: ## Build with Gradle
-	./gradlew build -x test
+	./gradlew build -x test -x detekt
 .PHONY: build
 
 test: ## Run the tests
@@ -33,6 +33,9 @@ fix-style: ## Fixed ktlint errors with spotless
 	./gradlew spotlessApply
 .PHONY: fix-style
 
+complexity: ## Calculates Code Complexity
+	./gradlew detekt
+.PHONY: complexity
 
 help: ## Prints this help command
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) |\

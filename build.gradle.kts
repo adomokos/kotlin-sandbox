@@ -5,6 +5,7 @@ plugins {
     id("com.gradle.build-scan") version "2.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
     id("com.diffplug.gradle.spotless") version "3.25.0"
+    id("io.gitlab.arturbosch.detekt").version("1.2.2")
     application
 }
 
@@ -75,6 +76,13 @@ tasks {
             // setShowStandardStreams(true)
         }
     }
+}
+
+detekt {
+    toolVersion = "1.2.2"
+    input = files("src/main/kotlin", "src/test/kotlin")
+    filters = ".*/resources/.*,.*/build/.*"
+    // baseline = file("my-detekt-baseline.xml") // Just if you want to create a baseline file.
 }
 
 repositories {
