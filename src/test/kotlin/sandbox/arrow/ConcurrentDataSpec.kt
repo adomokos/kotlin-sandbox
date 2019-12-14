@@ -19,7 +19,7 @@ private val faker = Faker()
 fun findUserInfo(i: Int): IO<UserInfo> =
     // Simulate DB calls
     IO.fx {
-        // Thread.sleep(2_000)
+//        Thread.sleep(300)
         when (i) {
             1 -> {
                 UserInfo("John", "Lennon")
@@ -67,6 +67,16 @@ val program3 = IO.fx {
     result
 }
 
+val program4 = IO.fx {
+    val result: List<UserInfo> = !listOf(
+        findUserInfo(1),
+        findUserInfo(2),
+        findUserInfo(3)
+    ).parSequence()
+
+    result
+}
+
 fun firstNamesFromUserInfos(userInfos: List<UserInfo>): List<String> =
     userInfos.map { it.firstName }
 
@@ -100,7 +110,15 @@ class ConcurrentDataSpec : DescribeSpec({
         it("can fetch data with parTraverse, described with fx").config(enabled = true) {
             IO.fx {
                 val users = !program3
-                val firstNames = users.map { it.firstName}
+                val firstNames = firstNamesFromUserInfos(users)
+                firstNames shouldContainAll(listOf("John", "Paul"))
+            }.unsafeRunSync()
+        }
+
+        it("can fetch data with parSequence").config(enabled = true) {
+            IO.fx {
+                val users = !program4
+                val firstNames = firstNamesFromUserInfos(users)
                 firstNames shouldContainAll(listOf("John", "Paul"))
             }.unsafeRunSync()
         }
