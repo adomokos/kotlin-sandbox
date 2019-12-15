@@ -2,7 +2,9 @@
 
 [![Build Status](https://travis-ci.org/adomokos/kotlin-sandbox.svg?branch=master)](http://travis-ci.org/adomokos/kotlin-sandbox)
 
-Trying various things with Kotlin.
+Trying various things with Kotlin, using [Kotlintest](https://github.com/kotlintest/kotlintest) to prove tools' functionality.
 
-1. [Arrow](https://arrow-kt.io/) [examples](src/main/kotlin/sandbox/arrow/Examples.kt)
+Run `make help` to see all different ways you can interact with the app.
+
+1. [Arrow](https://arrow-kt.io/) [examples](src/main/kotlin/sandbox/arrow/) and [specs](src/test/kotlin/sandbox/arrow/)
 2. [Exposed](https://github.com/JetBrains/Exposed) [examples](src/main/kotlin/sandbox/exposed/Examples.kt)
