@@ -1,10 +1,10 @@
 plugins {
     kotlin("jvm") version "1.3.61"
-    kotlin("kapt") version "1.3.50"
+    kotlin("kapt") version "1.3.61"
     id("com.adarshr.test-logger") version "2.0.0"
-    id("com.gradle.build-scan") version "2.1"
+    id("com.gradle.build-scan") version "3.1.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
-    id("com.diffplug.gradle.spotless") version "3.25.0"
+    id("com.diffplug.gradle.spotless") version "3.26.1"
     id("io.gitlab.arturbosch.detekt").version("1.2.2")
     id("com.github.ben-manes.versions").version("0.27.0")
     application
@@ -30,15 +30,15 @@ spotless {
 
 val arrowVersion = "0.10.3"
 val kotlinTestVersion = "3.4.2"
-val klaxonVersion = "5.0.1"
-val coroutinesVersion = "1.3.2"
+val klaxonVersion = "5.2"
+val coroutinesVersion = "1.3.3"
 
 dependencies {
     implementation(kotlin("stdlib"))
 
     // Exposed - db access
-    implementation("org.jetbrains.exposed:exposed:0.16.1")
-    implementation("org.xerial:sqlite-jdbc:3.21.0.1")
+    implementation("org.jetbrains.exposed:exposed:0.17.7")
+    implementation("org.xerial:sqlite-jdbc:3.28.0")
 
     // JSON parsing
     implementation("com.beust:klaxon:$klaxonVersion")
