@@ -37,6 +37,10 @@ complexity: ## Calculates Code Complexity
 	./gradlew detekt
 .PHONY: complexity
 
+update-check: ## Checks for updates with used libraries
+	./gradlew dependencyUpdates -Drevision=release
+.PHONY: update-check
+
 help: ## Prints this help command
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## .*$$' $(MAKEFILE_LIST) |\
 		sort | \
