@@ -2,7 +2,6 @@ plugins {
     kotlin("jvm") version "1.3.61"
     kotlin("kapt") version "1.3.61"
     id("com.adarshr.test-logger") version "2.0.0"
-    id("com.gradle.build-scan") version "3.1.1"
     id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
     id("com.diffplug.gradle.spotless") version "3.26.1"
     id("io.gitlab.arturbosch.detekt").version("1.2.2")
@@ -92,9 +91,4 @@ repositories {
     maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
     maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
     maven(url = "https://dl.bintray.com/serpro69/maven/")
-}
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
 }
