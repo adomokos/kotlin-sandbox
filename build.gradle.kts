@@ -3,8 +3,8 @@ plugins {
     kotlin("kapt") version "1.3.61"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
-    id("com.diffplug.gradle.spotless") version "3.26.1"
-    id("io.gitlab.arturbosch.detekt").version("1.2.2")
+    id("com.diffplug.gradle.spotless") version "3.27.0"
+    id("io.gitlab.arturbosch.detekt").version("1.3.1")
     id("com.github.ben-manes.versions").version("0.27.0")
     application
 }
@@ -37,7 +37,7 @@ dependencies {
 
     // Exposed - db access
     implementation("org.jetbrains.exposed:exposed:0.17.7")
-    implementation("org.xerial:sqlite-jdbc:3.28.0")
+    implementation("org.xerial:sqlite-jdbc:3.30.1")
 
     // JSON parsing
     implementation("com.beust:klaxon:$klaxonVersion")
@@ -81,7 +81,7 @@ tasks {
 detekt {
     toolVersion = "1.2.2"
     input = files("src/main/kotlin", "src/test/kotlin")
-    filters = ".*/resources/.*,.*/build/.*"
+    // filters = ".*/resources/.*,.*/build/.*"
     // baseline = file("my-detekt-baseline.xml") // Just if you want to create a baseline file.
 }
 
