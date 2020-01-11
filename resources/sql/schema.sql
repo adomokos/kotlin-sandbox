@@ -1,17 +1,24 @@
 CREATE TABLE people (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email varchar(255) NOT NULL UNIQUE,
-  firstname varchar(255),
-  lastname varchar(255),
+  firstname varchar(255) NOT NULL,
+  lastname varchar(255) NOT NULL,
+  git_hub_username varchar(255) NOT NULL UNIQUE,
+  rating integer(255) DEFAULT 0,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE github_info (
+CREATE TABLE git_hub_metrics (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  people_id INTEGER NOT NULL,
-  login varchar(255) NOT NULL UNIQUE,
+  person_id INTEGER NOT NULL,
+  login varchar(255) NOT NULL,
   name varchar(255) NOT NULL,
+  public_gists_count INTEGER NOT NULL,
+  public_repos_count INTEGER NOT NULL,
+  followers_count INTEGER NOT NULL,
+  following_count INTEGER NOT NULL,
+  most_stargazed_repos TEXT NULL,
   account_created_at DATETIME NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-  FOREIGN KEY (people_id) REFERENCES people(id)
+  FOREIGN KEY (person_id) REFERENCES people(id)
 );

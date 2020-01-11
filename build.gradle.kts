@@ -28,19 +28,27 @@ spotless {
 }
 
 val arrowVersion = "0.10.4"
-val kotlinTestVersion = "3.4.2"
-val klaxonVersion = "5.2"
 val coroutinesVersion = "1.3.3"
+val exposedVersion = "0.20.2"
+val klaxonVersion = "5.2"
+val kotlinTestVersion = "3.4.2"
+val openCsvVersion = "5.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
 
     // Exposed - db access
-    implementation("org.jetbrains.exposed:exposed:0.17.7")
+    implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+    implementation("org.jetbrains.exposed:exposed-jodatime:$exposedVersion")
     implementation("org.xerial:sqlite-jdbc:3.30.1")
 
     // JSON parsing
     implementation("com.beust:klaxon:$klaxonVersion")
+
+    // CSV Parsing
+    implementation("com.opencsv:opencsv:$openCsvVersion")
 
     // Arrow
     implementation("io.arrow-kt:arrow-core:$arrowVersion")
@@ -48,6 +56,7 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx:$arrowVersion")
     implementation("io.arrow-kt:arrow-optics:$arrowVersion")
     implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
+    implementation("io.arrow-kt:arrow-mtl:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
 
     // Coroutines
