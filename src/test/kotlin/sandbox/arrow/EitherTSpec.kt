@@ -1,58 +1,45 @@
 package sandbox.arrow
 
 import arrow.core.Either
+import arrow.core.Left
+import arrow.core.Right
 import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
+import arrow.fx.handleError
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
 import arrow.mtl.fix
-import com.opencsv.CSVReaderHeaderAware
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
-import java.io.FileReader
-import kotlinx.coroutines.runBlocking
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
-import org.jetbrains.exposed.sql.transactions.transaction
-import sandbox.explorer.AppError
-import sandbox.explorer.Person
-
-typealias EitherIO<A, B> = EitherT<ForIO, A, B>
 
 class EitherTSpec : StringSpec() {
-    private fun importUsers(): EitherIO<AppError, List<Person>> =
-        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
-            val csvReader = CSVReaderHeaderAware(FileReader("resources/users.csv"))
-            val records: List<Array<String>> = csvReader.readAll()
+    object AppError
 
-            records.map {
-                Person.findOrCreate(
-                    emailValue = it[0],
-                    firstNameValue = it[1],
-                    lastNameValue = it[2],
-                    ratingValue = it[3].toInt(),
-                    gitHubUsernameValue = it[4]
-                )
-            }
+    private fun one(): IO<Either<AppError, Int>> =
+        IO { Right(1) }
+    private fun two(inputString: String): IO<Either<AppError, String>> =
+        IO { Right(inputString) }
+    private fun toInt(str: String): IO<Either<AppError, Int>> =
+        IO { Right(str.toInt()) }.handleError { Left(AppError) }
+
+    // https://stackoverflow.com/a/53747937
+    fun result(inputString: String): EitherT<ForIO, AppError, Int> =
+        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+            val oneInt = ! EitherT(one())
+            val twoString = ! EitherT(two(inputString))
+            val twoInt = ! EitherT(toInt(twoString))
+            oneInt + twoInt
         }.fix()
 
     init {
-        "can validate with EitherT Monad Transformer".config(enabled = true) {
-            transaction {
-                addLogger(StdOutSqlLogger)
+        "can combine operations with IO<Either>" {
+            val rightResult = result("2").value().fix().unsafeRunSync()
+            rightResult shouldBe Right(3)
 
-                val people: Either<AppError, List<Person>> =
-                    runBlocking { importUsers().value().fix() }.unsafeRunSync()
-
-                people.map { it.size shouldBe 3 }
-
-                Person.count() shouldBe 3
-                // println(Person.all().forEach { println(it) })
-
-                rollback()
-            }
+            val leftResult = result("three").value().fix().unsafeRunSync()
+            leftResult shouldBe Left(AppError)
         }
     }
 }
