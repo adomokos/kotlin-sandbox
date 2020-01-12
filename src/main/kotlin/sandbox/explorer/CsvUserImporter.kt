@@ -28,7 +28,6 @@ import java.io.FileReader
 typealias EitherIO<A, B> = EitherT<ForIO, A, B>
 typealias EitherIOP<E> = EitherTPartialOf<ForIO, E>
 typealias RIO<E, B> = ReaderT<EitherIOP<E>, GetAppContext, B>
-typealias ReaderIO<A, B> = ReaderT<ForIO, A, B>
 
 data class GetAppContext(
     val csvPath: String
@@ -50,22 +49,6 @@ object CsvUserImporter {
                     )
                 })
             }.handleError { Left(AppError.CsvImportError) }
-
-    suspend fun importUsers2(): EitherIO<AppError, List<Person>> =
-            EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
-                val csvReader = CSVReaderHeaderAware(FileReader("resources/users.csv"))
-                val records: List<Array<String>> = csvReader.readAll()
-
-                records.map {
-                    Person.findOrCreate(
-                            emailValue = it[0],
-                            firstNameValue = it[1],
-                            lastNameValue = it[2],
-                            ratingValue = it[3].toInt(),
-                            gitHubUsernameValue = it[4]
-                    )
-                }
-            }.fix()
 
     suspend fun importUsers3(): Reader<GetAppContext, EitherIO<AppError, List<Person>>> =
             ReaderApi.ask<GetAppContext>().map { ctx ->

@@ -33,22 +33,6 @@ class CsvUserImporterSpec : StringSpec() {
             }
         }
 
-        "reads the GitHub users' info from a csv file with mtl" {
-            transaction {
-                addLogger(StdOutSqlLogger)
-
-                val people: Either<AppError, List<Person>> =
-                        runBlocking { CsvUserImporter.importUsers2().value().fix() }.unsafeRunSync()
-
-                people.map { it.size shouldBe 3 }
-
-                Person.count() shouldBe 3
-                // println(Person.all().forEach { println(it) })
-
-                rollback()
-            }
-        }
-
         "reads the GitHub users' info from a csv file with Reader" {
             transaction {
                 addLogger(StdOutSqlLogger)
