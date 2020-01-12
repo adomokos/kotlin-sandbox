@@ -5,6 +5,7 @@ import arrow.core.Right
 import arrow.core.extensions.either.applicative.applicative
 import arrow.core.extensions.list.traverse.traverse
 import arrow.core.fix
+import io.kotlintest.matchers.types.shouldBeInstanceOf
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.DescribeSpec
 
@@ -18,6 +19,11 @@ class TraverseSpec : DescribeSpec({
 
             val result = correctItems.traverse(Either.applicative(), ::parseIntEither).fix()
             result shouldBe Right(listOf(1, 2, 3))
+
+            val result2 = incorrectItems.traverse(Either.applicative(), ::parseIntEither).fix()
+            result2.mapLeft {
+                it.shouldBeInstanceOf<NumberFormatException>()
+            }
         }
     }
 })
