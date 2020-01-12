@@ -15,7 +15,7 @@ build: ## Build with Gradle
 	./gradlew build -x test -x detekt
 .PHONY: build
 
-test: ## Run the tests
+test: db.rebuild ## Run the tests
 	./gradlew test
 .PHONY: test
 
