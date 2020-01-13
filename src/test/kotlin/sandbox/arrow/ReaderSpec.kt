@@ -65,8 +65,7 @@ class ReaderSpec : StringSpec() {
             }
         }.fix()
 
-    // When Reader holds and EitherT<ForIO>
-
+    // Same example, but Reader holds an EitherT<ForIO> - EitherIO
     private fun oneT(): EitherIO<AppError, Int> =
         EitherIO(IO { Right(1) })
     private fun twoT(inputString: String): EitherIO<AppError, Int> =
