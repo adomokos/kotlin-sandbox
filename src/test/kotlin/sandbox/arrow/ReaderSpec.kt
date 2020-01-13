@@ -3,7 +3,7 @@ package sandbox.arrow
 import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
-import arrow.core.flatMap
+import arrow.core.extensions.fx
 import arrow.core.value
 import arrow.fx.IO
 import arrow.fx.extensions.fx
@@ -35,12 +35,27 @@ class ReaderSpec : StringSpec() {
                 val oneResult = !one()
                 val parsedTwo = !toInt(ctx.number)
 
-                // oneResult.combineK(parsedTwo)
+                /*
+                listOf(oneResult, parsedTwo)
+                    .traverse(Either.applicative(), ::identity)
+                    .fix()
+                    .map { it.fix().sum() }
+                */
+
+                Either.fx<AppError, Int> {
+                    val x = ! oneResult
+                    val y = ! parsedTwo
+                    x + y
+                }
+
+                /*
+                // Another way to do applicative
                 oneResult.flatMap { x ->
                     parsedTwo.map { y ->
                         x + y
                     }
                 }
+                */
             }
         }.fix()
 
