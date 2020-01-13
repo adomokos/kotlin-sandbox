@@ -8,26 +8,35 @@ import arrow.core.value
 import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.fx
+import arrow.fx.extensions.io.applicative.applicative
 import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
 import arrow.fx.handleError
 import arrow.mtl.EitherT
+import arrow.mtl.EitherTPartialOf
 import arrow.mtl.Reader
 import arrow.mtl.ReaderApi
+import arrow.mtl.ReaderT
+import arrow.mtl.extensions.eithert.applicative.applicative
 import arrow.mtl.extensions.eithert.monad.monad
+import arrow.mtl.extensions.monadError
 import arrow.mtl.fix
 import arrow.mtl.map
+import arrow.mtl.value
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
+object AppError
+
+data class GetAppContext(
+    val numberString: String
+)
+
 typealias EitherIO<A, B> = EitherT<ForIO, A, B>
+typealias EitherIOP<E> = EitherTPartialOf<ForIO, E>
+typealias RIO<E, B> = ReaderT<EitherIOP<E>, GetAppContext, B>
 
 class ReaderSpec : StringSpec() {
-    object AppError
-
-    data class GetAppContext(
-        val numberString: String
-    )
 
     private fun one(): IO<Either<AppError, Int>> =
         IO { Right(1) }
@@ -83,6 +92,29 @@ class ReaderSpec : StringSpec() {
             }.fix()
         }
 
+    object RIOApi {
+        fun monadError() = EitherT.monadError<ForIO, AppError>(IO.monad())
+
+        fun <E> raiseError(e: E): RIO<E, Nothing> =
+            RIO.raiseError(EitherT.monadError<ForIO, E>(IO.monad()), e)
+
+        fun <A> just(a: A): RIO<Nothing, A> =
+            RIO.just(EitherT.applicative<ForIO, Nothing>(IO.applicative()), a)
+
+        fun ask() = ReaderT.ask<EitherTPartialOf<ForIO, AppError>, GetAppContext>(monadError())
+    }
+
+    val myAppReaderT =
+        RIOApi.ask().flatMap(RIOApi.monadError()) { ctx ->
+            val result = ctx.numberString
+
+//            val x = ! oneT()
+//            val y = ! twoT(ctx.numberString)
+//            RIOApi.just(x + y
+
+            RIOApi.just(result)
+        }
+
     init {
         "can pull data from the Reader Context" {
             val appContext = GetAppContext(numberString = "3")
@@ -98,6 +130,14 @@ class ReaderSpec : StringSpec() {
 
             val result = appEffect.value().fix().unsafeRunSync()
             result shouldBe Right(5)
+        }
+
+        "can use ReaderT for simplicity?" {
+            val appContext = GetAppContext(numberString = "4")
+            val app = myAppReaderT.run(appContext).value()
+
+            val result = app.fix().unsafeRunSync()
+            result shouldBe Right("4")
         }
     }
 }
