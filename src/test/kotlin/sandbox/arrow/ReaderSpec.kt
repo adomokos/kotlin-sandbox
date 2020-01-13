@@ -31,8 +31,7 @@ class ReaderSpec : StringSpec() {
 
     private fun one(): IO<Either<AppError, Int>> =
         IO { Right(1) }
-    private fun two(inputString: String): IO<Either<AppError, String>> =
-        IO { Right(inputString) }
+    private fun two(inputString: String): IO<Either<AppError, Int>> = toInt(inputString)
     private fun toInt(str: String): IO<Either<AppError, Int>> =
         IO { Right(str.toInt()) }.handleError { Left(AppError) }
 
@@ -40,7 +39,7 @@ class ReaderSpec : StringSpec() {
         ReaderApi.ask<GetAppContext>().map { ctx ->
             IO.fx {
                 val oneResult = !one()
-                val parsedTwo = !toInt(ctx.numberString)
+                val parsedTwo = !two(ctx.numberString)
 
                 /*
                 listOf(oneResult, parsedTwo)
