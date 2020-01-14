@@ -4,6 +4,7 @@ import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.core.extensions.fx
+import arrow.core.fix
 import arrow.core.value
 import arrow.fx.ForIO
 import arrow.fx.IO
@@ -35,6 +36,7 @@ data class GetAppContext(
 typealias EitherIO<A, B> = EitherT<ForIO, A, B>
 typealias EitherIOP<E> = EitherTPartialOf<ForIO, E>
 typealias RIO<E, B> = ReaderT<EitherIOP<E>, GetAppContext, B>
+typealias ReatherIO<A> = Reader<GetAppContext, EitherIO<AppError, A>>
 
 class ReaderSpec : StringSpec() {
 
@@ -75,6 +77,21 @@ class ReaderSpec : StringSpec() {
         }.fix()
 
     // Same example, but Reader holds an EitherT<ForIO> - EitherIO
+    private fun oneT2(): ReatherIO<Int> =
+        ReaderApi.lift {
+            EitherIO(IO { Right(1) })
+        }
+
+    private fun twoT2(): ReatherIO<Int> =
+        ReaderApi.ask<GetAppContext>().map { ctx ->
+            toIntT(ctx.numberString)
+        }
+
+    private fun toInt2(str: String): ReatherIO<Int> =
+        ReaderApi.lift {
+            EitherIO(IO { Right(str.toInt()) }.handleError { Left(AppError) })
+        }
+
     private fun oneT(): EitherIO<AppError, Int> =
         EitherIO(IO { Right(1) })
     private fun twoT(inputString: String): EitherIO<AppError, Int> =
@@ -82,7 +99,7 @@ class ReaderSpec : StringSpec() {
     private fun toIntT(str: String): EitherIO<AppError, Int> =
         EitherT(IO { Right(str.toInt()) }.handleError { Left(AppError) })
 
-    private fun myAppT(): Reader<GetAppContext, EitherIO<AppError, Int>> =
+    private fun myAppT(): ReatherIO<Int> =
         ReaderApi.ask<GetAppContext>().map { ctx ->
             EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
                 val x = ! oneT()
@@ -90,6 +107,16 @@ class ReaderSpec : StringSpec() {
 
                 x + y
             }.fix()
+        }
+
+    private val myAppT2 =
+        ReaderApi.ask<GetAppContext>().map { ctx ->
+            EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+                val x = ! oneT2().run(ctx).fix().value()
+                val y = ! twoT2().run(ctx).fix().value()
+
+                x + y
+            }
         }
 
     object RIOApi {
@@ -138,6 +165,14 @@ class ReaderSpec : StringSpec() {
 
             val result = app.fix().unsafeRunSync()
             result shouldBe Right("4")
+        }
+
+        "can carry the ReaderT in the colling context" {
+            val appContext = GetAppContext(numberString = "4")
+            val app = myAppT2.run(appContext).fix().value().fix()
+
+            val result = app.value().fix().unsafeRunSync()
+            result shouldBe Right(5)
         }
     }
 }
