@@ -22,6 +22,7 @@ import arrow.mtl.fix
 import arrow.mtl.map
 import com.opencsv.CSVReaderHeaderAware
 import java.io.FileReader
+import org.jetbrains.exposed.sql.transactions.transaction
 
 // https://jorgecastillo.dev/kotlin-fp-2-monad-transformers
 
@@ -39,15 +40,17 @@ object CsvUserImporter {
                 val csvReader = CSVReaderHeaderAware(FileReader("resources/users.csv"))
                 val records: List<Array<String>> = csvReader.readAll()
 
-                Right(records.map {
-                    Person.findOrCreate(
+                transaction {
+                    Right(records.map {
+                        Person.findOrCreate(
                             emailValue = it[0],
                             firstNameValue = it[1],
                             lastNameValue = it[2],
                             ratingValue = it[3].toInt(),
                             gitHubUsernameValue = it[4]
-                    )
-                })
+                        )
+                    })
+                }
             }.handleError { Left(AppError.CsvImportError) }
 
     suspend fun importUsers3(): Reader<GetAppContext, EitherIO<AppError, List<Person>>> =
