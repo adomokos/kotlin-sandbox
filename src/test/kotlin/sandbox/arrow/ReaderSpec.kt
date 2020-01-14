@@ -22,8 +22,8 @@ import arrow.mtl.extensions.eithert.applicative.applicative
 import arrow.mtl.extensions.eithert.monad.monad
 import arrow.mtl.extensions.monadError
 import arrow.mtl.fix
+import arrow.mtl.flatMap
 import arrow.mtl.map
-import arrow.mtl.value
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -83,8 +83,8 @@ class ReaderSpec : StringSpec() {
         }
 
     private fun twoT2(): ReatherIO<Int> =
-        ReaderApi.ask<GetAppContext>().map { ctx ->
-            toIntT(ctx.numberString)
+        ReaderApi.ask<GetAppContext>().flatMap { ctx ->
+            toInt2(ctx.numberString)
         }
 
     private fun toInt2(str: String): ReatherIO<Int> =
@@ -132,7 +132,11 @@ class ReaderSpec : StringSpec() {
     }
 
     val myAppReaderT =
-        RIOApi.ask().flatMap(RIOApi.monadError()) { ctx ->
+        RIOApi.ask().map(RIOApi.monadError()) { ctx ->
+            3
+        }
+
+        /*
             val result = ctx.numberString
 
 //            val x = ! oneT()
@@ -141,6 +145,7 @@ class ReaderSpec : StringSpec() {
 
             RIOApi.just(result)
         }
+        */
 
     init {
         "can pull data from the Reader Context" {
@@ -161,10 +166,11 @@ class ReaderSpec : StringSpec() {
 
         "can use ReaderT for simplicity?" {
             val appContext = GetAppContext(numberString = "4")
-            val app = myAppReaderT.run(appContext).value()
+            val app = myAppReaderT.run(appContext).fix()
 
-            val result = app.fix().unsafeRunSync()
-            result shouldBe Right("4")
+            val result = app.value().fix().unsafeRunSync()
+
+            result shouldBe Right(3)
         }
 
         "can carry the ReaderT in the colling context" {
