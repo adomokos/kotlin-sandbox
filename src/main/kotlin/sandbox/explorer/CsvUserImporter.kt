@@ -16,10 +16,10 @@ import java.io.FileReader
 typealias EitherIO<A> = EitherT<ForIO, AppError, A>
 
 object CsvUserImporter {
-    private val readUserData: EitherIO<List<Array<String>>> =
+    private fun readUserData(fileName: String): EitherIO<List<Array<String>>> =
         EitherT(
             IO.fx {
-                val csvReader = CSVReaderHeaderAware(FileReader("resources/users.csv"))
+                val csvReader = CSVReaderHeaderAware(FileReader(fileName))
                 val records: List<Array<String>> = csvReader.readAll()
 
                 Right(records)
@@ -48,7 +48,7 @@ object CsvUserImporter {
 
     val importUsers =
         EitherIO.monad<ForIO, AppError>(IO.monad()).fx.monad {
-            val userData = ! readUserData
+            val userData = ! readUserData("resources/users.csv")
             val result = ! persistUserInfo(userData)
             result
         }
