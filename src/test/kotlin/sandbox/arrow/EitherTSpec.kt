@@ -40,7 +40,7 @@ class EitherTSpec : StringSpec() {
         EitherTIO(IO { Right(str.toInt()) }.handleError { Left(AppError) })
 
     private fun resultT(inputString: String): EitherTIO<Int> =
-        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+        EitherTIO.monad<ForIO, AppError>(IO.monad()).fx.monad {
             val oneInt = ! oneT()
             val twoInt = ! twoT(inputString)
             oneInt + twoInt
