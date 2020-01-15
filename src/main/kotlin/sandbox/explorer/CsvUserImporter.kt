@@ -17,7 +17,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 typealias EitherIO<A> = EitherT<ForIO, AppError, A>
 
 object CsvUserImporter {
-    private fun readUserData(fileName: String): EitherIO<List<Array<String>>> =
+    fun readUserData(fileName: String): EitherIO<List<Array<String>>> =
         EitherT(
             IO.fx {
                 val csvReader = CSVReaderHeaderAware(FileReader(fileName))
