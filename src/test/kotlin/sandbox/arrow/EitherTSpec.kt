@@ -1,6 +1,5 @@
 package sandbox.arrow
 
-import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.fx.ForIO
@@ -17,19 +16,18 @@ import io.kotlintest.specs.StringSpec
 class EitherTSpec : StringSpec() {
     object AppError
 
-    private fun one(): IO<Either<AppError, Int>> =
-        IO { Right(1) }
-    private fun two(inputString: String): IO<Either<AppError, String>> =
-        IO { Right(inputString) }
-    private fun toInt(str: String): IO<Either<AppError, Int>> =
-        IO { Right(str.toInt()) }.handleError { Left(AppError) }
+    private fun one(): EitherT<ForIO, AppError, Int> =
+        EitherT(IO { Right(1) })
+    private fun two(inputString: String): EitherT<ForIO, AppError, Int> =
+        toInt(inputString)
+    private fun toInt(str: String): EitherT<ForIO, AppError, Int> =
+        EitherT(IO { Right(str.toInt()) }.handleError { Left(AppError) })
 
     // https://stackoverflow.com/a/53747937
     fun result(inputString: String): EitherT<ForIO, AppError, Int> =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
-            val oneInt = ! EitherT(one())
-            val twoString = ! EitherT(two(inputString))
-            val twoInt = ! EitherT(toInt(twoString))
+            val oneInt = ! one()
+            val twoInt = ! two(inputString)
             oneInt + twoInt
         }.fix()
 
