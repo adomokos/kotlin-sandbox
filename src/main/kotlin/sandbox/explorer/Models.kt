@@ -30,6 +30,14 @@ data class GitHubUserInfo(
     companion object {
         fun deserializeFromJson(userInfoData: String): Option<GitHubUserInfo> =
                 createKlaxon().parse<GitHubUserInfo>(userInfoData).toOption()
+        /*
+
+        fun deserializeFromJson2(userInfoData: String): IO<Either<Any, GitHubUserInfo>> =
+            IO.fx {
+                val result = createKlaxon().parse<GitHubUserInfo>(userInfoData)
+                result.rightIfNotNull1 { Left(AppError.JSONDeserializaitonError) }
+            }
+         */
     }
 }
 

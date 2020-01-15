@@ -2,19 +2,16 @@ package sandbox.explorer
 
 import arrow.core.Left
 import arrow.core.Right
-import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.extensions.io.monad.monad
 import arrow.fx.handleError
 import arrow.mtl.EitherT
 import com.opencsv.CSVReaderHeaderAware
+import java.io.FileReader
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.io.FileReader
-
-typealias EitherIO<A> = EitherT<ForIO, AppError, A>
 
 object CsvUserImporter {
     fun readUserData(fileName: String): EitherIO<List<Array<String>>> =
