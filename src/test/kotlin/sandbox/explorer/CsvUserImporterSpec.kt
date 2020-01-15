@@ -1,7 +1,6 @@
 package sandbox.explorer
 
 import arrow.fx.fix
-import arrow.mtl.value
 import io.kotlintest.extensions.TestListener
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
