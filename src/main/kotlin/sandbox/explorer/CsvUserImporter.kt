@@ -10,8 +10,8 @@ import arrow.fx.handleError
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
 import com.opencsv.CSVReaderHeaderAware
-import org.jetbrains.exposed.sql.transactions.transaction
 import java.io.FileReader
+import org.jetbrains.exposed.sql.transactions.transaction
 
 typealias EitherIO<A> = EitherT<ForIO, AppError, A>
 
