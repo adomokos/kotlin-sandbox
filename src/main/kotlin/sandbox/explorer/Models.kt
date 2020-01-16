@@ -1,7 +1,13 @@
 package sandbox.explorer
 
+import arrow.core.Either
+import arrow.core.Left
 import arrow.core.Option
+import arrow.core.right
 import arrow.core.toOption
+import arrow.fx.IO
+import arrow.fx.extensions.fx
+import arrow.fx.handleError
 import com.beust.klaxon.Converter
 import com.beust.klaxon.Json
 import com.beust.klaxon.JsonValue
@@ -30,14 +36,12 @@ data class GitHubUserInfo(
     companion object {
         fun deserializeFromJson(userInfoData: String): Option<GitHubUserInfo> =
                 createKlaxon().parse<GitHubUserInfo>(userInfoData).toOption()
-        /*
 
-        fun deserializeFromJson2(userInfoData: String): IO<Either<Any, GitHubUserInfo>> =
+        fun deserializeFromJson2(userInfoData: String): IO<Either<AppError, GitHubUserInfo>> =
             IO.fx {
                 val result = createKlaxon().parse<GitHubUserInfo>(userInfoData)
-                result.rightIfNotNull1 { Left(AppError.JSONDeserializaitonError) }
-            }
-         */
+                result!!.right()
+            }.handleError { Left(AppError.JSONDeserializaitonError) }
     }
 }
 
