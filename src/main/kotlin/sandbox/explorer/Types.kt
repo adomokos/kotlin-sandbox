@@ -10,4 +10,5 @@ sealed class AppError {
     object CsvImportError : AppError()
     object PersonInsertError : AppError()
     object JSONDeserializaitonError : AppError()
+    data class GitHubApiError(val errorInfo: String) : AppError()
 }
