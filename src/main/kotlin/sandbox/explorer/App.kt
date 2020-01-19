@@ -10,13 +10,13 @@ import arrow.fx.fix
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
 import arrow.mtl.value
+import java.io.File
+import java.sql.Connection
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import sandbox.explorer.logic.CsvUserImporter
 import sandbox.explorer.logic.GitHubApiCaller
 import sandbox.explorer.logic.GitHubMetricConverter
-import java.io.File
-import java.sql.Connection
 
 fun main(args: Array<String>) = App.run.value().fix().unsafeRunSync()
 
@@ -37,11 +37,11 @@ object App {
         people.map { aPerson ->
             aPerson.firstName
 
-            val gitHubInfo = ! GitHubApiCaller.callApi(aPerson.gitHubUsername)
-            val gitHubUserInfo = ! GitHubUserInfo.deserializeFromJson2(gitHubInfo)
-
-            val result = ! GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
-            result
+            ! GitHubApiCaller.callApi(aPerson.gitHubUsername).flatMap { gitHubInfo ->
+                GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap { gitHubUserInfo ->
+                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
+                }
+            }
         }
     }
 }
