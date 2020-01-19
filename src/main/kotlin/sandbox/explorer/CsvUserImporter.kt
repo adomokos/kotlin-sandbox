@@ -37,7 +37,7 @@ object CsvUserImporter {
                 }
             }
             Right(result)
-        }.handleError { Left(AppError.PersonInsertError) })
+        }.handleError { err -> Left(AppError.PersonInsertError(err.message ?: "No message")) })
 
     val importUsers =
         readUserData("resources/users.csv").flatMap(IO.monad()) { userData ->

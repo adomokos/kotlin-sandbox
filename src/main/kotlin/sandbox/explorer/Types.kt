@@ -8,7 +8,7 @@ typealias EitherIO<A> = EitherT<ForIO, AppError, A>
 
 sealed class AppError {
     object CsvImportError : AppError()
-    object PersonInsertError : AppError()
+    data class PersonInsertError(val errorInfo: String) : AppError()
     object JSONDeserializaitonError : AppError()
     data class GitHubApiError(val errorInfo: String) : AppError()
 }

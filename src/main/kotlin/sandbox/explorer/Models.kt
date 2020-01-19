@@ -23,8 +23,17 @@ data class GitHubUserInfo(
     @Json(name = "login")
     var username: String,
 
+    @Json(name = "public_gists")
+    val publicGistCount: Int,
+
     @Json(name = "public_repos")
     val publicReposCount: Int,
+
+    @Json(name = "followers")
+    val followersCount: Int,
+
+    @Json(name = "following")
+    val followingCount: Int,
 
     @Json(name = "id")
     val gitHubId: Int,
