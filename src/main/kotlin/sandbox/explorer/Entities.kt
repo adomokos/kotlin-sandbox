@@ -5,7 +5,7 @@ import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.and
-import org.jetbrains.exposed.sql.jodatime.datetime
+import org.joda.time.DateTime
 
 object People : IntIdTable("people") {
     val email = varchar("email", length = 255)
@@ -22,7 +22,7 @@ object GitHubMetrics : IntIdTable("git_hub_metrics") {
     val publicReposCount = integer("public_repos_count")
     val followersCount = integer("followers_count")
     val followingCount = integer("following_count")
-    val accountCreatedAt = datetime("account_created_at")
+    val accountCreatedAt = registerColumn<DateTime>("account_created_at", MyDateColumnType(true))
     val person = reference("person_id", People)
 }
 

@@ -37,7 +37,7 @@ fun main(args: Array<String>) = IO.fx {
                             publicReposCount = gitHubUserInfo.publicReposCount
                             followersCount = gitHubUserInfo.followersCount
                             followingCount = gitHubUserInfo.followingCount
-                            accountCreatedAt = DateTime(2020, 1, 1, 12, 0, 0, 0)
+                            accountCreatedAt = DateTime(2020, 1, 1, 12, 0, 0)
                             person = aPerson
                         }
                     }
