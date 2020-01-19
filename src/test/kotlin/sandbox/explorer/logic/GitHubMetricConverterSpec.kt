@@ -6,6 +6,7 @@ import io.kotlintest.assertions.arrow.either.shouldBeRight
 import io.kotlintest.extensions.TestListener
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
+import java.io.File
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -13,7 +14,6 @@ import sandbox.explorer.DbSetupListener
 import sandbox.explorer.Factories
 import sandbox.explorer.GitHubUserInfo
 import sandbox.explorer.Person
-import java.io.File
 
 class GitHubMetricConverterSpec : StringSpec() {
     override fun listeners(): List<TestListener> = listOf(DbSetupListener)

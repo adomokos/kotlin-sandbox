@@ -3,9 +3,13 @@
  */
 package sandbox.explorer
 
+import arrow.fx.ForIO
 import arrow.fx.IO
-import arrow.fx.extensions.fx
+import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
+import arrow.mtl.EitherT
+import arrow.mtl.extensions.eithert.monad.monad
+import arrow.mtl.value
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import sandbox.explorer.logic.CsvUserImporter
@@ -14,24 +18,7 @@ import sandbox.explorer.logic.GitHubMetricConverter
 import java.io.File
 import java.sql.Connection
 
-fun main(args: Array<String>) = IO.fx {
-    val db = App.connectToDatabase()
-
-    val eitherPeople = ! CsvUserImporter.importUsers.value().fix()
-
-    eitherPeople.map { people ->
-        people.map { aPerson ->
-            val eitherGitHubInfo = GitHubApiCaller.callApi(aPerson.gitHubUsername).value().fix().unsafeRunSync()
-            eitherGitHubInfo.map { gitHubInfo ->
-                val eitherGitHubUserInfo = GitHubUserInfo.deserializeFromJson2(gitHubInfo).value().fix().unsafeRunSync()
-
-                eitherGitHubUserInfo.map { gitHubUserInfo ->
-                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson).value().fix().unsafeRunSync()
-                }
-            }
-        }
-    }
-}.unsafeRunSync()
+fun main(args: Array<String>) = App.run.value().fix().unsafeRunSync()
 
 object App {
     fun connectToDatabase(): Database {
@@ -40,5 +27,21 @@ object App {
         db.useNestedTransactions = true
         TransactionManager.manager.defaultIsolationLevel = Connection.TRANSACTION_SERIALIZABLE
         return db
+    }
+
+    val run = EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+        val db = App.connectToDatabase()
+
+        val people = ! CsvUserImporter.importUsers
+
+        people.map { aPerson ->
+            aPerson.firstName
+
+            val gitHubInfo = ! GitHubApiCaller.callApi(aPerson.gitHubUsername)
+            val gitHubUserInfo = ! GitHubUserInfo.deserializeFromJson2(gitHubInfo)
+
+            val result = ! GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
+            result
+        }
     }
 }
