@@ -1,6 +1,7 @@
 package sandbox.explorer
 
 import arrow.core.Left
+import arrow.fx.fix
 import com.beust.klaxon.KlaxonException
 import io.kotlintest.matchers.startWith
 import io.kotlintest.should
@@ -28,14 +29,14 @@ class ModelsSpec : StringSpec({
     "can deserialize a UserInfo from json string with Either returned type" {
         val userInfoData: String = File("./resources/github-user-info.json").readText(Charsets.UTF_8)
 
-        val userInfo = GitHubUserInfo.deserializeFromJson2(userInfoData).unsafeRunSync()
+        val userInfo = GitHubUserInfo.deserializeFromJson2(userInfoData).value().fix().unsafeRunSync()
 
         userInfo.map { it.username shouldBe "adomokos" }
     }
 
     "returns Left if any error occurs" {
         val userInfo =
-            GitHubUserInfo.deserializeFromJson2("something").unsafeRunSync()
+            GitHubUserInfo.deserializeFromJson2("something").value().fix().unsafeRunSync()
 
         userInfo shouldBe Left(AppError.JSONDeserializaitonError)
     }

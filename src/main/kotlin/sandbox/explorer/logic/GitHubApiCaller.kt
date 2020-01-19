@@ -9,15 +9,17 @@ import arrow.core.right
 import arrow.core.toOption
 import arrow.fx.IO
 import arrow.fx.extensions.fx
+import arrow.mtl.EitherT
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import sandbox.explorer.AppError
+import sandbox.explorer.EitherIO
 
 object GitHubApiCaller {
-    fun callApi(username: String) =
-        IO.fx {
+    fun callApi(username: String): EitherIO<String> =
+        EitherT(IO.fx {
             val client = HttpClient.newBuilder().build()
             val request =
                 HttpRequest
@@ -32,7 +34,7 @@ object GitHubApiCaller {
             }.handleError { AppError.GitHubApiError("Couldn't reach github.com").left() }.bind()
 
             userInfoJsonData
-        }
+        })
 
     fun processResponse(response: HttpResponse<String>, username: String): Either<AppError, String> {
         if (response.statusCode() == 404) {

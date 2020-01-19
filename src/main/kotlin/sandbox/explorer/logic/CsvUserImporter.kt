@@ -46,7 +46,7 @@ object CsvUserImporter {
             )
         ) })
 
-    val importUsers =
+    val importUsers: EitherIO<List<Person>> =
         readUserData("resources/users.csv")
             .flatMap(IO.monad()) { userData ->
                 persistUserInfo(userData)

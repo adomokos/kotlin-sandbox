@@ -5,28 +5,28 @@ package sandbox.explorer
 
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import java.io.File
-import java.sql.Connection
+import arrow.fx.fix
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import sandbox.explorer.logic.CsvUserImporter
 import sandbox.explorer.logic.GitHubApiCaller
 import sandbox.explorer.logic.GitHubMetricConverter
+import java.io.File
+import java.sql.Connection
 
 fun main(args: Array<String>) = IO.fx {
     val db = App.connectToDatabase()
 
-    val eitherPeople = ! CsvUserImporter.importUsers.value()
-    // println(eitherPeople)
+    val eitherPeople = ! CsvUserImporter.importUsers.value().fix()
 
     eitherPeople.map { people ->
         people.map { aPerson ->
-            val eitherGitHubInfo = GitHubApiCaller.callApi(aPerson.gitHubUsername).unsafeRunSync()
+            val eitherGitHubInfo = GitHubApiCaller.callApi(aPerson.gitHubUsername).value().fix().unsafeRunSync()
             eitherGitHubInfo.map { gitHubInfo ->
-                val eitherGitHubUserInfo = GitHubUserInfo.deserializeFromJson2(gitHubInfo).unsafeRunSync()
+                val eitherGitHubUserInfo = GitHubUserInfo.deserializeFromJson2(gitHubInfo).value().fix().unsafeRunSync()
 
                 eitherGitHubUserInfo.map { gitHubUserInfo ->
-                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson).unsafeRunSync()
+                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson).value().fix().unsafeRunSync()
                 }
             }
         }
