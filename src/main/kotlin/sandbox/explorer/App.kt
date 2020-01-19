@@ -13,6 +13,8 @@ import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
+import sandbox.explorer.logic.CsvUserImporter
+import sandbox.explorer.logic.GitHubApiCaller
 
 fun main(args: Array<String>) = IO.fx {
     val db = App.connectToDatabase()

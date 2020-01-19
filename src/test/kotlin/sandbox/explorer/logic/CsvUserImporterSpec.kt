@@ -1,4 +1,4 @@
-package sandbox.explorer
+package sandbox.explorer.logic
 
 import arrow.core.Left
 import arrow.fx.fix
@@ -9,6 +9,9 @@ import io.kotlintest.specs.StringSpec
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import sandbox.explorer.AppError
+import sandbox.explorer.DbSetupListener
+import sandbox.explorer.Person
 
 class CsvUserImporterSpec : StringSpec() {
     override fun listeners(): List<TestListener> = listOf(DbSetupListener)

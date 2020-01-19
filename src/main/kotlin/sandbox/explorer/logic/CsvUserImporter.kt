@@ -1,4 +1,4 @@
-package sandbox.explorer
+package sandbox.explorer.logic
 
 import arrow.core.Left
 import arrow.core.Right
@@ -12,6 +12,9 @@ import java.io.FileReader
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
+import sandbox.explorer.AppError
+import sandbox.explorer.EitherIO
+import sandbox.explorer.Person
 
 object CsvUserImporter {
     fun readUserData(fileName: String): EitherIO<List<Array<String>>> =
@@ -37,10 +40,15 @@ object CsvUserImporter {
                 }
             }
             Right(result)
-        }.handleError { err -> Left(AppError.PersonInsertError(err.message ?: "No message")) })
+        }.handleError { err -> Left(
+            AppError.PersonInsertError(
+                err.message ?: "No message"
+            )
+        ) })
 
     val importUsers =
-        readUserData("resources/users.csv").flatMap(IO.monad()) { userData ->
-            persistUserInfo(userData)
+        readUserData("resources/users.csv")
+            .flatMap(IO.monad()) { userData ->
+                persistUserInfo(userData)
         }
 }

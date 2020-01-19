@@ -1,4 +1,4 @@
-package sandbox.explorer
+package sandbox.explorer.logic
 
 import arrow.core.Either
 import arrow.core.None
@@ -13,6 +13,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import sandbox.explorer.AppError
 
 object GitHubApiCaller {
     fun callApi(username: String) =
