@@ -41,13 +41,7 @@ class EntitiesSpec : StringSpec() {
             transaction {
                 addLogger(StdOutSqlLogger)
 
-                val aPerson = Person.findOrCreate(
-                    emailValue = "john@example.com",
-                    firstNameValue = "John",
-                    lastNameValue = "Smith",
-                    ratingValue = 1,
-                    gitHubUsernameValue = "jdsmith"
-                )
+                val aPerson: Person = Factories.addPerson()
 
                 GitHubMetric.new {
                     login = "jdsmith"

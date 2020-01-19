@@ -8,13 +8,10 @@ import arrow.fx.extensions.fx
 import java.io.File
 import java.sql.Connection
 import org.jetbrains.exposed.sql.Database
-import org.jetbrains.exposed.sql.StdOutSqlLogger
-import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.TransactionManager
-import org.jetbrains.exposed.sql.transactions.transaction
-import org.joda.time.DateTime
 import sandbox.explorer.logic.CsvUserImporter
 import sandbox.explorer.logic.GitHubApiCaller
+import sandbox.explorer.logic.GitHubMetricConverter
 
 fun main(args: Array<String>) = IO.fx {
     val db = App.connectToDatabase()
@@ -29,22 +26,8 @@ fun main(args: Array<String>) = IO.fx {
                 val eitherGitHubUserInfo = GitHubUserInfo.deserializeFromJson2(gitHubInfo).unsafeRunSync()
 
                 eitherGitHubUserInfo.map { gitHubUserInfo ->
-                    transaction(db) {
-                        addLogger(StdOutSqlLogger)
-
-                        GitHubMetric.new {
-                            login = gitHubUserInfo.username
-                            name = "${aPerson.firstName} ${aPerson.lastName}"
-                            publicGistsCount = gitHubUserInfo.publicGistCount
-                            publicReposCount = gitHubUserInfo.publicReposCount
-                            followersCount = gitHubUserInfo.followersCount
-                            followingCount = gitHubUserInfo.followingCount
-                            accountCreatedAt = DateTime(2020, 1, 1, 12, 0, 0)
-                            person = aPerson
-                        }
-                    }
+                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson).unsafeRunSync()
                 }
-                println(eitherGitHubUserInfo)
             }
         }
     }

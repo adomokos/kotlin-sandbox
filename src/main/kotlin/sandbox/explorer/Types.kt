@@ -11,4 +11,5 @@ sealed class AppError {
     data class PersonInsertError(val errorInfo: String) : AppError()
     object JSONDeserializaitonError : AppError()
     data class GitHubApiError(val errorInfo: String) : AppError()
+    data class GitHubMetricSaveError(val errorInfo: String) : AppError()
 }
