@@ -24,11 +24,8 @@ object PeopleProcessor {
     fun processPeople(people: List<Person>) =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
             people.map { aPerson ->
-                ! GitHubApiCaller.callApi(aPerson.gitHubUsername).flatMap { gitHubInfo ->
-                    GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap { gitHubUserInfo ->
-                        GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
-                    }
-                }
+                val result = ! processPerson(aPerson) // .value().fix()
+                result
             }
         }
 

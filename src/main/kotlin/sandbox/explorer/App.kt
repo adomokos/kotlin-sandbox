@@ -13,6 +13,7 @@ import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
+import arrow.mtl.fix
 import arrow.mtl.value
 import java.io.File
 import java.sql.Connection
@@ -21,7 +22,7 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import sandbox.explorer.logic.CsvUserImporter
 import sandbox.explorer.logic.PeopleProcessor
 
-fun main(args: Array<String>) = App.run.value().fix().unsafeRunSync()
+fun main(args: Array<String>) = App.run(false).value().fix().unsafeRunSync()
 
 object App {
     fun connectToDatabase(): Database {
@@ -32,24 +33,29 @@ object App {
         return db
     }
 
-    val run =
+    fun run(parallel: Boolean) =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
             val db = App.connectToDatabase()
 
             val people = ! CsvUserImporter.importUsers
 
-            val result =
-                PeopleProcessor
+            val parallelRunner =
+                EitherT(PeopleProcessor
                     .processPeopleParallel(people)
-                    .unsafeRunSync()
-                    .traverse(Either.applicative()) { it }
-                    .fix()
+                    .map { item ->
+                        item
+                            .traverse(Either.applicative()) { it }
+                            .fix()
+                            .map { it.fix().toList() }
+                    })
 
-            result
+            val runner =
+                PeopleProcessor.processPeople(people).fix()
 
-            /*
-            val result2 = ! processPeople(people)
-            result2
-            */
+            if (parallel) {
+                ! parallelRunner
+            } else {
+                ! runner
+            }
         }
 }
