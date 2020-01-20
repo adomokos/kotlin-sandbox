@@ -23,7 +23,6 @@ enum class RunMode {
 }
 
 fun main(args: Array<String>) = IO.fx {
-
     val runMode: RunMode = if (args.any() && args.first() == "parallel") {
         RunMode.PARALLEL
     } else {
@@ -44,22 +43,16 @@ object App {
 
     fun run(runMode: RunMode) =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
-            val db = App.connectToDatabase()
+            App.connectToDatabase()
 
             val people = ! CsvUserImporter.importUsers
 
-            val parallelRunner =
-                PeopleProcessor.processPeopleParallel(people)
-
-            val runner =
-                PeopleProcessor.processPeople(people)
-
             val result = ! if (runMode == RunMode.PARALLEL) {
                 println(":::Running in parallel:::")
-                parallelRunner
+                PeopleProcessor.processPeopleParallel(people)
             } else {
                 println(":::Running normal:::")
-                runner
+                PeopleProcessor.processPeople(people)
             }
             result
         }
