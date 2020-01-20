@@ -3,11 +3,13 @@
  */
 package sandbox.explorer
 
+import arrow.core.Either
 import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
+import arrow.fx.handleError
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
 import arrow.mtl.value
@@ -22,15 +24,23 @@ enum class RunMode {
     NORMAL, PARALLEL
 }
 
-fun main(args: Array<String>) = IO.fx {
-    val runMode: RunMode = if (args.any() && args.first() == "parallel") {
-        RunMode.PARALLEL
-    } else {
-        RunMode.NORMAL
-    }
+fun main(args: Array<String>) =
+    IO.fx {
+        val runMode: RunMode = if (args.any() && args.first() == "parallel") {
+            RunMode.PARALLEL
+        } else {
+            RunMode.NORMAL
+        }
 
-    val result = ! App.run(runMode).value().fix()
-    }.unsafeRunSync()
+        val result = ! App.run(runMode).value().fix()
+
+        when (result) {
+            is Either.Left -> println("Error occurred - ${result.a}")
+            is Either.Right -> println("Success!! - ${result.b}")
+        }
+    }
+    .handleError { err -> println("::: Fatal error occurred: ${err.message} ") }
+    .unsafeRunSync()
 
 object App {
     fun connectToDatabase(): Database {
@@ -48,10 +58,10 @@ object App {
             val people = ! CsvUserImporter.importUsers
 
             val result = ! if (runMode == RunMode.PARALLEL) {
-                println(":::Running in parallel:::")
+                println("::: Running in parallel :::")
                 PeopleProcessor.processPeopleParallel(people)
             } else {
-                println(":::Running normal:::")
+                println("::: Running normal :::")
                 PeopleProcessor.processPeople(people)
             }
             result

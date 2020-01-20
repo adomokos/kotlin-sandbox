@@ -70,4 +70,7 @@ class GitHubMetric(id: EntityID<Int>) : IntEntity(id) {
     var followingCount by GitHubMetrics.followingCount
     var accountCreatedAt by GitHubMetrics.accountCreatedAt
     var person by Person referencedOn(GitHubMetrics.person)
+
+    override fun toString(): String =
+        "<GitHubMetric: id - $id, name - $name>"
 }
