@@ -3,17 +3,12 @@
  */
 package sandbox.explorer
 
-import arrow.core.Either
-import arrow.core.extensions.either.applicative.applicative
-import arrow.core.extensions.list.traverse.traverse
-import arrow.core.fix
 import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
-import arrow.mtl.fix
 import arrow.mtl.value
 import java.io.File
 import java.sql.Connection
@@ -40,17 +35,10 @@ object App {
             val people = ! CsvUserImporter.importUsers
 
             val parallelRunner =
-                EitherT(PeopleProcessor
-                    .processPeopleParallel(people)
-                    .map { item ->
-                        item
-                            .traverse(Either.applicative()) { it }
-                            .fix()
-                            .map { it.fix().toList() }
-                    })
+                PeopleProcessor.processPeopleParallel(people)
 
             val runner =
-                PeopleProcessor.processPeople(people).fix()
+                PeopleProcessor.processPeople(people)
 
             if (parallel) {
                 ! parallelRunner

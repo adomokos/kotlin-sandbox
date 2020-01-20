@@ -1,5 +1,9 @@
 package sandbox.explorer.logic
 
+import arrow.core.Either
+import arrow.core.extensions.either.applicative.applicative
+import arrow.core.extensions.list.traverse.traverse
+import arrow.core.fix
 import arrow.core.k
 import arrow.fx.ForIO
 import arrow.fx.IO
@@ -8,6 +12,7 @@ import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
+import arrow.mtl.fix
 import sandbox.explorer.AppError
 import sandbox.explorer.EitherIO
 import sandbox.explorer.GitHubMetric
@@ -15,19 +20,26 @@ import sandbox.explorer.GitHubUserInfo
 import sandbox.explorer.Person
 
 object PeopleProcessor {
-    fun processPeopleParallel(people: List<Person>) =
-        people.k().parTraverse { aPerson ->
+    fun processPeopleParallel(people: List<Person>): EitherIO<List<GitHubMetric>> =
+        EitherT(people.k().parTraverse { aPerson ->
             val result = processPerson(aPerson).value().fix()
             result
-        }
+        }.map { item ->
+            item
+                .traverse(Either.applicative()) { it }
+                .fix()
+                .map { it.fix().toList() }
+        })
 
-    fun processPeople(people: List<Person>) =
+    fun processPeople(people: List<Person>): EitherIO<List<GitHubMetric>> =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+            val r = processPeopleParallel(people)
+
             people.map { aPerson ->
                 val result = ! processPerson(aPerson) // .value().fix()
                 result
             }
-        }
+        }.fix()
 
     fun processPerson(aPerson: Person): EitherIO<GitHubMetric> =
         GitHubApiCaller.callApi(aPerson.gitHubUsername).flatMap(IO.monad()) { gitHubInfo ->
