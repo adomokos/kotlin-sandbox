@@ -5,6 +5,7 @@ package sandbox.explorer
 
 import arrow.fx.ForIO
 import arrow.fx.IO
+import arrow.fx.extensions.fx
 import arrow.fx.extensions.io.monad.monad
 import arrow.fx.fix
 import arrow.mtl.EitherT
@@ -17,7 +18,20 @@ import org.jetbrains.exposed.sql.transactions.TransactionManager
 import sandbox.explorer.logic.CsvUserImporter
 import sandbox.explorer.logic.PeopleProcessor
 
-fun main(args: Array<String>) = App.run(false).value().fix().unsafeRunSync()
+enum class RunMode {
+    NORMAL, PARALLEL
+}
+
+fun main(args: Array<String>) = IO.fx {
+
+    val runMode: RunMode = if (args.any() && args.first() == "parallel") {
+        RunMode.PARALLEL
+    } else {
+        RunMode.NORMAL
+    }
+
+    val result = ! App.run(runMode).value().fix()
+    }.unsafeRunSync()
 
 object App {
     fun connectToDatabase(): Database {
@@ -28,7 +42,7 @@ object App {
         return db
     }
 
-    fun run(parallel: Boolean) =
+    fun run(runMode: RunMode) =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
             val db = App.connectToDatabase()
 
@@ -40,10 +54,13 @@ object App {
             val runner =
                 PeopleProcessor.processPeople(people)
 
-            if (parallel) {
-                ! parallelRunner
+            val result = ! if (runMode == RunMode.PARALLEL) {
+                println(":::Running in parallel:::")
+                parallelRunner
             } else {
-                ! runner
+                println(":::Running normal:::")
+                runner
             }
+            result
         }
 }
