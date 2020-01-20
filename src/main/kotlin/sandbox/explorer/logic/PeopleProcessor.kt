@@ -24,7 +24,8 @@ object PeopleProcessor {
         EitherT(people.k().parTraverse { aPerson ->
             val result = processPerson(aPerson).value().fix()
             result
-        }.map { item ->
+        } // Do some type conversion gymnastics to return EitherIO<List<GitHubMetric>>
+            .map { item ->
             item
                 .traverse(Either.applicative()) { it }
                 .fix()
@@ -33,10 +34,8 @@ object PeopleProcessor {
 
     fun processPeople(people: List<Person>): EitherIO<List<GitHubMetric>> =
         EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
-            val r = processPeopleParallel(people)
-
             people.map { aPerson ->
-                val result = ! processPerson(aPerson) // .value().fix()
+                val result = ! processPerson(aPerson)
                 result
             }
         }.fix()
