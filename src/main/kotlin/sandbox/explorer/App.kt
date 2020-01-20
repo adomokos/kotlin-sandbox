@@ -3,6 +3,10 @@
  */
 package sandbox.explorer
 
+import arrow.core.Either
+import arrow.core.extensions.either.applicative.applicative
+import arrow.core.extensions.list.traverse.traverse
+import arrow.core.fix
 import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.io.monad.monad
@@ -15,8 +19,7 @@ import java.sql.Connection
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.transactions.TransactionManager
 import sandbox.explorer.logic.CsvUserImporter
-import sandbox.explorer.logic.GitHubApiCaller
-import sandbox.explorer.logic.GitHubMetricConverter
+import sandbox.explorer.logic.PeopleProcessor
 
 fun main(args: Array<String>) = App.run.value().fix().unsafeRunSync()
 
@@ -29,19 +32,24 @@ object App {
         return db
     }
 
-    val run = EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
-        val db = App.connectToDatabase()
+    val run =
+        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+            val db = App.connectToDatabase()
 
-        val people = ! CsvUserImporter.importUsers
+            val people = ! CsvUserImporter.importUsers
 
-        people.map { aPerson ->
-            aPerson.firstName
+            val result =
+                PeopleProcessor
+                    .processPeopleParallel(people)
+                    .unsafeRunSync()
+                    .traverse(Either.applicative()) { it }
+                    .fix()
 
-            ! GitHubApiCaller.callApi(aPerson.gitHubUsername).flatMap { gitHubInfo ->
-                GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap { gitHubUserInfo ->
-                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
-                }
-            }
+            result
+
+            /*
+            val result2 = ! processPeople(people)
+            result2
+            */
         }
-    }
 }
