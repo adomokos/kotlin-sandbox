@@ -6,6 +6,8 @@ import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.handleError
 import arrow.mtl.EitherT
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
@@ -29,9 +31,13 @@ object GitHubMetricConverter {
                     publicReposCount = gitHubUserInfo.publicReposCount
                     followersCount = gitHubUserInfo.followersCount
                     followingCount = gitHubUserInfo.followingCount
-                    accountCreatedAt = DateTime(2020, 1, 1, 12, 0, 0)
+                    accountCreatedAt = convertToDate(gitHubUserInfo.memberSince!!)
                     person = personValue
                 }.right()
             }
         }.handleError { err -> AppError.GitHubMetricSaveError(err.message.toString()).left() })
+
+    private fun convertToDate(dateTimeValue: LocalDateTime): DateTime {
+        return DateTime(dateTimeValue.toInstant(ZoneOffset.UTC).toEpochMilli())
+    }
 }
