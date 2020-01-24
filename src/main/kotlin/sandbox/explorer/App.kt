@@ -24,7 +24,7 @@ enum class RunMode {
     NORMAL, PARALLEL
 }
 
-fun main(args: Array<String>) =
+suspend fun main(args: Array<String>) =
     IO.fx {
         val runMode: RunMode = if (args.any() && args.first() == "parallel") {
             RunMode.PARALLEL
@@ -40,7 +40,7 @@ fun main(args: Array<String>) =
         }
     }
     .handleError { err -> println("::: Fatal error occurred: ${err.message} ") }
-    .unsafeRunSync()
+    .suspended()
 
 object App {
     fun connectToDatabase(): Database {

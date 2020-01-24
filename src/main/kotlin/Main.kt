@@ -3,7 +3,7 @@
 import sandbox.explorer.main as runGitHubExplorer
 
 @Suppress("UNUSED_PARAMETER")
-fun main(args: Array<String>) {
+suspend fun main(args: Array<String>) {
     // runArrowExamples()
     // runExposedExamples()
     // runInactionExamples()
