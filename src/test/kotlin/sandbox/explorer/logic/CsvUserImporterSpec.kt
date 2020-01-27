@@ -37,8 +37,8 @@ class CsvUserImporterSpec : StringSpec() {
                     // println(Person.all().forEach { println(it) })
                     people.shouldNotBeLeft()
 
-                    people.map { it.size shouldBe 3 }
-                    Person.count() shouldBe 3
+                    people.map { it.size shouldBe 4 }
+                    Person.count() shouldBe 4
 
                     rollback()
                 }
