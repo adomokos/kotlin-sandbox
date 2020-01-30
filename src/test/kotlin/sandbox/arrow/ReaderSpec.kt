@@ -173,7 +173,7 @@ class ReaderSpec : StringSpec() {
             result shouldBe Right(3)
         }
 
-        "can carry the ReaderT in the colling context" {
+        "can carry the ReaderT in the calling context" {
             val appContext = GetAppContext(numberString = "4")
             val app = myAppT2.run(appContext).fix().value().fix()
 
