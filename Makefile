@@ -26,8 +26,8 @@ single-test: ## Run a sigle test, pass TEST=something.MySpec to run it
 .PHONY: tests
 
 run: ## Run app locally
-	./gradlew run --args="parallel"
-	# ./gradlew run
+	# ./gradlew run --args="parallel"
+	./gradlew run
 .PHONY: run
 
 fix-style: ## Fixed ktlint errors with spotless

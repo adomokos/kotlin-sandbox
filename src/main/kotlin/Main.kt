@@ -1,6 +1,6 @@
 // import arrow.runExamples as runArrowExamples
 // import sandbox.github.explorer.run as runExplorer
-import sandbox.explorer.main as runGitHubExplorer
+import sandbox.github.explorer.NullableApp
 
 @Suppress("UNUSED_PARAMETER")
 suspend fun main(args: Array<String>) {
@@ -9,5 +9,6 @@ suspend fun main(args: Array<String>) {
     // runInactionExamples()
 
     // runExplorer(args)
-    runGitHubExplorer(args)
+    // runGitHubExplorer(args)
+    NullableApp.run(args)
 }

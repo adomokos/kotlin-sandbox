@@ -23,3 +23,8 @@ fun createKlaxon() = Klaxon()
         override fun toJson(dateValue: Any) =
             """ { "date" : $dateValue } """
     })
+
+fun saveRecord(userInfo: UserInfo): UserInfo? {
+    println(":: Saved user info ::")
+    return userInfo
+}
