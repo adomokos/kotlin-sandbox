@@ -1,5 +1,7 @@
 package sandbox.github.explorer
 
+import arrow.core.Option
+import arrow.core.Some
 import com.beust.klaxon.Converter
 import com.beust.klaxon.JsonValue
 import com.beust.klaxon.Klaxon
@@ -27,4 +29,9 @@ fun createKlaxon() = Klaxon()
 fun saveRecord(userInfo: UserInfo): UserInfo? {
     println(":: Saved user info ::")
     return userInfo
+}
+
+fun optionSaveRecord(userInfo: UserInfo): Option<UserInfo> {
+    println(":: Saved user info ::")
+    return Some(userInfo)
 }
