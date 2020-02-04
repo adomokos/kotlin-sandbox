@@ -56,12 +56,6 @@ private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
         AppError.UserDataJsonParseFailed(ex.message ?: "No message").left()
     }
 
-    /*
-    Try { createKlaxon().parse<UserInfo>(userInfoData) }
-        .toEither { AppError.UserDataJsonParseFailed("Couldn't parse") }
-        .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
-    */
-
 private fun addStarRating(userInfo: UserInfo): UserInfo {
     if (userInfo.publicReposCount > 20) {
         userInfo.username = userInfo.username + " ⭐"
@@ -124,6 +118,4 @@ fun run(args: Array<String>) {
     program.unsafeRunAsync { result ->
         result.fold({ error -> println("Error: $error") }, {})
     }
-
-    // program.unsafeRunSync()
 }
