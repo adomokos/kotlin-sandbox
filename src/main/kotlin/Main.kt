@@ -1,6 +1,7 @@
 // import arrow.runExamples as runArrowExamples
 // import sandbox.github.explorer.run as runExplorer
-import sandbox.github.explorer.OptionApp
+// import sandbox.github.explorer.OptionApp
+import sandbox.github.explorer.EitherApp
 
 @Suppress("UNUSED_PARAMETER")
 suspend fun main(args: Array<String>) {
@@ -11,5 +12,5 @@ suspend fun main(args: Array<String>) {
     // runExplorer(args)
     // runGitHubExplorer(args)
     // NullableApp.run(args)
-    OptionApp.run(args)
+    EitherApp.run(args)
 }

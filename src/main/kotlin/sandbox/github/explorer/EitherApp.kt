@@ -1,6 +1,7 @@
 package sandbox.github.explorer
 
 import arrow.core.Either
+import arrow.core.Left
 import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.leftIfNull
@@ -22,6 +23,7 @@ object EitherApp {
         data class UserNotFound(val errorInfo: String) : AppError()
         data class GitHubConnectionFailed(val errorInfo: String) : AppError()
         data class UserDataJsonParseFailed(val errorInfo: String) : AppError()
+        data class UserSaveFailed(val errorInfo: String) : AppError()
     }
 
     private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
@@ -38,14 +40,22 @@ object EitherApp {
             userInfo.username = userInfo.username + " ⭐"
         }
         return userInfo
-        // return Either.right(userInfo)
     }
+
+    fun saveUserInfo(userInfo: UserInfo): IO<Either<AppError, UserInfo>> =
+        IO {
+            optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
+        }.handleError { Left(AppError.UserSaveFailed("Something went wrong in saveUserInfo")) }
 
     private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
         callApi(username)
-            .map {
-                it.flatMap(::extractUserInfo)
+            .map { eitherApiResponse ->
+                eitherApiResponse
+                    .flatMap(::extractUserInfo)
                     .map(::addStarRating)
+                    .flatMap {
+                        saveUserInfo(it).unsafeRunSync()
+                    }
             }
 
     private fun callApi(username: String): IO<Either<AppError, String>> {
