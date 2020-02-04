@@ -7,14 +7,9 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import sandbox.github.explorer.Entities.UserInfo
 
 object OptionApp {
-    sealed class AppError {
-        data class UserNotFound(val errorInfo: String) : AppError()
-        data class GitHubConnectionFailed(val errorInfo: String) : AppError()
-        data class UserDataJsonParseFailed(val errorInfo: String) : AppError()
-    }
-
     fun extractUserInfo(userInfoData: String): Option<UserInfo> =
         Option.fromNullable(UserInfo.deserializeFromJson(userInfoData))
 

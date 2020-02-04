@@ -8,10 +8,11 @@ import com.beust.klaxon.Klaxon
 import com.beust.klaxon.KlaxonException
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import sandbox.github.explorer.Entities.UserInfo
 
 // ZOMG to parse 8601 UTC Date Time
 fun createKlaxon() = Klaxon()
-    .fieldConverter(KlaxonDate::class, object : Converter {
+    .fieldConverter(Entities.KlaxonDate::class, object : Converter {
         override fun canConvert(cls: Class<*>) = cls == LocalDateTime::class.java
 
         override fun fromJson(jv: JsonValue) =
