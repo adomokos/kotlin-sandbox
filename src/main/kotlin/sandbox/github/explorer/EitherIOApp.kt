@@ -8,11 +8,11 @@ import arrow.core.leftIfNull
 import arrow.core.right
 import arrow.fx.IO
 import arrow.fx.handleError
+import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
-import sandbox.github.explorer.Entities.UserInfo
 
 // https://jorgecastillo.dev/please-try-to-use-io
 
@@ -50,9 +50,25 @@ object EitherIOApp {
         return result
     }
 
+    fun <E, T> runCatchingEither(onError: E, block: () -> Either<E, T>): Either<E, T> {
+        val result = runCatching(block)
+
+        return result.fold(
+            { it },
+            { onError.left() }
+        )
+    }
+
     // 2. Deserialize the JSON response into UserInfo?
     private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
-        runCatching {
+        runCatchingEither(AppError.UserDataJsonParseFailed("Error deserializing JSON to UserInfo")) {
+            UserInfo.deserializeFromJson(userInfoData)
+                .right()
+                .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
+        }
+
+        /*
+       runCatching {
             UserInfo.deserializeFromJson(userInfoData)
                 .right()
                 .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
@@ -60,6 +76,7 @@ object EitherIOApp {
             { it },
             { AppError.UserDataJsonParseFailed(it.message ?: "No message").left() }
         )
+    */
 
     // 3. Run the transform logic
     private fun addStarRating(userInfo: UserInfo): UserInfo {
