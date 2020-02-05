@@ -22,13 +22,14 @@ object EitherApp {
     // 1. Call GitHub, pull info about the user
     private fun callApi(username: String): Either<AppError, String> {
         val client = HttpClient.newBuilder().build()
-        val request =
-            HttpRequest
-                .newBuilder()
-                .uri(URI.create("${getGitHubUrl()}/$username"))
-                .build()
 
         val result = {
+            val request =
+                HttpRequest
+                    .newBuilder()
+                    .uri(URI.create("${getGitHubUrl()}/$username"))
+                    .build()
+
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
             if (response.statusCode() == 404) {
