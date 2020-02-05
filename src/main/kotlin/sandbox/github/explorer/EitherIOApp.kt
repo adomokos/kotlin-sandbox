@@ -18,7 +18,7 @@ import sandbox.github.explorer.Entities.UserInfo
 
 // https://jorgecastillo.dev/please-try-to-use-io
 
-object EitherApp {
+object EitherIOApp {
     sealed class AppError {
         data class UserNotFound(val errorInfo: String) : AppError()
         data class GitHubConnectionFailed(val errorInfo: String) : AppError()
