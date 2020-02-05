@@ -49,8 +49,8 @@ object NullableApp {
 
         try {
             println(getUserInfo(username ?: "adomokos"))
-        } catch (ex: Exception) {
-            println("Error occurred: $ex")
+        } catch (err: Exception) {
+            println("Fatal error occurred: $err")
         }
     }
 }

@@ -25,38 +25,7 @@ object EitherIOApp {
         data class UserSaveFailed(val errorInfo: String) : AppError()
     }
 
-    private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
-        try {
-            UserInfo.deserializeFromJson(userInfoData)
-                .right()
-                .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
-        } catch (ex: KlaxonException) {
-            AppError.UserDataJsonParseFailed(ex.message ?: "No message").left()
-        }
-
-    private fun addStarRating(userInfo: UserInfo): UserInfo {
-        if (userInfo.publicReposCount > 20) {
-            userInfo.username = userInfo.username + " ⭐"
-        }
-        return userInfo
-    }
-
-    fun saveUserInfo(userInfo: UserInfo): IO<Either<AppError, UserInfo>> =
-        IO {
-            optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
-        }.handleError { Left(AppError.UserSaveFailed("Something went wrong in saveUserInfo")) }
-
-    private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
-        callApi(username)
-            .map { eitherApiResponse ->
-                eitherApiResponse
-                    .flatMap(::extractUserInfo)
-                    .map(::addStarRating)
-                    .flatMap {
-                        saveUserInfo(it).unsafeRunSync()
-                    }
-            }
-
+    // 1. Call GitHub, pull info about the user
     private fun callApi(username: String): IO<Either<AppError, String>> {
         val client = HttpClient.newBuilder().build()
         val request =
@@ -81,6 +50,41 @@ object EitherIOApp {
         return result
     }
 
+    // 2. Deserialize the JSON response into UserInfo?
+    private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
+        try {
+            UserInfo.deserializeFromJson(userInfoData)
+                .right()
+                .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
+        } catch (ex: KlaxonException) {
+            AppError.UserDataJsonParseFailed(ex.message ?: "No message").left()
+        }
+
+    // 3. Run the transform logic
+    private fun addStarRating(userInfo: UserInfo): UserInfo {
+        if (userInfo.publicReposCount > 20) {
+            userInfo.username = userInfo.username + " ⭐"
+        }
+        return userInfo
+    }
+
+    // 4. Save the user in a data store
+    fun saveUserInfo(userInfo: UserInfo): IO<Either<AppError, UserInfo>> =
+        IO {
+            optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
+        }.handleError { Left(AppError.UserSaveFailed("Something went wrong in saveUserInfo")) }
+
+    private fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
+        callApi(username)
+            .map { eitherApiResponse ->
+                eitherApiResponse
+                    .flatMap(::extractUserInfo)
+                    .map(::addStarRating)
+                    .flatMap {
+                        saveUserInfo(it).unsafeRunSync()
+                    }
+            }
+
     private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
     private fun handleFailure(error: AppError): Unit = println("The app error is: $error")
     private fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo")
@@ -99,9 +103,9 @@ object EitherIOApp {
                 handleAppError(error)
             }
 
-        // Run the program asynchronously
+        // Run the program asynchronously, handle error
         program.unsafeRunAsync { result ->
-            result.fold({ error -> println("Error: $error") }, {})
+            result.mapLeft { error -> println("Error: $error") }
         }
     }
 }

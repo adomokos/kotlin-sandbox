@@ -10,30 +10,7 @@ import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 object OptionApp {
-    fun extractUserInfo(userInfoData: String): Option<UserInfo> =
-        Option.fromNullable(UserInfo.deserializeFromJson(userInfoData))
-
-    fun saveUserInfo(userInfo: UserInfo): Option<UserInfo> =
-        optionSaveRecord(userInfo)
-
-    fun addStarRating(userInfo: UserInfo): UserInfo {
-        if (userInfo.publicReposCount > 20) {
-            userInfo.username = userInfo.username + " ⭐"
-        }
-        return userInfo
-    }
-
-    fun getUserInfo(username: String): Option<UserInfo> {
-        val maybeApiData = callApi(username)
-        return maybeApiData.flatMap { apiData ->
-            val maybeUserInfo = extractUserInfo(apiData)
-            maybeUserInfo.flatMap { userInfo ->
-                val userInfoData = addStarRating(userInfo)
-                saveUserInfo(userInfoData)
-            }
-        }
-    }
-
+    // 1. Call GitHub, pull info about the user
     fun callApi(username: String): Option<String> {
         val client = HttpClient.newBuilder().build()
         val request =
@@ -51,13 +28,40 @@ object OptionApp {
         }
     }
 
+    // 2. Deserialize the JSON response into UserInfo?
+    fun extractUserInfo(userInfoData: String): Option<UserInfo> =
+        Option.fromNullable(UserInfo.deserializeFromJson(userInfoData))
+
+    // 3. Run the transform logic
+    fun addStarRating(userInfo: UserInfo): UserInfo {
+        if (userInfo.publicReposCount > 20) {
+            userInfo.username = userInfo.username + " ⭐"
+        }
+        return userInfo
+    }
+
+    // 4. Save the user in a data store
+    fun saveUserInfo(userInfo: UserInfo): Option<UserInfo> =
+        optionSaveRecord(userInfo)
+
+    fun getUserInfo(username: String): Option<UserInfo> {
+        val maybeApiData = callApi(username)
+        return maybeApiData.flatMap { apiData ->
+            val maybeUserInfo = extractUserInfo(apiData)
+            maybeUserInfo.flatMap { userInfo ->
+                val userInfoData = addStarRating(userInfo)
+                saveUserInfo(userInfoData)
+            }
+        }
+    }
+
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
 
         try {
             println(getUserInfo(username ?: "adomokos"))
-        } catch (ex: Exception) {
-            println("Error occurred: $ex")
+        } catch (err: Exception) {
+            println("Fatal error occurred: $err")
         }
     }
 }
