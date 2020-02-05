@@ -1,18 +1,31 @@
 package sandbox.github.explorer
 
+import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import sandbox.github.explorer.Entities.UserInfo
 
 object NullableApp {
+    // 1. Call GitHub, pull info about the user
+    fun callApi(username: String): String {
+        val client = HttpClient.newBuilder().build()
+        val request =
+            HttpRequest
+                .newBuilder()
+                .uri(URI.create("${getGitHubUrl()}/$username"))
+                .build()
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        return response.body()
+    }
+
+    // 2. Deserialize the JSON response into UserInfo?
     fun extractUserInfo(userInfoData: String): UserInfo? =
         UserInfo.deserializeFromJson(userInfoData)
 
-    fun saveUserInfo(userInfo: UserInfo): UserInfo? =
-        saveRecord(userInfo)
-
+    // 3. Run the transform logic
     fun addStarRating(userInfo: UserInfo): UserInfo {
         if (userInfo.publicReposCount > 20) {
             userInfo.username = userInfo.username + " ⭐"
@@ -20,24 +33,15 @@ object NullableApp {
         return userInfo
     }
 
+    // 4. Save the user in a data store
+    fun saveUserInfo(userInfo: UserInfo): UserInfo? =
+        saveRecord(userInfo)
+
     fun getUserInfo(username: String): UserInfo? {
         val apiData = callApi(username)
         val userInfo = extractUserInfo(apiData)
         val ratedUserInfo = addStarRating(userInfo!!)
         return saveUserInfo(ratedUserInfo!!)
-    }
-
-    fun callApi(username: String): String {
-        val client = HttpClient.newBuilder().build()
-        val request =
-            HttpRequest
-                .newBuilder()
-                .uri(URI.create("https://api.github.com/users/$username"))
-                .build()
-
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
-
-        return response.body()
     }
 
     fun run(args: Array<String>) {

@@ -3,11 +3,11 @@ package sandbox.github.explorer
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
+import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
-import sandbox.github.explorer.Entities.UserInfo
 
 object OptionApp {
     fun extractUserInfo(userInfoData: String): Option<UserInfo> =
@@ -39,7 +39,7 @@ object OptionApp {
         val request =
             HttpRequest
                 .newBuilder()
-                .uri(URI.create("https://api.github.com/users/$username"))
+                .uri(URI.create("${getGitHubUrl()}/$username"))
                 .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
