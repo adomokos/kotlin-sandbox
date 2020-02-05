@@ -9,7 +9,6 @@ import arrow.core.right
 import arrow.fx.IO
 import arrow.fx.handleError
 import com.beust.klaxon.KlaxonException
-import java.net.ConnectException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -66,7 +65,7 @@ object EitherIOApp {
                 .uri(URI.create("https://api.github.com/users/$username"))
                 .build()
 
-        val result = try {
+        val result = IO {
             val response = client.send(request, BodyHandlers.ofString())
 
             if (response.statusCode() == 404) {
@@ -75,11 +74,11 @@ object EitherIOApp {
             } else {
                 response.body().right()
             }
-        } catch (_: ConnectException) {
-            AppError.GitHubConnectionFailed("Couldn't reach github.com").left()
+        }.handleError { exception ->
+            AppError.GitHubConnectionFailed("Couldn't reach github.com: ${exception.cause}").left()
         }
 
-        return IO { result }
+        return result
     }
 
     private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
