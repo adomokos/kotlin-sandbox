@@ -3,11 +3,11 @@ package sandbox.github.explorer
 import arrow.core.None
 import arrow.core.Option
 import arrow.core.Some
-import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import sandbox.github.explorer.Entities.UserInfo
 
 object OptionApp {
     // 1. Call GitHub, pull info about the user

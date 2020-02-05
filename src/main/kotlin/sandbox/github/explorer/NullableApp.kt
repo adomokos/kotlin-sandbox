@@ -1,10 +1,10 @@
 package sandbox.github.explorer
 
-import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import sandbox.github.explorer.Entities.UserInfo
 
 object NullableApp {
     // 1. Call GitHub, pull info about the user

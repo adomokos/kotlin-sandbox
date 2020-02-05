@@ -8,12 +8,11 @@ import arrow.core.leftIfNull
 import arrow.core.right
 import arrow.fx.IO
 import arrow.fx.handleError
-import com.beust.klaxon.KlaxonException
-import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
+import sandbox.github.explorer.Entities.UserInfo
 
 // https://jorgecastillo.dev/please-try-to-use-io
 
@@ -28,13 +27,14 @@ object EitherIOApp {
     // 1. Call GitHub, pull info about the user
     private fun callApi(username: String): IO<Either<AppError, String>> {
         val client = HttpClient.newBuilder().build()
-        val request =
-            HttpRequest
-                .newBuilder()
-                .uri(URI.create("${getGitHubUrl()}/$username"))
-                .build()
 
         val result = IO {
+            val request =
+                HttpRequest
+                    .newBuilder()
+                    .uri(URI.create("${getGitHubUrl()}/$username"))
+                    .build()
+
             val response = client.send(request, BodyHandlers.ofString())
 
             if (response.statusCode() == 404) {
@@ -52,13 +52,14 @@ object EitherIOApp {
 
     // 2. Deserialize the JSON response into UserInfo?
     private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
-        try {
+        runCatching {
             UserInfo.deserializeFromJson(userInfoData)
                 .right()
                 .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
-        } catch (ex: KlaxonException) {
-            AppError.UserDataJsonParseFailed(ex.message ?: "No message").left()
-        }
+        }.fold(
+            { it },
+            { AppError.UserDataJsonParseFailed(it.message ?: "No message").left() }
+        )
 
     // 3. Run the transform logic
     private fun addStarRating(userInfo: UserInfo): UserInfo {
