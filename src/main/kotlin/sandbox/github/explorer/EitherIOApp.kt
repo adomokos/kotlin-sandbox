@@ -85,6 +85,7 @@ object EitherIOApp {
         if (userInfo.publicReposCount > 20) {
             userInfo.username = userInfo.username + " ⭐"
         }
+        throw Exception("I blew up")
         return userInfo
     }
 
@@ -124,8 +125,6 @@ object EitherIOApp {
             }
 
         // Run the program asynchronously, handle error
-        program.unsafeRunAsync { result ->
-            result.mapLeft { error -> println("Error: $error") }
-        }
+        program.unsafeRunSync()
     }
 }
