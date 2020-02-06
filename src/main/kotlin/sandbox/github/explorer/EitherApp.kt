@@ -27,7 +27,7 @@ object EitherApp {
             val request =
                 HttpRequest
                     .newBuilder()
-                    .uri(URI.create("${getGitHubUrl()}/$username"))
+                    .uri(URI.create("$gitHubUrl/$username"))
                     .build()
 
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())

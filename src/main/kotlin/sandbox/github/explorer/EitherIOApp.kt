@@ -8,11 +8,11 @@ import arrow.core.leftIfNull
 import arrow.core.right
 import arrow.fx.IO
 import arrow.fx.handleError
-import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
+import sandbox.github.explorer.Entities.UserInfo
 
 // https://jorgecastillo.dev/please-try-to-use-io
 
@@ -32,7 +32,7 @@ object EitherIOApp {
             val request =
                 HttpRequest
                     .newBuilder()
-                    .uri(URI.create("${getGitHubUrl()}/$username"))
+                    .uri(URI.create("$gitHubUrl/$username"))
                     .build()
 
             val response = client.send(request, BodyHandlers.ofString())

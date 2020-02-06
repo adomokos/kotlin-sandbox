@@ -37,5 +37,5 @@ fun optionSaveRecord(userInfo: UserInfo): Option<UserInfo> {
     return Some(userInfo)
 }
 
-fun getGitHubUrl(): String =
+val gitHubUrl: String =
     System.getenv("GITHUB_URL") ?: "https://api.github.com/users"
