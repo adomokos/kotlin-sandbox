@@ -18,8 +18,6 @@ object NullableApp {
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
-        println(response)
-
         return response.body()
     }
 
