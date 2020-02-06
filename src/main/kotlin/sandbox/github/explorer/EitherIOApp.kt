@@ -7,6 +7,7 @@ import arrow.core.left
 import arrow.core.leftIfNull
 import arrow.core.right
 import arrow.fx.IO
+import arrow.fx.extensions.fx
 import arrow.fx.handleError
 import java.net.URI
 import java.net.http.HttpClient
@@ -85,14 +86,15 @@ object EitherIOApp {
         if (userInfo.publicReposCount > 20) {
             userInfo.username = userInfo.username + " ⭐"
         }
-        throw Exception("I blew up")
         return userInfo
     }
 
     // 4. Save the user in a data store
     fun saveUserInfo(userInfo: UserInfo): IO<Either<AppError, UserInfo>> =
         IO {
-            Util.optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
+            Util.optionSaveRecord(userInfo).toEither {
+                AppError.UserSaveFailed("Couldn't save the user with the DAO")
+            }
         }.handleError { Left(AppError.UserSaveFailed("Something went wrong in saveUserInfo")) }
 
     fun getUserInfo(username: String): IO<Either<AppError, UserInfo>> =
@@ -102,9 +104,23 @@ object EitherIOApp {
                     .flatMap(::extractUserInfo)
                     .map(::addStarRating)
                     .flatMap {
-                        saveUserInfo(it).unsafeRunSync()
+                        val result = saveUserInfo(it)
+                        result.unsafeRunSync()
                     }
             }
+
+    fun getUserInfoFx(username: String): IO<Either<AppError, UserInfo>> =
+        IO.fx {
+            val eitherApiResponse = !callApi(username)
+            val eitherUserInfo = eitherApiResponse.flatMap(::extractUserInfo)
+            val userInfoWithStarRating = eitherUserInfo.map(::addStarRating)
+            val result = when (userInfoWithStarRating) {
+                is Either.Left -> userInfoWithStarRating
+                is Either.Right -> !saveUserInfo(userInfoWithStarRating.b)
+            }
+
+            userInfoWithStarRating
+        }
 
     fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
     fun handleFailure(error: AppError): Unit = println("The app error is: $error")
@@ -113,7 +129,7 @@ object EitherIOApp {
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
 
-        val program = getUserInfo(username ?: "adomokos")
+        val program = getUserInfoFx(username ?: "adomokos")
             .map { result ->
                 when (result) {
                     is Either.Left -> handleFailure(result.a)
