@@ -10,32 +10,34 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import sandbox.github.explorer.Entities.UserInfo
 
-// ZOMG to parse 8601 UTC Date Time
-fun createKlaxon() = Klaxon()
-    .fieldConverter(Entities.KlaxonDate::class, object : Converter {
-        override fun canConvert(cls: Class<*>) = cls == LocalDateTime::class.java
+object Util {
+    // ZOMG to parse 8601 UTC Date Time
+    fun createKlaxon() = Klaxon()
+        .fieldConverter(Entities.KlaxonDate::class, object : Converter {
+            override fun canConvert(cls: Class<*>) = cls == LocalDateTime::class.java
 
-        override fun fromJson(jv: JsonValue) =
-            if (jv.string != null) {
-                LocalDateTime.parse(jv.string, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
-            } else {
-                throw KlaxonException("Couldn't parse date: ${jv.string}")
-            }
+            override fun fromJson(jv: JsonValue) =
+                if (jv.string != null) {
+                    LocalDateTime.parse(jv.string, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'"))
+                } else {
+                    throw KlaxonException("Couldn't parse date: ${jv.string}")
+                }
 
-        @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
-        override fun toJson(dateValue: Any) =
-            """ { "date" : $dateValue } """
-    })
+            @Suppress("PARAMETER_NAME_CHANGED_ON_OVERRIDE")
+            override fun toJson(dateValue: Any) =
+                """ { "date" : $dateValue } """
+        })
 
-fun saveRecord(userInfo: UserInfo): UserInfo? {
-    println(":: Saved user info ::")
-    return userInfo
+    fun saveRecord(userInfo: UserInfo): UserInfo? {
+        println(":: Saved user info ::")
+        return userInfo
+    }
+
+    fun optionSaveRecord(userInfo: UserInfo): Option<UserInfo> {
+        println(":: Saved user info ::")
+        return Some(userInfo)
+    }
+
+    val gitHubUrl: String =
+        System.getenv("GITHUB_URL") ?: "https://api.github.com/users"
 }
-
-fun optionSaveRecord(userInfo: UserInfo): Option<UserInfo> {
-    println(":: Saved user info ::")
-    return Some(userInfo)
-}
-
-val gitHubUrl: String =
-    System.getenv("GITHUB_URL") ?: "https://api.github.com/users"

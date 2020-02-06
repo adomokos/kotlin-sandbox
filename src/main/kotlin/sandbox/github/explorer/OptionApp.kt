@@ -16,7 +16,7 @@ object OptionApp {
         val request =
             HttpRequest
                 .newBuilder()
-                .uri(URI.create("$gitHubUrl/$username"))
+                .uri(URI.create("${Util.gitHubUrl}/$username"))
                 .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
@@ -42,7 +42,7 @@ object OptionApp {
 
     // 4. Save the user in a data store
     fun saveUserInfo(userInfo: UserInfo): Option<UserInfo> =
-        optionSaveRecord(userInfo)
+        Util.optionSaveRecord(userInfo)
 
     fun getUserInfo(username: String): Option<UserInfo> {
         val maybeApiData = callApi(username)

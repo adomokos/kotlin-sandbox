@@ -13,10 +13,12 @@ object NullableApp {
         val request =
             HttpRequest
                 .newBuilder()
-                .uri(URI.create("$gitHubUrl/$username"))
+                .uri(URI.create("${Util.gitHubUrl}/$username"))
                 .build()
 
         val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+
+        println(response)
 
         return response.body()
     }
@@ -35,22 +37,18 @@ object NullableApp {
 
     // 4. Save the user in a data store
     fun saveUserInfo(userInfo: UserInfo): UserInfo? =
-        saveRecord(userInfo)
+        Util.saveRecord(userInfo)
 
     fun getUserInfo(username: String): UserInfo? {
         val apiData = callApi(username)
         val userInfo = extractUserInfo(apiData)
         val ratedUserInfo = addStarRating(userInfo!!)
-        return saveUserInfo(ratedUserInfo!!)
+        return saveUserInfo(ratedUserInfo)
     }
 
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
 
-        try {
-            println(getUserInfo(username ?: "adomokos"))
-        } catch (err: Exception) {
-            println("Fatal error occurred: $err")
-        }
+        println(getUserInfo(username ?: "adomokos"))
     }
 }

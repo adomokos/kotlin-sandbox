@@ -27,7 +27,7 @@ object EitherApp {
             val request =
                 HttpRequest
                     .newBuilder()
-                    .uri(URI.create("$gitHubUrl/$username"))
+                    .uri(URI.create("${Util.gitHubUrl}/$username"))
                     .build()
 
             val response = client.send(request, HttpResponse.BodyHandlers.ofString())
@@ -63,7 +63,7 @@ object EitherApp {
 
     // 4. Save the user in a data store
     fun saveUserInfo(userInfo: Entities.UserInfo): Either<AppError, Entities.UserInfo> =
-        optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
+        Util.optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
 
     private fun getUserInfo(username: String): Either<AppError, Entities.UserInfo> =
         callApi(username)

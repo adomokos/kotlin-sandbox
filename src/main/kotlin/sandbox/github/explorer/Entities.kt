@@ -23,7 +23,7 @@ object Entities {
     ) {
         companion object {
             fun deserializeFromJson(userInfoData: String): UserInfo? =
-                createKlaxon().parse<UserInfo>(userInfoData)
+                Util.createKlaxon().parse<UserInfo>(userInfoData)
         }
     }
 }
