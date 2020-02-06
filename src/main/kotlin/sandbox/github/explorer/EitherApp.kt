@@ -71,7 +71,7 @@ object EitherApp {
             .map(::addStarRating)
             .flatMap(::saveUserInfo)
 
-    private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
+    // private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
     private fun handleFailure(error: AppError): Unit = println("The app error is: $error")
     private fun handleSuccess(userInfo: Entities.UserInfo): Unit = println("The result is: $userInfo")
 
