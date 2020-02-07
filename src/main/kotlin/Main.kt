@@ -6,6 +6,18 @@ import sandbox.github.explorer.OptionApp.run as runOptionApp
 // import sandbox.github.explorer.EitherIOApp.run as runEitherIOApp
 
 @Suppress("UNUSED_PARAMETER")
+class Main {
+    companion object {
+        @JvmStatic fun main(args: Array<String>) {
+            Main().run(args)
+        }
+    }
+
+    fun run(args: Array<String>) {
+        println(args)
+        runOptionApp(args)
+    }
+}
 suspend fun main(args: Array<String>) {
     // runArrowExamples()
     // runExposedExamples()

@@ -12,7 +12,7 @@ db.console: ## Open the db-console
 .PHONY: db-console
 
 build: ## Build with Gradle
-	./gradlew build -x test -x detekt
+	./gradlew build -x test -x detekt --warning-mode all
 .PHONY: build
 
 test: db.rebuild ## Run the tests
@@ -29,6 +29,12 @@ run: ## Run app locally
 	# ./gradlew run --args="parallel"
 	./gradlew run
 .PHONY: run
+
+run-jar: ## Run the app locally as Jar
+	# ./gradlew run --args="parallel"
+	./gradlew jar
+	java -jar build/libs/kotlin-sandbox-uber.jar
+.PHONY: run-jar
 
 fix-style: ## Fixed ktlint errors with spotless
 	./gradlew spotlessApply

@@ -86,6 +86,27 @@ tasks {
             // setShowStandardStreams(true)
         }
     }
+
+    withType<Jar> {
+        archiveClassifier.set("uber")
+
+        manifest {
+            attributes["Main-Class"] = application.mainClassName
+        }
+        from(sourceSets.main.get().output)
+
+        dependsOn(configurations.runtimeClasspath)
+        from({
+            exclude("META-INF/LICENSE.txt")
+            exclude("META-INF/NOTICE.txt")
+            configurations.runtimeClasspath.get().map {
+                if (it.isDirectory)
+                    it
+                else
+                    zipTree(it)
+            }
+        })
+    }
 }
 
 detekt {
