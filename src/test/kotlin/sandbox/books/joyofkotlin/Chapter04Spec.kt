@@ -1,5 +1,6 @@
 package sandbox.books.joyofkotlin
 
+import arrow.core.NonEmptyList
 import io.kotlintest.shouldBe
 import io.kotlintest.specs.StringSpec
 
@@ -81,6 +82,33 @@ tailrec fun add(x: Int, y: Int): Int =
         add(inc(x), dec(y))
 
 class Chapter04Spec : StringSpec() {
+    // Sum list by recursion
+
+    fun <T> List<T>.head(): T =
+        if (this.isEmpty())
+            throw IllegalArgumentException("head called on empty list")
+        else
+            this[0]
+
+    fun <T> List<T>.tail(): List<T> =
+        if (this.isEmpty())
+            throw IllegalArgumentException("tail called on empty list")
+        else
+            this.drop(1)
+
+    fun recursiveSum(list: List<Int>): Int =
+        if (list.isEmpty())
+            0
+        else
+            list.head() + recursiveSum(list.tail())
+
+    // Or with Arrow's NonEmptyList
+    fun nolRecursiveSum(list: NonEmptyList<Int>): Int =
+        if (list.size == 1)
+            list.head
+        else
+            list.head + nolRecursiveSum(NonEmptyList.fromListUnsafe(list.tail))
+
     init {
         "can use append to combine a list into a String" {
             val charList = listOf('a', 'b', 'c', 'd')
@@ -111,6 +139,14 @@ class Chapter04Spec : StringSpec() {
         "can add two numbers" {
             val result = add(5, 4)
             result shouldBe 9
+        }
+
+        "can recursively sum list" {
+            val list = listOf(1, 2, 3, 4)
+            recursiveSum(list) shouldBe 10
+
+            val nolList = NonEmptyList.of(1, 2, 3, 4)
+            nolRecursiveSum(nolList) shouldBe 10
         }
     }
 }
