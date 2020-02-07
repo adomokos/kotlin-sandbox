@@ -109,6 +109,49 @@ class Chapter04Spec : StringSpec() {
         else
             list.head + nolRecursiveSum(NonEmptyList.fromListUnsafe(list.tail))
 
+    fun tailrecSum(list: List<Int>): Int {
+        tailrec fun sumTail(list: List<Int>, acc: Int): Int =
+            if (list.isEmpty())
+                acc
+            else
+                sumTail(list.tail(), acc + list.head())
+
+        return sumTail(list, 0)
+    }
+
+    fun <T, U> foldLeft(list: List<T>, z: U, f: (U, T) -> U): U {
+        tailrec fun foldLeft(list: List<T>, acc: U): U =
+            if (list.isEmpty())
+                acc
+            else
+                foldLeft(list.tail(), f(acc, list.head()))
+
+        return foldLeft(list, z)
+    }
+
+    fun sumInts(list: List<Int>) = foldLeft(list, 0, Int::plus)
+    fun stringMaker(list: List<Char>) = foldLeft(list, "", String::plus)
+    fun <T> makeString(list: List<T>, delim: String) =
+        foldLeft(list, "") { s, t ->
+            if (s.isEmpty()) "$t" else "$s$delim$t"
+        }
+
+    fun <T> prepend(list: List<T>, elem: T): List<T> =
+        listOf(elem) + list
+
+    fun <T> reverse(list: List<T>): List<T> =
+        foldLeft(list, listOf(), ::prepend)
+
+    fun rangeMaker(start: Int, end: Int): List<Int> {
+        val result: MutableList<Int> = mutableListOf()
+        var index = start
+        while (index < end) {
+            result.add(index)
+            index++
+        }
+        return result
+    }
+
     init {
         "can use append to combine a list into a String" {
             val charList = listOf('a', 'b', 'c', 'd')
@@ -147,6 +190,29 @@ class Chapter04Spec : StringSpec() {
 
             val nolList = NonEmptyList.of(1, 2, 3, 4)
             nolRecursiveSum(nolList) shouldBe 10
+
+            tailrecSum(list) shouldBe 10
+        }
+
+        "can use generic foldLeft" {
+            val list = listOf(1, 2, 3, 4)
+            sumInts(list) shouldBe 10
+
+            val chars = listOf('h', 'e', 'l', 'l', 'o')
+            stringMaker(chars) shouldBe "hello"
+
+            makeString(list, ",") shouldBe "1,2,3,4"
+        }
+
+        "can reverse a list" {
+            val list = listOf(1, 2, 3, 4)
+            reverse(list) shouldBe listOf(4, 3, 2, 1)
+        }
+
+        "can create a range" {
+            val range = rangeMaker(2, 6)
+
+            range shouldBe listOf(2, 3, 4, 5)
         }
     }
 }
