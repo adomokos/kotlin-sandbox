@@ -13,6 +13,7 @@ db.console: ## Open the db-console
 
 build: ## Build with Gradle
 	./gradlew build -x test -x detekt --warning-mode all
+.PHONY: build
 
 test: db.rebuild ## Run the tests
 	./gradlew test
