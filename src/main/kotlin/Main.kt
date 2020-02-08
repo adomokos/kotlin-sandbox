@@ -1,11 +1,11 @@
-// import arrow.runExamples as runArrowExamples
-// import sandbox.github.explorer.run as runExplorer
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
+// import sandbox.explorer.main as runExplorerApp
+import sandbox.github.explorer.EitherApp.run as runEitherApp
+import sandbox.github.explorer.EitherIOApp.run as runEitherIOApp
 import sandbox.github.explorer.NullableApp.run as runNullableApp
-// import sandbox.github.explorer.EitherApp.run as runEitherApp
-// import sandbox.github.explorer.EitherIOApp.run as runEitherIOApp
+import sandbox.github.explorer.OptionApp.run as runOptionApp
 
 class Hello : CliktCommand() {
     val app: String by option(help = "App name").default("Nullable")
@@ -15,6 +15,9 @@ class Hello : CliktCommand() {
     override fun run() {
         when (app) {
             "Nullable" -> runNullableApp(arrayOf(username))
+            "Option" -> runOptionApp(arrayOf(username))
+            "Either" -> runEitherApp(arrayOf(username))
+            "EitherIO" -> runEitherIOApp(arrayOf(username))
             else -> { // Note the block
                 println("Sorry, I don't know what to do...")
             }
@@ -24,4 +27,5 @@ class Hello : CliktCommand() {
 
 suspend fun main(args: Array<String>) {
     Hello().main(args)
+    // runExplorerApp(args)
 }
