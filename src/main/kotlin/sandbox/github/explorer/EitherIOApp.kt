@@ -9,11 +9,11 @@ import arrow.core.right
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.handleError
+import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
-import sandbox.github.explorer.Entities.UserInfo
 
 // https://jorgecastillo.dev/please-try-to-use-io
 
@@ -63,7 +63,7 @@ object EitherIOApp {
     */
 
     // 2. Deserialize the JSON response into UserInfo?
-    fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
+    fun deserializeData(userInfoData: String): Either<AppError, UserInfo> =
         UserInfo.deserializeFromJson(userInfoData)
             .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
@@ -88,7 +88,7 @@ object EitherIOApp {
         callApi(username)
             .map { eitherApiResponse ->
                 eitherApiResponse
-                    .flatMap(::extractUserInfo)
+                    .flatMap(::deserializeData)
                     .map(::addStarRating)
                     .flatMap {
                         val result = saveUserInfo(it)
@@ -99,7 +99,7 @@ object EitherIOApp {
     fun getUserInfoFx(username: String): IO<Either<AppError, UserInfo>> =
         IO.fx {
             val eitherApiResponse = !callApi(username)
-            val eitherUserInfo = eitherApiResponse.flatMap(::extractUserInfo)
+            val eitherUserInfo = eitherApiResponse.flatMap(::deserializeData)
             val userInfoWithStarRating = eitherUserInfo.map(::addStarRating)
             val result = when (userInfoWithStarRating) {
                 is Either.Left -> userInfoWithStarRating

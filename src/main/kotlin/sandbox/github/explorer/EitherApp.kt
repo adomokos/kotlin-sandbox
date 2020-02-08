@@ -44,7 +44,7 @@ object EitherApp {
     }
 
     // 2. Deserialize the JSON response into UserInfo?
-    private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
+    private fun deserializeData(userInfoData: String): Either<AppError, UserInfo> =
         Entities.UserInfo.deserializeFromJson(userInfoData)
             .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
@@ -63,7 +63,7 @@ object EitherApp {
 
     private fun getUserInfo(username: String): Either<AppError, UserInfo> =
         callApi(username)
-            .flatMap(::extractUserInfo)
+            .flatMap(::deserializeData)
             .map(::addStarRating)
             .flatMap(::saveUserInfo)
 

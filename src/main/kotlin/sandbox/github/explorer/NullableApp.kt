@@ -22,7 +22,7 @@ object NullableApp {
     }
 
     // 2. Deserialize the JSON response into UserInfo?
-    fun extractUserInfo(userInfoData: String): UserInfo? =
+    fun deserializeData(userInfoData: String): UserInfo? =
         UserInfo.deserializeFromJson(userInfoData)
 
     // 3. Run the transform logic
@@ -39,7 +39,7 @@ object NullableApp {
 
     fun getUserInfo(username: String): UserInfo? {
         val apiData = callApi(username)
-        val userInfo = extractUserInfo(apiData) ?: return null
+        val userInfo = deserializeData(apiData) ?: return null
         val ratedUserInfo = addStarRating(userInfo)
         return saveUserInfo(ratedUserInfo)
     }

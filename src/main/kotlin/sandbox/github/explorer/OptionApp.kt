@@ -29,7 +29,7 @@ object OptionApp {
     }
 
     // 2. Deserialize the JSON response into UserInfo?
-    fun extractUserInfo(userInfoData: String): Option<UserInfo> =
+    fun deserializeData(userInfoData: String): Option<UserInfo> =
         Option.fromNullable(UserInfo.deserializeFromJson(userInfoData))
 
     // 3. Run the transform logic
@@ -47,7 +47,7 @@ object OptionApp {
     fun getUserInfo(username: String): Option<UserInfo> {
         val maybeApiData = callApi(username)
         return maybeApiData.flatMap { apiData ->
-            val maybeUserInfo = extractUserInfo(apiData)
+            val maybeUserInfo = deserializeData(apiData)
             maybeUserInfo.flatMap { userInfo ->
                 val userInfoData = addStarRating(userInfo)
                 saveUserInfo(userInfoData)
