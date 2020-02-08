@@ -5,7 +5,6 @@ import arrow.core.flatMap
 import arrow.core.left
 import arrow.core.leftIfNull
 import arrow.core.right
-import com.beust.klaxon.KlaxonException
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
@@ -45,13 +44,9 @@ object EitherApp {
 
     // 2. Deserialize the JSON response into UserInfo?
     private fun extractUserInfo(userInfoData: String): Either<AppError, Entities.UserInfo> =
-        try {
-            Entities.UserInfo.deserializeFromJson(userInfoData)
-                .right()
-                .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
-        } catch (ex: KlaxonException) {
-            AppError.UserDataJsonParseFailed(ex.message ?: "No message").left()
-        }
+        Entities.UserInfo.deserializeFromJson(userInfoData)
+            .right()
+            .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
 
     // 3. Run the transform logic
     private fun addStarRating(userInfo: Entities.UserInfo): Entities.UserInfo {

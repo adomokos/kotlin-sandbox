@@ -62,24 +62,9 @@ object EitherIOApp {
 
     // 2. Deserialize the JSON response into UserInfo?
     fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
-        runCatchingEither({ err ->
-            AppError.UserDataJsonParseFailed("Error deserializing JSON to UserInfo: ${err.message}")
-        }) {
-                UserInfo.deserializeFromJson(userInfoData)
-                    .right()
-                    .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
-            }
-
-        /*
-       runCatching {
-            UserInfo.deserializeFromJson(userInfoData)
-                .right()
-                .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
-        }.fold(
-            { it },
-            { AppError.UserDataJsonParseFailed(it.message ?: "No message").left() }
-        )
-    */
+        UserInfo.deserializeFromJson(userInfoData)
+            .right()
+            .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
 
     // 3. Run the transform logic
     fun addStarRating(userInfo: UserInfo): UserInfo {

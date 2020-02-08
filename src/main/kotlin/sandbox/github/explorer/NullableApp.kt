@@ -39,8 +39,8 @@ object NullableApp {
 
     fun getUserInfo(username: String): UserInfo? {
         val apiData = callApi(username)
-        val userInfo = extractUserInfo(apiData)
-        val ratedUserInfo = addStarRating(userInfo!!)
+        val userInfo = extractUserInfo(apiData) ?: return null
+        val ratedUserInfo = addStarRating(userInfo)
         return saveUserInfo(ratedUserInfo)
     }
 
