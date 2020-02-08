@@ -9,6 +9,7 @@ import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
+import sandbox.github.explorer.Entities.UserInfo
 
 object EitherApp {
     sealed class AppError {
@@ -43,13 +44,13 @@ object EitherApp {
     }
 
     // 2. Deserialize the JSON response into UserInfo?
-    private fun extractUserInfo(userInfoData: String): Either<AppError, Entities.UserInfo> =
+    private fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
         Entities.UserInfo.deserializeFromJson(userInfoData)
             .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
 
     // 3. Run the transform logic
-    private fun addStarRating(userInfo: Entities.UserInfo): Entities.UserInfo {
+    private fun addStarRating(userInfo: UserInfo): UserInfo {
         if (userInfo.publicReposCount > 20) {
             userInfo.username = userInfo.username + " ⭐"
         }
@@ -57,18 +58,18 @@ object EitherApp {
     }
 
     // 4. Save the user in a data store
-    fun saveUserInfo(userInfo: Entities.UserInfo): Either<AppError, Entities.UserInfo> =
+    fun saveUserInfo(userInfo: UserInfo): Either<AppError, UserInfo> =
         Util.optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
 
-    private fun getUserInfo(username: String): Either<AppError, Entities.UserInfo> =
+    private fun getUserInfo(username: String): Either<AppError, UserInfo> =
         callApi(username)
             .flatMap(::extractUserInfo)
             .map(::addStarRating)
             .flatMap(::saveUserInfo)
 
-    private fun handleFailure(resultFailure: Either<AppError, Entities.UserInfo>): Unit =
+    private fun handleFailure(resultFailure: Either<AppError, UserInfo>): Unit =
         println("The app error is: $resultFailure")
-    private fun handleSuccess(resultSuccess: Either<AppError, Entities.UserInfo>): Unit =
+    private fun handleSuccess(resultSuccess: Either<AppError, UserInfo>): Unit =
         println("The result is: $resultSuccess")
 
     fun run(args: Array<String>) {

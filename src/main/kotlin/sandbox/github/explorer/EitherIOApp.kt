@@ -51,6 +51,7 @@ object EitherIOApp {
         return result
     }
 
+    /*
     fun <E, T> runCatchingEither(onError: (err: Throwable) -> E, block: () -> Either<E, T>): Either<E, T> {
         val result = runCatching(block)
 
@@ -59,6 +60,7 @@ object EitherIOApp {
             { err -> onError(err).left() }
         )
     }
+    */
 
     // 2. Deserialize the JSON response into UserInfo?
     fun extractUserInfo(userInfoData: String): Either<AppError, UserInfo> =
