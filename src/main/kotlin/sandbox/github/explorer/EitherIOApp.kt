@@ -119,12 +119,14 @@ object EitherIOApp {
                 is Either.Right -> !saveUserInfo(userInfoWithStarRating.b)
             }
 
-            userInfoWithStarRating
+            result
         }
 
     fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
-    fun handleFailure(error: AppError): Unit = println("The app error is: $error")
-    fun handleSuccess(userInfo: UserInfo): Unit = println("The result is: $userInfo")
+    private fun handleFailure(resultFailure: Either<AppError, UserInfo>): Unit =
+        println("The app error is: $resultFailure")
+    private fun handleSuccess(resultSuccess: Either<AppError, UserInfo>): Unit =
+        println("The result is: $resultSuccess")
 
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
@@ -132,8 +134,8 @@ object EitherIOApp {
         val program = getUserInfoFx(username ?: "adomokos")
             .map { result ->
                 when (result) {
-                    is Either.Left -> handleFailure(result.a)
-                    is Either.Right -> handleSuccess(result.b)
+                    is Either.Left -> handleFailure(result)
+                    is Either.Right -> handleSuccess(result)
                 }
             }
             .handleError { error ->

@@ -71,9 +71,10 @@ object EitherApp {
             .map(::addStarRating)
             .flatMap(::saveUserInfo)
 
-    // private fun handleAppError(error: Throwable): Unit = println("app failed \uD83D\uDCA5: $error")
-    private fun handleFailure(error: AppError): Unit = println("The app error is: $error")
-    private fun handleSuccess(userInfo: Entities.UserInfo): Unit = println("The result is: $userInfo")
+    private fun handleFailure(resultFailure: Either<AppError, Entities.UserInfo>): Unit =
+        println("The app error is: $resultFailure")
+    private fun handleSuccess(resultSuccess: Either<AppError, Entities.UserInfo>): Unit =
+        println("The result is: $resultSuccess")
 
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
@@ -82,8 +83,8 @@ object EitherApp {
             val result = getUserInfo(username ?: "adomokos")
 
             when (result) {
-                is Either.Left -> handleFailure(result.a)
-                is Either.Right -> handleSuccess(result.b)
+                is Either.Left -> handleFailure(result)
+                is Either.Right -> handleSuccess(result)
             }
         } catch (err: Exception) {
             println("Fatal error occurred: $err")
