@@ -13,7 +13,6 @@ db.console: ## Open the db-console
 
 build: ## Build with Gradle
 	./gradlew build -x test -x detekt --warning-mode all
-.PHONY: build
 
 test: db.rebuild ## Run the tests
 	./gradlew test
@@ -29,6 +28,17 @@ run: ## Run app locally
 	# ./gradlew run --args="parallel"
 	./gradlew run --args="--app=Nullable --username=adomokos"
 .PHONY: run
+
+run-all: ## Run  all the examples
+	./gradlew run --args="--app=Nullable --username=adomokos"
+	./gradlew run --args="--app=Nullable --username=adomoko1"
+	./gradlew run --args="--app=Option --username=adomokos"
+	./gradlew run --args="--app=Option --username=adomoko1"
+	./gradlew run --args="--app=Either --username=adomokos"
+	./gradlew run --args="--app=Either --username=adomoko1"
+	./gradlew run --args="--app=EitherIO --username=adomokos"
+	./gradlew run --args="--app=EitherIO --username=adomoko1"
+.PHONY: run-all
 
 run-jar: ## Run the app locally as Jar
 	# ./gradlew run --args="parallel"
