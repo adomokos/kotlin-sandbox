@@ -63,6 +63,9 @@ dependencies {
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
+    // clikt - for command line args parsing
+    implementation("com.github.ajalt:clikt:2.4.0")
+
     // kotlintest
     testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion") {
         // https://github.com/kotlintest/kotlintest/issues/1026
