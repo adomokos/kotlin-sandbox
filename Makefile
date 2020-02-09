@@ -26,7 +26,6 @@ single-test: ## Run a sigle test, pass TEST=something.MySpec to run it
 .PHONY: tests
 
 run: ## Run app locally
-	# ./gradlew run --args="parallel"
 	./gradlew run --args="--app=Nullable --username=adomokos"
 .PHONY: run
 
