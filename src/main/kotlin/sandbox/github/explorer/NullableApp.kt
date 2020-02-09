@@ -47,6 +47,7 @@ object NullableApp {
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
 
-        println(getUserInfo(username ?: "adomokos"))
+        val result = getUserInfo(username ?: "adomokos")
+        Util.printlnGreen(result)
     }
 }

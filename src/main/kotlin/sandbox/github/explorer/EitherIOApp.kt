@@ -9,11 +9,11 @@ import arrow.core.right
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.handleError
-import sandbox.github.explorer.Entities.UserInfo
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse.BodyHandlers
+import sandbox.github.explorer.Entities.UserInfo
 
 // https://jorgecastillo.dev/please-try-to-use-io
 

@@ -27,12 +27,17 @@ object Entities {
         val memberSince: LocalDateTime?
     ) {
         companion object {
-            fun deserializeFromJson(userInfoData: String): UserInfo? =
-                try {
+            fun deserializeFromJson(userInfoData: String): UserInfo? {
+                if (userInfoData.isBlank())
+                    return null
+
+                return try {
                     createKlaxon().parse<UserInfo>(userInfoData)
                 } catch (ex: KlaxonException) {
+                    Util.printlnRed("KlaxonException: ${ex.message}")
                     null
                 }
+            }
         }
     }
 

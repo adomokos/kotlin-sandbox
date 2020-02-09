@@ -45,7 +45,7 @@ object EitherApp {
 
     // 2. Deserialize the JSON response into UserInfo?
     private fun deserializeData(userInfoData: String): Either<AppError, UserInfo> =
-        Entities.UserInfo.deserializeFromJson(userInfoData)
+        UserInfo.deserializeFromJson(userInfoData)
             .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
 
