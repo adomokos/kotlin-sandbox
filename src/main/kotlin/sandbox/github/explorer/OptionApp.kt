@@ -44,16 +44,11 @@ object OptionApp {
     fun saveUserInfo(userInfo: UserInfo): Option<UserInfo> =
         Util.optionSaveRecord(userInfo)
 
-    fun getUserInfo(username: String): Option<UserInfo> {
-        val maybeApiData = callApi(username)
-        return maybeApiData.flatMap { apiData ->
-            val maybeUserInfo = deserializeData(apiData)
-            maybeUserInfo.flatMap { userInfo ->
-                val userInfoData = addStarRating(userInfo)
-                saveUserInfo(userInfoData)
-            }
-        }
-    }
+    fun getUserInfo(username: String): Option<UserInfo> =
+        callApi(username)
+            .flatMap(::deserializeData)
+            .map(::addStarRating)
+            .flatMap(::saveUserInfo)
 
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
