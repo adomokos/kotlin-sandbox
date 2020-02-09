@@ -54,9 +54,9 @@ object OptionApp {
         val username = args.firstOrNull()
 
         try {
-            println(getUserInfo(username ?: "adomokos"))
+            Util.printlnGreen(getUserInfo(username ?: "adomokos"))
         } catch (err: Exception) {
-            println("Fatal error occurred: $err")
+            Util.printlnRed("Fatal error occurred: $err")
         }
     }
 }
