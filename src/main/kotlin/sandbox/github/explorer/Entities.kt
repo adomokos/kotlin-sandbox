@@ -26,6 +26,12 @@ object Entities {
         @KlaxonDate
         val memberSince: LocalDateTime?
     ) {
+        override fun toString(): String =
+            """UserInfo(username = ${this.username},
+|         publicReposCount = ${this.publicReposCount},
+|         gitHubId = ${this.gitHubId},
+|         memberSince = ${this.memberSince})""".trimMargin()
+
         companion object {
             fun deserializeFromJson(userInfoData: String): UserInfo? {
                 if (userInfoData.isBlank())
