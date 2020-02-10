@@ -20,7 +20,7 @@ object EitherApp {
     }
 
     // 1. Call GitHub, pull info about the user
-    private fun callApi(username: String): Either<AppError, String> {
+    fun callApi(username: String): Either<AppError, String> {
         val client = HttpClient.newBuilder().build()
 
         val result = {
@@ -44,13 +44,13 @@ object EitherApp {
     }
 
     // 2. Deserialize the JSON response into UserInfo?
-    private fun deserializeData(userInfoData: String): Either<AppError, UserInfo> =
+    fun deserializeData(userInfoData: String): Either<AppError, UserInfo> =
         UserInfo.deserializeFromJson(userInfoData)
             .right()
             .leftIfNull { AppError.UserDataJsonParseFailed("Parsed result is null") }
 
     // 3. Run the transform logic
-    private fun addStarRating(userInfo: UserInfo): UserInfo {
+    fun addStarRating(userInfo: UserInfo): UserInfo {
         if (userInfo.publicReposCount > 20) {
             userInfo.username = userInfo.username + " ⭐"
         }
@@ -61,16 +61,16 @@ object EitherApp {
     fun saveUserInfo(userInfo: UserInfo): Either<AppError, UserInfo> =
         Util.optionSaveRecord(userInfo).toEither { AppError.UserSaveFailed("Couldn't save the user with the DAO") }
 
-    private fun getUserInfo(username: String): Either<AppError, UserInfo> =
+    fun getUserInfo(username: String): Either<AppError, UserInfo> =
         callApi(username)
             .flatMap(::deserializeData)
             .map(::addStarRating)
             .flatMap(::saveUserInfo)
 
-    private fun handleFailure(resultFailure: Either<AppError, UserInfo>): Unit =
-        println("The app error is: $resultFailure")
-    private fun handleSuccess(resultSuccess: Either<AppError, UserInfo>): Unit =
-        println("The result is: $resultSuccess")
+    fun handleFailure(resultFailure: Either<AppError, UserInfo>): Unit =
+        Util.printlnYellow("The app error is: $resultFailure")
+    fun handleSuccess(resultSuccess: Either<AppError, UserInfo>): Unit =
+        Util.printlnGreen("The result is: $resultSuccess")
 
     fun run(args: Array<String>) {
         val username = args.firstOrNull()
@@ -83,7 +83,7 @@ object EitherApp {
                 is Either.Right -> handleSuccess(result)
             }
         } catch (err: Exception) {
-            println("Fatal error occurred: $err")
+            Util.printlnRed("Fatal error occurred: $err")
         }
     }
 }

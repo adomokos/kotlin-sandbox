@@ -36,4 +36,7 @@ object Util {
 
     fun printlnRed(input: Any?): Unit =
         println("${TerminalColors.ANSI_RED}$input${TerminalColors.ANSI_RESET}")
+
+    fun printlnYellow(input: Any?): Unit =
+        println("${TerminalColors.ANSI_YELLOW}$input${TerminalColors.ANSI_RESET}")
 }
