@@ -26,29 +26,25 @@ object EitherIOApp {
     }
 
     // 1. Call GitHub, pull info about the user
-    fun callApi(username: String): IO<Either<AppError, String>> {
+    fun callApi(username: String): IO<Either<AppError, String>> = IO {
         val client = HttpClient.newBuilder().build()
 
-        val result = IO {
-            val request =
-                HttpRequest
-                    .newBuilder()
-                    .uri(URI.create("${Util.gitHubUrl}/$username"))
-                    .build()
+        val request =
+            HttpRequest
+                .newBuilder()
+                .uri(URI.create("${Util.gitHubUrl}/$username"))
+                .build()
 
-            val response = client.send(request, BodyHandlers.ofString())
+        val response = client.send(request, BodyHandlers.ofString())
 
-            if (response.statusCode() == 404) {
-                AppError.UserNotFound("The user $username was not found on GitHub")
-                    .left()
-            } else {
-                response.body().right()
-            }
-        }.handleError { exception ->
-            AppError.GitHubConnectionFailed("Couldn't reach github.com: ${exception.cause}").left()
+        if (response.statusCode() == 404) {
+            AppError.UserNotFound("The user $username was not found on GitHub")
+                .left()
+        } else {
+            response.body().right()
         }
-
-        return result
+    }.handleError { err ->
+        AppError.GitHubConnectionFailed("Couldn't reach github.com: ${err.cause}").left()
     }
 
     /*
