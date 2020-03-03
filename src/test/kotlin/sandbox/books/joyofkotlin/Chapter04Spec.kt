@@ -1,8 +1,8 @@
 package sandbox.books.joyofkotlin
 
 import arrow.core.NonEmptyList
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 /*
 Corecursion is composing computations steps by using the output of one step as the input of the next one, starting with

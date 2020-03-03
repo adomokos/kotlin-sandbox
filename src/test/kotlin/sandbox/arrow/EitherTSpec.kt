@@ -10,8 +10,8 @@ import arrow.fx.handleError
 import arrow.mtl.EitherT
 import arrow.mtl.extensions.eithert.monad.monad
 import arrow.mtl.fix
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 typealias EitherTIO<A> = EitherT<ForIO, AppError, A>
 

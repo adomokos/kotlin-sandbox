@@ -3,8 +3,8 @@ package sandbox.arrow
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import arrow.fx.fix
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 fun returnLastElement(): Int {
     return IO.fx {

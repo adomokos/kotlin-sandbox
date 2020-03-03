@@ -2,8 +2,8 @@ package sandbox.arrow
 
 import arrow.syntax.function.bind
 import arrow.syntax.function.partially3
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 val strongHtml: (String, String, String) -> String =
     { body, id, style -> "<strong id='$id' style='$style'>$body</strong>" }

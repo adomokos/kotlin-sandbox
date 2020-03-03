@@ -2,10 +2,10 @@ package sandbox.explorer.logic
 
 import arrow.core.Left
 import arrow.fx.fix
-import io.kotlintest.assertions.arrow.either.shouldNotBeLeft
-import io.kotlintest.extensions.TestListener
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.arrow.either.shouldNotBeLeft
+import io.kotest.core.listeners.TestListener
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction

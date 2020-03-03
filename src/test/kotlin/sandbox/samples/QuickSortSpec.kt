@@ -1,7 +1,7 @@
 package sandbox.samples
 
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 fun <T : Comparable<T>> quickSort(numbers: List<T>): List<Any?> =
     when {

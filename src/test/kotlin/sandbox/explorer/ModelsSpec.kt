@@ -3,11 +3,11 @@ package sandbox.explorer
 import arrow.core.Left
 import arrow.fx.fix
 import com.beust.klaxon.KlaxonException
-import io.kotlintest.matchers.startWith
-import io.kotlintest.should
-import io.kotlintest.shouldBe
-import io.kotlintest.shouldThrow
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.throwables.shouldThrow
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.should
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.startWith
 import java.io.File
 
 class ModelsSpec : StringSpec({

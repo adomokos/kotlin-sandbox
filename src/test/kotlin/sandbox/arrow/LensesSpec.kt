@@ -2,8 +2,8 @@ package sandbox.arrow
 
 import arrow.optics.Lens
 import arrow.optics.optics
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 @optics data class MemoryL(val size: GB) { companion object }
 @optics data class MotherBoardL(val brand: String, val memoryL: MemoryL) { companion object }

@@ -5,8 +5,8 @@ import arrow.core.Some
 import arrow.core.Tuple3
 import arrow.core.extensions.option.applicative.applicative
 import arrow.core.extensions.option.apply.tupled
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 class ApplicativeSpec : DescribeSpec({
     describe("for Option") {

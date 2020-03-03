@@ -1,11 +1,5 @@
 package sandbox.samples
 
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.assertAll
-import io.kotlintest.properties.forAll
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
-
 // Custom generator
 /* Must implement:
 interface Gen<T> {
@@ -13,8 +7,10 @@ interface Gen<T> {
     fun random(): Sequence<T>
 }
 */
-
+/*
 data class PBPerson(val name: String, val age: Int)
+
+@Suppress("DEPRECATION")
 class PBPersonGenerator : Gen<PBPerson> {
     override fun constants() = emptyList<PBPerson>()
     override fun random() = generateSequence {
@@ -53,3 +49,4 @@ class PropertyBasedTestingSpec : StringSpec() {
         }
     }
 }
+*/

@@ -4,8 +4,8 @@ import arrow.syntax.function.curried
 import arrow.syntax.function.pipe
 import arrow.syntax.function.reverse
 import arrow.syntax.function.uncurried
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 class CurryingSpec : DescribeSpec({
     // Currying without arrow

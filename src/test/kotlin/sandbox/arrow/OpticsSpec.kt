@@ -1,8 +1,8 @@
 package sandbox.arrow
 
 import arrow.optics.Lens
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 typealias GB = Int
 

@@ -5,8 +5,8 @@ import arrow.core.Option
 import arrow.core.Some
 import arrow.core.extensions.fx
 import arrow.core.none
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 class MonadSpec : StringSpec({
     "works with the Option type - Some values" {

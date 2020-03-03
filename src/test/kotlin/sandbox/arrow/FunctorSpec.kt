@@ -11,8 +11,8 @@ import arrow.core.extensions.option.functor.functor
 import arrow.core.none
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 fun addOne(n: Int): Int {
     return n + 1
