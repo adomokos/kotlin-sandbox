@@ -61,9 +61,9 @@ class CurryingSpec : DescribeSpec({
             partialBVal(4) shouldBe 6
         }
 
-        it("can curry with 3 arguments") {
-            val result = explicitCurried<String, String, String>() // ("oh")("my")("hey")
-        }
+//        it("can curry with 3 arguments") {
+//            val result = explicitCurried<String, String, String>() // ("oh")("my")("hey")
+//        }
     }
 
     describe("Currying: (A, B) -> R transformed into a chain of (A) -> (B) -> R") {

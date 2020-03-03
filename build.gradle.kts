@@ -74,6 +74,8 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion") {
         exclude("io.arrow-kt")
     }
+    testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
 
     testImplementation("io.github.serpro69:kotlin-faker:$kotlinFakerVersion")
