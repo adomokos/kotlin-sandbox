@@ -24,8 +24,8 @@ import arrow.mtl.extensions.monadError
 import arrow.mtl.fix
 import arrow.mtl.flatMap
 import arrow.mtl.map
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 object AppError
 

@@ -4,9 +4,9 @@ import arrow.core.Tuple5
 import arrow.fx.IO
 import arrow.fx.extensions.fx
 import io.github.serpro69.kfaker.Faker
-import io.kotlintest.matchers.collections.shouldContainAll
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.collections.shouldContainAll
+import io.kotest.matchers.shouldBe
 
 // parMapN
 data class UserInfo(

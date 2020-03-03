@@ -13,8 +13,8 @@ import arrow.core.invalid
 import arrow.core.left
 import arrow.core.right
 import arrow.core.valid
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 data class ConnectionParams(val url: String, val port: Int)
 

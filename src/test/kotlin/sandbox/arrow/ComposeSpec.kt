@@ -3,8 +3,8 @@ package sandbox.arrow
 import arrow.core.andThen
 import arrow.core.compose
 import arrow.syntax.function.forwardCompose
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 
 val p: (String) -> String = { body -> "<p>$body</p>" }
 val span: (String) -> String = { body -> "<span>$body</span>" }

@@ -31,7 +31,7 @@ val arrowVersion = "0.10.4"
 val coroutinesVersion = "1.3.3"
 val exposedVersion = "0.20.3"
 val klaxonVersion = "5.2"
-val kotlinTestVersion = "3.4.2"
+val kotestVersion = "4.0.0-BETA1"
 val openCsvVersion = "5.1"
 val kotlinFakerVersion = "1.1.1"
 
@@ -67,13 +67,15 @@ dependencies {
     implementation("com.github.ajalt:clikt:2.4.0")
 
     // kotlintest
-    testImplementation("io.kotlintest:kotlintest-runner-junit5:$kotlinTestVersion") {
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") {
         // https://github.com/kotlintest/kotlintest/issues/1026
         exclude("io.arrow-kt")
     }
-    testImplementation("io.kotlintest:kotlintest-assertions-arrow:$kotlinTestVersion") {
+    testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion") {
         exclude("io.arrow-kt")
     }
+    testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
 
     testImplementation("io.github.serpro69:kotlin-faker:$kotlinFakerVersion")
@@ -109,6 +111,11 @@ tasks {
                     zipTree(it)
             }
         })
+    }
+
+    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+        kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
+        kotlinOptions.jvmTarget = "1.8"
     }
 }
 

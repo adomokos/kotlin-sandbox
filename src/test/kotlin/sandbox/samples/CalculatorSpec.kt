@@ -1,9 +1,8 @@
 package sandbox.samples
 
-import io.kotlintest.matchers.startWith
-import io.kotlintest.should
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldStartWith
 
 class Calculator {
     fun add(a: Int, b: Int): Int {
@@ -27,6 +26,6 @@ class CalculatorSpec : StringSpec({
     }
 
     "startsWith should test for a prefix" {
-        "world" should startWith("wor")
+        "world".shouldStartWith("wor")
     }
 })

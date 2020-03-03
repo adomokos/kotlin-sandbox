@@ -1,8 +1,8 @@
 package sandbox.arrow
 
 import arrow.syntax.function.pipe
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
 import sandbox.arrow.effects.allUpper
 
 class PipeSpec : DescribeSpec({

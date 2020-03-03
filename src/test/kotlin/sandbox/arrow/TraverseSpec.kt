@@ -5,9 +5,9 @@ import arrow.core.Right
 import arrow.core.extensions.either.applicative.applicative
 import arrow.core.extensions.list.traverse.traverse
 import arrow.core.fix
-import io.kotlintest.matchers.types.shouldBeInstanceOf
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.DescribeSpec
+import io.kotest.core.spec.style.DescribeSpec
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.types.shouldBeInstanceOf
 
 fun parseIntEither(s: String): Either<Throwable, Int> = s.safeToInt()
 

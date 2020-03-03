@@ -2,8 +2,8 @@ package sandbox.arrow
 
 import arrow.core.NonEmptyList
 import arrow.core.extensions.fx
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 fun sumNel(nel: NonEmptyList<Int>): Int =
     nel.foldLeft(0) { acc, n -> acc + n }

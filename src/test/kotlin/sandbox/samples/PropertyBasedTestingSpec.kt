@@ -1,33 +1,25 @@
 package sandbox.samples
 
-import io.kotlintest.properties.Gen
-import io.kotlintest.properties.assertAll
-import io.kotlintest.properties.forAll
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
-
-// Custom generator
-/* Must implement:
-interface Gen<T> {
-    fun constants(): Iterable<T>
-    fun random(): Sequence<T>
-}
-*/
-
-data class PBPerson(val name: String, val age: Int)
-class PBPersonGenerator : Gen<PBPerson> {
-    override fun constants() = emptyList<PBPerson>()
-    override fun random() = generateSequence {
-        val intList = Gen.choose(1, 1000)
-        PBPerson(Gen.string().random().first(), intList.random().first())
-    }
-}
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.inspectors.forAll
+import io.kotest.matchers.comparables.shouldBeGreaterThan
+import io.kotest.matchers.shouldNotBe
+import io.kotest.matchers.string.shouldHaveLength
+import io.kotest.matchers.types.shouldBeInstanceOf
+import io.kotest.property.arbitrary.Arb
+import io.kotest.property.arbitrary.bind
+import io.kotest.property.arbitrary.default
+import io.kotest.property.arbitrary.positiveInts
+import io.kotest.property.arbitrary.string
+import io.kotest.property.checkAll
 
 class PropertyBasedTestingSpec : StringSpec() {
+    data class Person(val name: String, val age: Int)
+
     init {
         "can do property-based testing - with 100 examples" {
-            assertAll { a: String, b: String ->
-                (a + b).length shouldBe a.length + b.length
+            checkAll<String, String> { a, b ->
+                (a + b) shouldHaveLength(a.length + b.length)
             }
         }
 
@@ -40,15 +32,36 @@ class PropertyBasedTestingSpec : StringSpec() {
         }
         */
 
+        "generate the defaults for list" {
+
+            val gen = Arb.default<List<Int>>()
+            checkAll(10, gen) { list ->
+                list.forAll { i ->
+                    i.shouldBeInstanceOf<Int>()
+                }
+            }
+        }
+
+        "generate the defaults for set" {
+            val gen = Arb.default<Set<String>>()
+            checkAll(gen) { inst ->
+                inst.forAll { i ->
+                    i.shouldBeInstanceOf<String>()
+                }
+            }
+        }
+
         "string size" {
-            forAll(Gen.string(), Gen.string()) { a: String, b: String ->
-                (a + b).length == a.length + b.length
+            checkAll<String, String> { a, b ->
+                (a + b) shouldHaveLength(a.length + b.length)
             }
         }
 
         "person generator" {
-            forAll(PBPersonGenerator()) { person1: PBPerson ->
-                person1.age > 0
+            val gen = Arb.bind(Arb.string(), Arb.positiveInts(), ::Person)
+            checkAll(gen) {
+                it.name shouldNotBe null
+                it.age shouldBeGreaterThan(0)
             }
         }
     }

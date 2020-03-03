@@ -4,10 +4,10 @@ import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.core.extensions.fx
-import io.kotlintest.assertions.arrow.either.shouldBeLeft
-import io.kotlintest.assertions.arrow.either.shouldBeRight
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.assertions.arrow.either.shouldBeLeft
+import io.kotest.assertions.arrow.either.shouldBeRight
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 
 data class RawUser(
     val fullName: String,

@@ -1,8 +1,8 @@
 package sandbox.explorer
 
-import io.kotlintest.extensions.TestListener
-import io.kotlintest.shouldBe
-import io.kotlintest.specs.StringSpec
+import io.kotest.core.listeners.TestListener
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.insert
