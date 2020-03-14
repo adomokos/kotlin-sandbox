@@ -3,9 +3,9 @@ plugins {
     kotlin("kapt") version "1.3.61"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
-    id("com.diffplug.gradle.spotless") version "3.27.1"
+    id("com.diffplug.gradle.spotless") version "3.27.2"
     id("io.gitlab.arturbosch.detekt").version("1.5.1")
-    id("com.github.ben-manes.versions").version("0.27.0")
+    id("com.github.ben-manes.versions").version("0.28.0")
     application
 }
 
@@ -29,7 +29,7 @@ spotless {
 
 val arrowVersion = "0.10.4"
 val coroutinesVersion = "1.3.3"
-val exposedVersion = "0.20.3"
+val exposedVersion = "0.22.1"
 val klaxonVersion = "5.2"
 val kotestVersion = "4.0.0-BETA1"
 val openCsvVersion = "5.1"
