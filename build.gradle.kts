@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.3.61"
     kotlin("kapt") version "1.3.61"
     id("com.adarshr.test-logger") version "2.0.0"
-    id("org.jlleitschuh.gradle.ktlint") version "9.1.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("com.diffplug.gradle.spotless") version "3.27.2"
     id("io.gitlab.arturbosch.detekt").version("1.5.1")
     id("com.github.ben-manes.versions").version("0.28.0")
