@@ -33,7 +33,6 @@ class PropertyBasedTestingSpec : StringSpec() {
         */
 
         "generate the defaults for list" {
-
             val gen = Arb.default<List<Int>>()
             checkAll(10, gen) { list ->
                 list.forAll { i ->

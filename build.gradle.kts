@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.3.61"
-    kotlin("kapt") version "1.3.61"
+    kotlin("jvm") version "1.3.70"
+    kotlin("kapt") version "1.3.70"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("com.diffplug.gradle.spotless") version "3.27.2"
@@ -31,7 +31,7 @@ val arrowVersion = "0.10.4"
 val coroutinesVersion = "1.3.3"
 val exposedVersion = "0.22.1"
 val klaxonVersion = "5.2"
-val kotestVersion = "4.0.0-BETA1"
+val kotestVersion = "4.0.0-BETA2"
 val openCsvVersion = "5.1"
 val kotlinFakerVersion = "1.1.1"
 
@@ -66,7 +66,7 @@ dependencies {
     // clikt - for command line args parsing
     implementation("com.github.ajalt:clikt:2.4.0")
 
-    // kotlintest
+    // kotest
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") {
         // https://github.com/kotlintest/kotlintest/issues/1026
         exclude("io.arrow-kt")
@@ -74,6 +74,7 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion") {
         exclude("io.arrow-kt")
     }
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
 
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
