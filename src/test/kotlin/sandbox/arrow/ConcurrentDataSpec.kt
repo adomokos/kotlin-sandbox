@@ -103,7 +103,7 @@ class ConcurrentDataSpec : DescribeSpec({
                     .unsafeRunSync()
 
             result.map {
-                it shouldContainAll(listOf("John", "Paul"))
+                it.shouldContainAll(listOf("John", "Paul"))
             }
         }
 
@@ -111,7 +111,7 @@ class ConcurrentDataSpec : DescribeSpec({
             IO.fx {
                 val users = !program3
                 val firstNames = firstNamesFromUserInfos(users)
-                firstNames shouldContainAll(listOf("John", "Paul"))
+                firstNames.shouldContainAll(listOf("John", "Paul"))
             }.unsafeRunSync()
         }
 
@@ -119,7 +119,7 @@ class ConcurrentDataSpec : DescribeSpec({
             IO.fx {
                 val users = !program4
                 val firstNames = firstNamesFromUserInfos(users)
-                firstNames shouldContainAll(listOf("John", "Paul"))
+                firstNames.shouldContainAll(listOf("John", "Paul"))
             }.unsafeRunSync()
         }
     }
