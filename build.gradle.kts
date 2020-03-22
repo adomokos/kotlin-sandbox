@@ -68,13 +68,8 @@ dependencies {
     implementation("com.github.ajalt:clikt:$cliktVersion")
 
     // kotest
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") {
-        // https://github.com/kotlintest/kotlintest/issues/1026
-        exclude("io.arrow-kt")
-    }
-    testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion") {
-        exclude("io.arrow-kt")
-    }
+    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
 
