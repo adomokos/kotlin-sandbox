@@ -31,7 +31,7 @@ val arrowVersion = "0.10.4"
 val coroutinesVersion = "1.3.3"
 val exposedVersion = "0.22.1"
 val klaxonVersion = "5.2"
-val kotestVersion = "4.0.0-BETA2"
+val kotestVersion = "4.0.0"
 val openCsvVersion = "5.1"
 val kotlinFakerVersion = "1.1.1"
 

@@ -6,7 +6,7 @@ import io.kotest.matchers.comparables.shouldBeGreaterThan
 import io.kotest.matchers.shouldNotBe
 import io.kotest.matchers.string.shouldHaveLength
 import io.kotest.matchers.types.shouldBeInstanceOf
-import io.kotest.property.arbitrary.Arb
+import io.kotest.property.Arb
 import io.kotest.property.arbitrary.bind
 import io.kotest.property.arbitrary.default
 import io.kotest.property.arbitrary.positiveInts
