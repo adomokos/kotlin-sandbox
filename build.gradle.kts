@@ -3,8 +3,8 @@ plugins {
     kotlin("kapt") version "1.3.70"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-    id("com.diffplug.gradle.spotless") version "3.27.2"
-    id("io.gitlab.arturbosch.detekt").version("1.5.1")
+    id("com.diffplug.gradle.spotless") version "3.28.0"
+    id("io.gitlab.arturbosch.detekt").version("1.7.0")
     id("com.github.ben-manes.versions").version("0.28.0")
     application
 }
@@ -34,6 +34,7 @@ val klaxonVersion = "5.2"
 val kotestVersion = "4.0.0"
 val openCsvVersion = "5.1"
 val kotlinFakerVersion = "1.1.1"
+val cliktVersion = "2.6.0"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -64,7 +65,7 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 
     // clikt - for command line args parsing
-    implementation("com.github.ajalt:clikt:2.4.0")
+    implementation("com.github.ajalt:clikt:$cliktVersion")
 
     // kotest
     testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion") {
