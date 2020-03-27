@@ -25,7 +25,7 @@ class Chapter05Spec : StringSpec() {
             override fun isEmpty() = true
             override fun setHead(a: Nothing): List<Nothing> =
                 throw IllegalArgumentException("setHead called on an empty list")
-            override fun drop(n: Int) = this
+            override fun drop(n: Int) = drop(this, n)
             override fun toString(): String = "[NIL]"
         }
         fun cons(a: A): List<A> = Cons(a, this)
@@ -40,14 +40,7 @@ class Chapter05Spec : StringSpec() {
 
             override fun setHead(a: A): List<A> = tail.cons(a)
 
-            override fun drop(n: Int): List<A> {
-                tailrec fun drop(n: Int, list: List<A>): List<A> =
-                    if (n <= 0) list else when (list) {
-                        is Cons -> drop(n - 1, list.tail)
-                        is Nil -> list
-                    }
-                return drop(n, this)
-            }
+            override fun drop(n: Int): List<A> = drop(this, n)
 
             private tailrec fun toString(acc: String, list: List<A>): String =
                 when (list) {
@@ -61,6 +54,12 @@ class Chapter05Spec : StringSpec() {
             operator fun <A> invoke(vararg az: A): List<A> =
                 az.foldRight(Nil as List<A>) {
                     a: A, list: List<A> -> Cons(a, list)
+                }
+
+            tailrec fun <A> drop(list: List<A>, n: Int): List<A> =
+                when (list) {
+                    Nil -> list
+                    is Cons -> if (n <= 0) list else drop(list.tail, n - 1)
                 }
         }
     }
@@ -85,6 +84,12 @@ class Chapter05Spec : StringSpec() {
             val lighterList = initialList.drop(2)
 
             lighterList.toString() shouldBe "[3, 4, NIL]"
+        }
+
+        "can use drop function from sealed object" {
+            val initialList = List(1, 2, 3, 4)
+
+            List.drop(initialList, 2).toString() shouldBe "[3, 4, NIL]"
         }
     }
 }
