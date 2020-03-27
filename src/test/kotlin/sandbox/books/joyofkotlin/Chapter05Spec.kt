@@ -18,10 +18,17 @@ class Chapter05Spec : StringSpec() {
     // is implicitly private
     sealed class List<A> {
         abstract fun isEmpty(): Boolean
+        abstract fun setHead(a: A): List<A>
+        abstract fun drop(n: Int): List<A>
+
         private object Nil : List<Nothing>() {
             override fun isEmpty() = true
+            override fun setHead(a: Nothing): List<Nothing> =
+                throw IllegalArgumentException("setHead called on an empty list")
+            override fun drop(n: Int) = this
             override fun toString(): String = "[NIL]"
         }
+        fun cons(a: A): List<A> = Cons(a, this)
 
         private class Cons<A>(
             internal val head: A,
@@ -30,6 +37,17 @@ class Chapter05Spec : StringSpec() {
             override fun isEmpty() = false
 
             override fun toString(): String = "[${toString("", this)}NIL]"
+
+            override fun setHead(a: A): List<A> = tail.cons(a)
+
+            override fun drop(n: Int): List<A> {
+                tailrec fun drop(n: Int, list: List<A>): List<A> =
+                    if (n <= 0) list else when (list) {
+                        is Cons -> drop(n - 1, list.tail)
+                        is Nil -> list
+                    }
+                return drop(n, this)
+            }
 
             private tailrec fun toString(acc: String, list: List<A>): String =
                 when (list) {
@@ -45,14 +63,6 @@ class Chapter05Spec : StringSpec() {
                     a: A, list: List<A> -> Cons(a, list)
                 }
         }
-
-        private fun cons(a: A): List<A> = Cons(a, this)
-
-        fun setHead(a: A): List<A> =
-            when (this) {
-                is Nil -> throw IllegalArgumentException("setHead called on an empty list")
-                is Cons -> tail.cons(a)
-            }
     }
 
     init {
@@ -63,11 +73,18 @@ class Chapter05Spec : StringSpec() {
             list.toString() shouldBe "[1, 2, 3, NIL]"
         }
 
-        "can add an element to the front" {
+        "can set an element to the head of the list" {
             val initialList = List(1, 2)
             val newList = initialList.setHead(3)
 
             newList.toString() shouldBe "[3, 2, NIL]"
+        }
+
+        "can drop elements from a list" {
+            val initialList = List(1, 2, 3, 4)
+            val lighterList = initialList.drop(2)
+
+            lighterList.toString() shouldBe "[3, 4, NIL]"
         }
     }
 }
