@@ -132,7 +132,7 @@ class ReaderSpec : StringSpec() {
     }
 
     val myAppReaderT =
-        RIOApi.ask().map(RIOApi.monadError()) { ctx ->
+        RIOApi.ask().map(RIOApi.monadError()) { _ ->
             3
         }
 
