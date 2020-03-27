@@ -11,6 +11,7 @@ Collections can be classified as:
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import java.lang.IllegalArgumentException
 
 class Chapter05Spec : StringSpec() {
     // Sealed classes are implicitly abstract and their constructor
@@ -38,18 +39,35 @@ class Chapter05Spec : StringSpec() {
         }
 
         companion object {
+            @Suppress("UNCHECKED_CAST")
             operator fun <A> invoke(vararg az: A): List<A> =
                 az.foldRight(Nil as List<A>) {
                     a: A, list: List<A> -> Cons(a, list)
                 }
         }
+
+        private fun cons(a: A): List<A> = Cons(a, this)
+
+        fun setHead(a: A): List<A> =
+            when (this) {
+                is Nil -> throw IllegalArgumentException("setHead called on an empty list")
+                is Cons -> tail.cons(a)
+            }
     }
 
     init {
         "can work with singly linked lists" {
-            val list = List(1, 2, 3)
+            val list = List(1, 2, 3) // this isn't called to the constructor
+            // but to the companion objects `invoke` function
             list.isEmpty() shouldBe false
             list.toString() shouldBe "[1, 2, 3, NIL]"
+        }
+
+        "can add an element to the front" {
+            val initialList = List(1, 2)
+            val newList = initialList.setHead(3)
+
+            newList.toString() shouldBe "[3, 2, NIL]"
         }
     }
 }
