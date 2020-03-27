@@ -1,4 +1,4 @@
-package sandbox.books.joyofkotlin
+package sandbox.books.joyofkotlin.chapter04
 
 import arrow.core.NonEmptyList
 import io.kotest.core.spec.style.StringSpec
@@ -18,83 +18,91 @@ fun hello() {
 
 Unlike Java, Kotlin eliminates Tail Call Elimination (TCE).
 */
-
-fun append(s: String, c: Char): String = "$s$c"
-
-fun toString(list: List<Char>, s: String): String =
-    if (list.isEmpty())
-        s
-    else
-        toString(list.subList(1, list.size), append(s, list[0]))
-
-fun tailrecToString(list: List<Char>): String {
-    tailrec fun tailrecToString(list: List<Char>, s: String): String =
+fun <T, U> foldLeft(list: List<T>, z: U, f: (U, T) -> U): U {
+    tailrec fun foldLeft(list: List<T>, acc: U): U =
         if (list.isEmpty())
-            s
+            acc
         else
-            tailrecToString(
-                list.subList(1, list.size),
-                append(s, list[0]))
+            foldLeft(list.tail(), f(acc, list.head()))
 
-    return tailrecToString(list, "")
+    return foldLeft(list, z)
 }
 
-fun prepend(c: Char, s: String): String = "$c$s"
+fun <T> List<T>.head(): T =
+    if (this.isEmpty())
+        throw IllegalArgumentException("head called on empty list")
+    else
+        this[0]
 
-fun toString(list: List<Char>): String {
+fun <T> List<T>.tail(): List<T> =
+    if (this.isEmpty())
+        throw IllegalArgumentException("tail called on empty list")
+    else
+        this.drop(1)
+
+class RecursionSpec : StringSpec() {
+    fun append(s: String, c: Char): String = "$s$c"
+
     fun toString(list: List<Char>, s: String): String =
         if (list.isEmpty())
             s
         else
-            toString(list.subList(0, list.size - 1),
-                prepend(list[list.size - 1], s))
-    return toString(list, "")
-}
+            toString(list.subList(1, list.size), append(s, list[0]))
 
-fun sum(n: Int): Int {
-    var sum = 0
-    var idx = 0
-    while (idx <= n) {
-        sum += idx
-        idx += 1
+    fun tailrecToString(list: List<Char>): String {
+        tailrec fun tailrecToString(list: List<Char>, s: String): String =
+            if (list.isEmpty())
+                s
+            else
+                tailrecToString(
+                    list.subList(1, list.size),
+                    append(s, list[0]))
+
+        return tailrecToString(list, "")
     }
 
-    return sum
-}
+    fun prepend(c: Char, s: String): String = "$c$s"
 
-fun sum2(n: Int): Int {
-    tailrec fun sum(s: Int, i: Int): Int =
-        if (i > n)
-            s
+    fun toString(list: List<Char>): String {
+        fun toString(list: List<Char>, s: String): String =
+            if (list.isEmpty())
+                s
+            else
+                toString(list.subList(0, list.size - 1),
+                    prepend(list[list.size - 1], s))
+        return toString(list, "")
+    }
+
+    fun sum(n: Int): Int {
+        var sum = 0
+        var idx = 0
+        while (idx <= n) {
+            sum += idx
+            idx += 1
+        }
+
+        return sum
+    }
+
+    fun sum2(n: Int): Int {
+        tailrec fun sum(s: Int, i: Int): Int =
+            if (i > n)
+                s
+            else
+                sum(s + i, i + 1)
+
+        return sum(0, 0)
+    }
+
+    fun inc(n: Int) = n + 1
+    fun dec(n: Int) = n - 1
+
+    tailrec fun add(x: Int, y: Int): Int =
+        if (y == 0)
+            x
         else
-            sum(s + i, i + 1)
-
-    return sum(0, 0)
-}
-
-fun inc(n: Int) = n + 1
-fun dec(n: Int) = n - 1
-
-tailrec fun add(x: Int, y: Int): Int =
-    if (y == 0)
-        x
-    else
-        add(inc(x), dec(y))
-
-class Chapter04Spec : StringSpec() {
+            add(inc(x), dec(y))
     // Sum list by recursion
-
-    fun <T> List<T>.head(): T =
-        if (this.isEmpty())
-            throw IllegalArgumentException("head called on empty list")
-        else
-            this[0]
-
-    fun <T> List<T>.tail(): List<T> =
-        if (this.isEmpty())
-            throw IllegalArgumentException("tail called on empty list")
-        else
-            this.drop(1)
 
     fun recursiveSum(list: List<Int>): Int =
         if (list.isEmpty())
@@ -117,16 +125,6 @@ class Chapter04Spec : StringSpec() {
                 sumTail(list.tail(), acc + list.head())
 
         return sumTail(list, 0)
-    }
-
-    fun <T, U> foldLeft(list: List<T>, z: U, f: (U, T) -> U): U {
-        tailrec fun foldLeft(list: List<T>, acc: U): U =
-            if (list.isEmpty())
-                acc
-            else
-                foldLeft(list.tail(), f(acc, list.head()))
-
-        return foldLeft(list, z)
     }
 
     fun sumInts(list: List<Int>) = foldLeft(list, 0, Int::plus)
