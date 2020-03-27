@@ -20,6 +20,7 @@ class Chapter05Spec : StringSpec() {
         abstract fun isEmpty(): Boolean
         abstract fun setHead(a: A): List<A>
         abstract fun drop(n: Int): List<A>
+        abstract fun dropWhile(p: (A) -> Boolean): List<A>
 
         private object Nil : List<Nothing>() {
             override fun isEmpty() = true
@@ -27,7 +28,10 @@ class Chapter05Spec : StringSpec() {
                 throw IllegalArgumentException("setHead called on an empty list")
             override fun drop(n: Int) = drop(this, n)
             override fun toString(): String = "[NIL]"
+            override fun dropWhile(p: (Nothing) -> Boolean): List<Nothing> =
+                dropWhile(this, p)
         }
+
         fun cons(a: A): List<A> = Cons(a, this)
 
         private class Cons<A>(
@@ -41,6 +45,8 @@ class Chapter05Spec : StringSpec() {
             override fun setHead(a: A): List<A> = tail.cons(a)
 
             override fun drop(n: Int): List<A> = drop(this, n)
+
+            override fun dropWhile(p: (A) -> Boolean): List<A> = dropWhile(this, p)
 
             private tailrec fun toString(acc: String, list: List<A>): String =
                 when (list) {
@@ -60,6 +66,12 @@ class Chapter05Spec : StringSpec() {
                 when (list) {
                     Nil -> list
                     is Cons -> if (n <= 0) list else drop(list.tail, n - 1)
+                }
+
+            tailrec fun <A> dropWhile(list: List<A>, p: (A) -> Boolean): List<A> =
+                when (list) {
+                    Nil -> list
+                    is Cons -> if (p(list.head)) dropWhile(list.tail, p) else list
                 }
         }
     }
@@ -90,6 +102,12 @@ class Chapter05Spec : StringSpec() {
             val initialList = List(1, 2, 3, 4)
 
             List.drop(initialList, 2).toString() shouldBe "[3, 4, NIL]"
+        }
+
+        "can drop elements with dropWhile()" {
+            val initialList = List(1, 2, 3, 4)
+
+            List.dropWhile(initialList) { it < 3 }.toString() shouldBe "[3, 4, NIL]"
         }
     }
 }
