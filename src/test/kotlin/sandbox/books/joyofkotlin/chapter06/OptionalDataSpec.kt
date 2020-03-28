@@ -9,17 +9,20 @@ sealed class Option<out A> {
     abstract fun <B> map(f: (A) -> B): Option<B>
     abstract fun <B> flatMap(f: (A) -> Option<B>): Option<B>
 
-    internal object None : Option<Nothing>() {
+    internal class None<out A> : Option<A>() {
         override fun isEmpty() = true
-        override fun <B> map(f: (Nothing) -> B): Option<B> = None
-        override fun <B> flatMap(f: (Nothing) -> Option<B>): Option<B> = None
+        override fun <B> map(f: (A) -> B): Option<B> = None()
+        override fun <B> flatMap(f: (A) -> Option<B>): Option<B> = None()
         override fun toString(): String = "None"
-        override fun equals(other: Any?): Boolean =
-            other === None
         override fun hashCode(): Int = 0
+        override fun equals(other: Any?): Boolean {
+            if (this === other) return true
+            if (javaClass != other?.javaClass) return false
+            return true
+        }
     }
 
-    internal data class Some<out A>(internal val value: A) : Option <A>() {
+    internal data class Some<out A>(internal val value: A) : Option<A>() {
         override fun isEmpty() = false
         override fun <B> map(f: (A) -> B): Option<B> = Some(f(value))
         override fun <B> flatMap(f: (A) -> Option<B>): Option<B> = f(value)
@@ -28,7 +31,7 @@ sealed class Option<out A> {
     companion object {
         operator fun <A> invoke(a: A? = null): Option<A> =
             when (a) {
-                null -> None
+                null -> None()
                 else -> Some(a)
             }
     }
@@ -50,7 +53,7 @@ class OptionalDataSpec : StringSpec() {
     init {
         "can create Option value" {
             val none = Option(null)
-            none shouldBe Option.None
+            none shouldBe Option.None()
 
             val some = Option(2)
             some shouldBe Option.Some(2)
@@ -62,13 +65,16 @@ class OptionalDataSpec : StringSpec() {
         }
 
         "can work with a fmap function" {
+            val none = Option(null)
+            none.map { x: Int -> x + 2 } shouldBe Option.None()
+
             val some = Option(2)
             some.map { it + 2 } shouldBe Option(4)
         }
 
         "can work with flatMap" {
             val none = Option(null)
-            none.flatMap { Option(2) } shouldBe Option.None
+            none.flatMap { x: Int -> Option(x + 2) } shouldBe Option.None()
 
             val some = Option(2)
             some.flatMap { x -> Option(x + 2) } shouldBe Option(4)
