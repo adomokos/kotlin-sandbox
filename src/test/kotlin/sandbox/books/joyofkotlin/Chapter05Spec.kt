@@ -50,7 +50,7 @@ class Chapter05Spec : StringSpec() {
 
             private tailrec fun toString(acc: String, list: List<A>): String =
                 when (list) {
-                    is Nil -> acc
+                    Nil -> acc
                     is Cons -> toString("$acc${list.head}, ", list.tail)
                 }
         }
@@ -72,6 +72,12 @@ class Chapter05Spec : StringSpec() {
                 when (list) {
                     Nil -> list
                     is Cons -> if (p(list.head)) dropWhile(list.tail, p) else list
+                }
+
+            fun <A> concat(list1: List<A>, list2: List<A>): List<A> =
+                when (list1) {
+                    Nil -> list2
+                    is Cons -> concat(list1.tail, list2).cons(list1.head)
                 }
         }
     }
@@ -108,6 +114,13 @@ class Chapter05Spec : StringSpec() {
             val initialList = List(1, 2, 3, 4)
 
             List.dropWhile(initialList) { it < 3 }.toString() shouldBe "[3, 4, NIL]"
+        }
+
+        "can concat lists" {
+            val list1 = List(1, 2, 3)
+            val list2 = List(8, 10)
+
+            List.concat(list1, list2).toString() shouldBe "[1, 2, 3, 8, 10, NIL]"
         }
     }
 }
