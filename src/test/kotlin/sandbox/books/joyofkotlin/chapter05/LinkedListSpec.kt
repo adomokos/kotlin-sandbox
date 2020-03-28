@@ -1,4 +1,4 @@
-package sandbox.books.joyofkotlin
+package sandbox.books.joyofkotlin.chapter05
 
 /*
 Collections can be classified as:
@@ -13,7 +13,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.lang.IllegalArgumentException
 
-class Chapter05Spec : StringSpec() {
+class LinkedListSpec : StringSpec() {
     // Sealed classes are implicitly abstract and their constructor
     // is implicitly private
     sealed class List<A> {
@@ -23,20 +23,26 @@ class Chapter05Spec : StringSpec() {
         abstract fun dropWhile(p: (A) -> Boolean): List<A>
         abstract fun reverse(): List<A>
 
-        private object Nil : List<Nothing>() {
+        object Nil : List<Nothing>() {
             override fun isEmpty() = true
             override fun setHead(a: Nothing): List<Nothing> =
                 throw IllegalArgumentException("setHead called on an empty list")
-            override fun drop(n: Int) = drop(this, n)
+            override fun drop(n: Int) =
+                drop(this, n)
             override fun toString(): String = "[NIL]"
             override fun dropWhile(p: (Nothing) -> Boolean): List<Nothing> =
                 dropWhile(this, p)
-            override fun reverse(): List<Nothing> = reverse(List.invoke(), this)
+            override fun reverse(): List<Nothing> =
+                reverse(
+                    invoke(),
+                    this
+                )
         }
 
-        fun cons(a: A): List<A> = Cons(a, this)
+        fun cons(a: A): List<A> =
+            Cons(a, this)
 
-        private class Cons<A>(
+        class Cons<A>(
             internal val head: A,
             internal val tail: List<A>
         ) : List<A>() {
@@ -46,11 +52,17 @@ class Chapter05Spec : StringSpec() {
 
             override fun setHead(a: A): List<A> = tail.cons(a)
 
-            override fun drop(n: Int): List<A> = drop(this, n)
+            override fun drop(n: Int): List<A> =
+                drop(this, n)
 
-            override fun dropWhile(p: (A) -> Boolean): List<A> = dropWhile(this, p)
+            override fun dropWhile(p: (A) -> Boolean): List<A> =
+                dropWhile(this, p)
 
-            override fun reverse(): List<A> = reverse(List.invoke(), this)
+            override fun reverse(): List<A> =
+                reverse(
+                    invoke(),
+                    this
+                )
 
             private tailrec fun toString(acc: String, list: List<A>): String =
                 when (list) {
@@ -63,38 +75,80 @@ class Chapter05Spec : StringSpec() {
             @Suppress("UNCHECKED_CAST")
             operator fun <A> invoke(vararg az: A): List<A> =
                 az.foldRight(Nil as List<A>) {
-                    a: A, list: List<A> -> Cons(a, list)
+                    a: A, list: List<A> ->
+                    Cons(a, list)
                 }
 
             tailrec fun <A> drop(list: List<A>, n: Int): List<A> =
                 when (list) {
                     Nil -> list
-                    is Cons -> if (n <= 0) list else drop(list.tail, n - 1)
+                    is Cons -> if (n <= 0) list else drop(
+                        list.tail,
+                        n - 1
+                    )
                 }
 
             tailrec fun <A> dropWhile(list: List<A>, p: (A) -> Boolean): List<A> =
                 when (list) {
                     Nil -> list
-                    is Cons -> if (p(list.head)) dropWhile(list.tail, p) else list
+                    is Cons -> if (p(list.head)) dropWhile(
+                        list.tail,
+                        p
+                    ) else list
                 }
 
             fun <A> concat(list1: List<A>, list2: List<A>): List<A> =
                 when (list1) {
                     Nil -> list2
-                    is Cons -> concat(list1.tail, list2).cons(list1.head)
+                    is Cons -> concat(
+                        list1.tail,
+                        list2
+                    ).cons(list1.head)
                 }
 
             tailrec fun <A> reverse(acc: List<A>, list: List<A>): List<A> =
                 when (list) {
                     Nil -> acc
-                    is Cons -> reverse(acc.cons(list.head), list.tail)
+                    is Cons -> reverse(
+                        acc.cons(list.head),
+                        list.tail
+                    )
                 }
         }
     }
 
+    private fun product(ints: List<Int>): Int =
+        when (ints) {
+            is List.Cons -> ints.head * product(ints.tail)
+            else -> 1
+        }
+
+    private fun sum(ints: List<Int>): Int =
+        when (ints) {
+            is List.Cons -> ints.head + sum(ints.tail)
+            else -> 0
+        }
+
+    private fun <A, B> foldRight(
+        list: List<A>,
+        identityVal: B,
+        f: (A) -> (B) -> B
+    ): B =
+        when (list) {
+            List.Nil -> identityVal
+            is List.Cons -> f(list.head) (foldRight(list.tail, identityVal, f))
+        }
+
+    fun sum1(list: List<Int>): Int = foldRight(list, 0) { x -> { y -> x + y } }
+    fun product1(list: List<Int>): Int = foldRight(list, 1) { x -> { y -> x * y } }
+
     init {
         "can work with singly linked lists" {
-            val list = List(1, 2, 3) // this isn't called to the constructor
+            val list = List(
+                1,
+                2,
+                3
+            ) // this isn't called to the constructor
             // but to the companion objects `invoke` function
             list.isEmpty() shouldBe false
             list.toString() shouldBe "[1, 2, 3, NIL]"
@@ -123,7 +177,8 @@ class Chapter05Spec : StringSpec() {
         "can drop elements with dropWhile()" {
             val initialList = List(1, 2, 3, 4)
 
-            List.dropWhile(initialList) { it < 3 }.toString() shouldBe "[3, 4, NIL]"
+            List.dropWhile(initialList) { it < 3 }
+                .toString() shouldBe "[3, 4, NIL]"
         }
 
         "can concat lists" {
@@ -137,6 +192,20 @@ class Chapter05Spec : StringSpec() {
             val list1 = List(1, 2, 3)
 
             list1.reverse().toString() shouldBe "[3, 2, 1, NIL]"
+        }
+
+        "can calculate the product of a list" {
+            val list = List(1, 2, 3, 4)
+
+            product(list) shouldBe 24
+            product1(list) shouldBe 24
+        }
+
+        "can calculate the sum a list" {
+            val list = List(1, 2, 3, 4)
+
+            sum(list) shouldBe 10
+            sum1(list) shouldBe 10
         }
     }
 }
