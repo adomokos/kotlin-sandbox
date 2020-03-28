@@ -21,6 +21,7 @@ class Chapter05Spec : StringSpec() {
         abstract fun setHead(a: A): List<A>
         abstract fun drop(n: Int): List<A>
         abstract fun dropWhile(p: (A) -> Boolean): List<A>
+        abstract fun reverse(): List<A>
 
         private object Nil : List<Nothing>() {
             override fun isEmpty() = true
@@ -30,6 +31,7 @@ class Chapter05Spec : StringSpec() {
             override fun toString(): String = "[NIL]"
             override fun dropWhile(p: (Nothing) -> Boolean): List<Nothing> =
                 dropWhile(this, p)
+            override fun reverse(): List<Nothing> = reverse(List.invoke(), this)
         }
 
         fun cons(a: A): List<A> = Cons(a, this)
@@ -47,6 +49,8 @@ class Chapter05Spec : StringSpec() {
             override fun drop(n: Int): List<A> = drop(this, n)
 
             override fun dropWhile(p: (A) -> Boolean): List<A> = dropWhile(this, p)
+
+            override fun reverse(): List<A> = reverse(List.invoke(), this)
 
             private tailrec fun toString(acc: String, list: List<A>): String =
                 when (list) {
@@ -78,6 +82,12 @@ class Chapter05Spec : StringSpec() {
                 when (list1) {
                     Nil -> list2
                     is Cons -> concat(list1.tail, list2).cons(list1.head)
+                }
+
+            tailrec fun <A> reverse(acc: List<A>, list: List<A>): List<A> =
+                when (list) {
+                    Nil -> acc
+                    is Cons -> reverse(acc.cons(list.head), list.tail)
                 }
         }
     }
@@ -121,6 +131,12 @@ class Chapter05Spec : StringSpec() {
             val list2 = List(8, 10)
 
             List.concat(list1, list2).toString() shouldBe "[1, 2, 3, 8, 10, NIL]"
+        }
+
+        "can reverse a list" {
+            val list1 = List(1, 2, 3)
+
+            list1.reverse().toString() shouldBe "[3, 2, 1, NIL]"
         }
     }
 }
