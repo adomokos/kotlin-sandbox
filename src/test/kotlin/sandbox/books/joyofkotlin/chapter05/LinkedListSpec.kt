@@ -143,6 +143,17 @@ class LinkedListSpec : StringSpec() {
     fun product1(list: List<Int>): Int = foldRight(list, 1) { x -> { y -> x * y } }
     fun listLength(list: List<Int>): Int = foldRight(list, 0) { { it + 1 } }
 
+    // This is stack safe and corecursive
+    tailrec fun <A, B> foldLeft(acc: B, list: List<A>, f: (B) -> (A) -> B): B =
+        when (list) {
+            List.Nil -> acc
+            is List.Cons -> foldLeft(f(acc) (list.head), list.tail, f)
+        }
+
+    fun sum2(list: List<Int>): Int = foldLeft(0, list) { x -> { y -> x + y } }
+    fun product2(list: List<Int>): Int = foldLeft(1, list) { x -> { y -> x * y } }
+    fun listLength2(list: List<Int>): Int = foldLeft(0, list) { i -> { i + 1 } }
+
     init {
         "can work with singly linked lists" {
             val list = List(
@@ -200,6 +211,7 @@ class LinkedListSpec : StringSpec() {
 
             product(list) shouldBe 24
             product1(list) shouldBe 24
+            product2(list) shouldBe 24
         }
 
         "can calculate the sum a list" {
@@ -207,12 +219,14 @@ class LinkedListSpec : StringSpec() {
 
             sum(list) shouldBe 10
             sum1(list) shouldBe 10
+            sum2(list) shouldBe 10
         }
 
         "can calculate the length" {
             val list = List(1, 2, 3, 4)
 
             listLength(list) shouldBe 4
+            listLength2(list) shouldBe 4
         }
     }
 }
