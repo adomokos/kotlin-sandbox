@@ -141,6 +141,7 @@ class LinkedListSpec : StringSpec() {
 
     fun sum1(list: List<Int>): Int = foldRight(list, 0) { x -> { y -> x + y } }
     fun product1(list: List<Int>): Int = foldRight(list, 1) { x -> { y -> x * y } }
+    fun listLength(list: List<Int>): Int = foldRight(list, 0) { { it + 1 } }
 
     init {
         "can work with singly linked lists" {
@@ -206,6 +207,12 @@ class LinkedListSpec : StringSpec() {
 
             sum(list) shouldBe 10
             sum1(list) shouldBe 10
+        }
+
+        "can calculate the length" {
+            val list = List(1, 2, 3, 4)
+
+            listLength(list) shouldBe 4
         }
     }
 }
