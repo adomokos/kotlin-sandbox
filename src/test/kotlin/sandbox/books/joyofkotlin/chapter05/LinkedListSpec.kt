@@ -61,6 +61,9 @@ sealed class List<A> {
                 this
             )
 
+        fun <B> foldLeft(acc: B, f: (B) -> (A) -> B): B =
+            List.foldLeft(acc, this, f)
+
         private tailrec fun toString(acc: String, list: List<A>): String =
             when (list) {
                 Nil -> acc
@@ -121,6 +124,13 @@ sealed class List<A> {
                 Nil -> identityVal
                 is Cons -> f(list.head) (foldRight(list.tail, identityVal, f))
             }
+
+        // This is stack safe and corecursive
+        tailrec fun <A, B> foldLeft(acc: B, list: List<A>, f: (B) -> (A) -> B): B =
+            when (list) {
+                Nil -> acc
+                is Cons -> foldLeft(f(acc) (list.head), list.tail, f)
+            }
     }
 }
 
@@ -141,16 +151,9 @@ class LinkedListSpec : StringSpec() {
     fun product1(list: List<Int>): Int = List.foldRight(list, 1) { x -> { y -> x * y } }
     fun listLength(list: List<Int>): Int = List.foldRight(list, 0) { { it + 1 } }
 
-    // This is stack safe and corecursive
-    tailrec fun <A, B> foldLeft(acc: B, list: List<A>, f: (B) -> (A) -> B): B =
-        when (list) {
-            List.Nil -> acc
-            is List.Cons -> foldLeft(f(acc) (list.head), list.tail, f)
-        }
-
-    fun sum2(list: List<Int>): Int = foldLeft(0, list) { x -> { y -> x + y } }
-    fun product2(list: List<Int>): Int = foldLeft(1, list) { x -> { y -> x * y } }
-    fun listLength2(list: List<Int>): Int = foldLeft(0, list) { i -> { i + 1 } }
+    fun sum2(list: List<Int>): Int = List.foldLeft(0, list) { x -> { y -> x + y } }
+    fun product2(list: List<Int>): Int = List.foldLeft(1, list) { x -> { y -> x * y } }
+    fun listLength2(list: List<Int>): Int = List.foldLeft(0, list) { i -> { i + 1 } }
 
     init {
         "can work with singly linked lists" {
