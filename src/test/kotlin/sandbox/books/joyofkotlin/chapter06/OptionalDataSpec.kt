@@ -35,6 +35,19 @@ sealed class Option<out A> {
                 null -> None()
                 else -> Some(a)
             }
+
+        fun <A, B> lift(f: (A) -> B): (Option<A>) -> Option<B> = { it.map(f) }
+
+        fun <A, B, C> map2(
+            oa: Option<A>,
+            ob: Option<B>,
+            f: (A) -> (B) -> C
+        ): Option<C> =
+            oa.flatMap { a ->
+                ob.map { b ->
+                    f(a)(b)
+                }
+            }
     }
 
     fun getOrElse(default: @UnsafeVariance A): A =
@@ -140,6 +153,20 @@ class OptionalDataSpec : StringSpec() {
 
             val doubleList4 = listOf<Double>()
             variance(doubleList4) shouldBe Option()
+        }
+
+        "can lift value from one context to the other" {
+            val optionalInt = Option(1)
+
+            Option.lift { x: Int -> x.toString() }(optionalInt) shouldBe Option("1")
+        }
+
+        "can map over two Option values" {
+            val optionA = Option("2")
+            val optionB = Option(1)
+            val fn = { x: String -> { i: Int -> x + i.toString() } }
+
+            Option.map2(optionA, optionB, fn) shouldBe Option("21")
         }
     }
 }
