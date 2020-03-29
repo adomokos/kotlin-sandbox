@@ -3,6 +3,7 @@ package sandbox.books.joyofkotlin.chapter06
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import kotlin.math.pow
+import sandbox.books.joyofkotlin.chapter05.List as LList
 
 // Optional data is computational context for safely handling optional data
 sealed class Option<out A> {
@@ -94,6 +95,26 @@ fun variance(list: List<Double>): Option<Double> =
         })
     }
 
+// Sequence List of Option values into Option List values
+fun <A> sequence(list: LList<Option<A>>): Option<LList<A>> =
+    LList.foldRight(list, Option(LList())) { x ->
+        { y: Option<LList<A>> -> Option.map2(x, y) { a ->
+            { b: LList<A> -> b.cons(a) } }
+        }
+    }
+
+fun <A, B> traverse(list: LList<A>, f: (A) -> Option<B>): Option<LList<B>> =
+    LList.foldRight(list, Option(LList())) { x ->
+        { y: Option<LList<B>> -> Option.map2(f(x), y) { a ->
+                { b: LList<B> -> b.cons(a) }
+            }
+        }
+    }
+
+// Using traverse
+fun <A> sequence2(list: LList<Option<A>>): Option<LList<A>> =
+    traverse(list) { x -> x }
+
 class OptionalDataSpec : StringSpec() {
     init {
         "can create Option value" {
@@ -167,6 +188,22 @@ class OptionalDataSpec : StringSpec() {
             val fn = { x: String -> { i: Int -> x + i.toString() } }
 
             Option.map2(optionA, optionB, fn) shouldBe Option("21")
+        }
+
+        "can 'sequence' over a list of Option values" {
+            val optionList = LList(Option(1), Option(2), Option(3))
+
+            sequence(optionList).map {
+                it.toString() shouldBe "[1, 2, 3, NIL]"
+            }
+        }
+
+        "can use traverse to sequence over collection" {
+            val optionList = LList(Option(1), Option(2), Option(3))
+
+            sequence2(optionList).map {
+                it.toString() shouldBe "[1, 2, 3, NIL]"
+            }
         }
     }
 }

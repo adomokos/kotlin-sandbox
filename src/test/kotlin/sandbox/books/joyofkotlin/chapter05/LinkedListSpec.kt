@@ -111,6 +111,16 @@ sealed class List<A> {
                     list.tail
                 )
             }
+
+        fun <A, B> foldRight(
+            list: List<A>,
+            identityVal: B,
+            f: (A) -> (B) -> B
+        ): B =
+            when (list) {
+                Nil -> identityVal
+                is Cons -> f(list.head) (foldRight(list.tail, identityVal, f))
+            }
     }
 }
 
@@ -127,19 +137,9 @@ class LinkedListSpec : StringSpec() {
             else -> 0
         }
 
-    private fun <A, B> foldRight(
-        list: List<A>,
-        identityVal: B,
-        f: (A) -> (B) -> B
-    ): B =
-        when (list) {
-            List.Nil -> identityVal
-            is List.Cons -> f(list.head) (foldRight(list.tail, identityVal, f))
-        }
-
-    fun sum1(list: List<Int>): Int = foldRight(list, 0) { x -> { y -> x + y } }
-    fun product1(list: List<Int>): Int = foldRight(list, 1) { x -> { y -> x * y } }
-    fun listLength(list: List<Int>): Int = foldRight(list, 0) { { it + 1 } }
+    fun sum1(list: List<Int>): Int = List.foldRight(list, 0) { x -> { y -> x + y } }
+    fun product1(list: List<Int>): Int = List.foldRight(list, 1) { x -> { y -> x * y } }
+    fun listLength(list: List<Int>): Int = List.foldRight(list, 0) { { it + 1 } }
 
     // This is stack safe and corecursive
     tailrec fun <A, B> foldLeft(acc: B, list: List<A>, f: (B) -> (A) -> B): B =
