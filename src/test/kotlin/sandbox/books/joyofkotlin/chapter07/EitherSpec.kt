@@ -70,13 +70,19 @@ sealed class Result<out A> : Serializable {
     fun getOrElse(defaultValue: @UnsafeVariance A): A =
         when (this) {
             is Success -> this.value
-            is Failure -> defaultValue
+            else -> defaultValue
+        }
+
+    fun getOrElse(defaultValue: () -> @UnsafeVariance A): A =
+        when (this) {
+            is Success -> this.value
+            else -> defaultValue()
         }
 
     fun orElse(defaultValue: () -> Result<@UnsafeVariance A>): Result<A> =
         when (this) {
             is Success -> this
-            is Failure -> try {
+            else -> try {
                 defaultValue()
             } catch (e: RuntimeException) {
                 Result.failure<A>(e)
@@ -85,12 +91,19 @@ sealed class Result<out A> : Serializable {
             }
         }
 
+    internal object Empty : Result<Nothing>() {
+        override fun <B> map(f: (Nothing) -> B): Result<B> = Empty
+        override fun <B> flatMap(f: (Nothing) -> Result<B>): Result<B> = Empty
+        override fun toString(): String = "Empty"
+    }
+
     companion object {
         operator fun <A> invoke(a: A? = null): Result<A> =
             when (a) {
                 null -> Failure(NullPointerException())
                 else -> Success(a)
             }
+        operator fun <A> invoke(): Result<A> = Empty
 
         fun <A> failure(message: String): Result<A> = Failure(IllegalStateException(message))
         fun <A> failure(exception: RuntimeException): Result<A> = Failure(exception)
@@ -113,6 +126,12 @@ class EitherSpec : StringSpec() {
             else -> Result.failure("Key `$key` not found in map")
         }
 
+    fun <K, V> Map<K, V>.getResultWithDefault(key: K) =
+        when {
+            this.containsKey(key) -> Result(this[key])
+            else -> Result.Empty
+        }
+
     data class Toon private constructor(
         val firstName: String,
         val lastName: String,
@@ -125,6 +144,21 @@ class EitherSpec : StringSpec() {
 
             operator fun invoke(firstName: String, lastName: String, email: String) =
                 Toon(firstName, lastName, Result(email))
+        }
+    }
+
+    data class Toon2 private constructor(
+        val firstName: String,
+        val lastName: String,
+        val email: Result<String>
+    ) {
+
+        companion object {
+            operator fun invoke(firstName: String, lastName: String) =
+                Toon2(firstName, lastName, Result.Empty)
+
+            operator fun invoke(firstName: String, lastName: String, email: String) =
+                Toon2(firstName, lastName, Result(email))
         }
     }
 
@@ -188,6 +222,20 @@ class EitherSpec : StringSpec() {
 
             val noEmailToon = toons.getResult("Minnie").flatMap { it.email }
             noEmailToon.toString() shouldBe "Failure(Minnie Mouse has no email)"
+        }
+
+        "uses Empty in toons when no email was found" {
+            val toons: Map<String, Toon2> = mapOf(
+                "Mickey" to Toon2("Mickey", "Mouse", "mickey@disney.com"),
+                "Minnie" to Toon2("Minnie", "Mouse"),
+                "Donald" to Toon2("Donald", "Duck", "donald@disney.com")
+            )
+
+            val toon = toons.getResultWithDefault("Mickey").flatMap { it.email }
+            toon shouldBe Result("mickey@disney.com")
+
+            val emptyEmail = toons.getResultWithDefault("Minnie").flatMap { it.email }
+            emptyEmail shouldBe Result.Empty
         }
     }
 }
