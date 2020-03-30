@@ -73,6 +73,18 @@ sealed class Result<out A> : Serializable {
             is Failure -> defaultValue
         }
 
+    fun orElse(defaultValue: () -> Result<@UnsafeVariance A>): Result<A> =
+        when (this) {
+            is Success -> this
+            is Failure -> try {
+                defaultValue()
+            } catch (e: RuntimeException) {
+                Result.failure<A>(e)
+            } catch (e: Exception) {
+                Result.failure<A>(RuntimeException(e))
+            }
+        }
+
     companion object {
         operator fun <A> invoke(a: A? = null): Result<A> =
             when (a) {
@@ -94,6 +106,27 @@ class EitherSpec : StringSpec() {
                 { y -> if (x > y) x else y }
             })
         }
+
+    fun <K, V> Map<K, V>.getResult(key: K) =
+        when {
+            this.containsKey(key) -> Result(this[key])
+            else -> Result.failure("Key `$key` not found in map")
+        }
+
+    data class Toon private constructor(
+        val firstName: String,
+        val lastName: String,
+        val email: Result<String>
+    ) {
+
+        companion object {
+            operator fun invoke(firstName: String, lastName: String) =
+                Toon(firstName, lastName, Result.failure("$firstName $lastName has no email"))
+
+            operator fun invoke(firstName: String, lastName: String, email: String) =
+                Toon(firstName, lastName, Result(email))
+        }
+    }
 
     init {
         "can work with custom Either type" {
@@ -141,6 +174,20 @@ class EitherSpec : StringSpec() {
 
             val result = Result(5)
             result.getOrElse(3) shouldBe 5
+        }
+
+        "uses Result in toons" {
+            val toons: Map<String, Toon> = mapOf(
+                "Mickey" to Toon("Mickey", "Mouse", "mickey@disney.com"),
+                "Minnie" to Toon("Minnie", "Mouse"),
+                "Donald" to Toon("Donald", "Duck", "donald@disney.com")
+            )
+
+            val toon = toons.getResult("Mickey").flatMap { it.email }
+            toon shouldBe Result("mickey@disney.com")
+
+            val noEmailToon = toons.getResult("Minnie").flatMap { it.email }
+            noEmailToon.toString() shouldBe "Failure(Minnie Mouse has no email)"
         }
     }
 }
