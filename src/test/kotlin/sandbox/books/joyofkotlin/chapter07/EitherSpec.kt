@@ -67,6 +67,12 @@ sealed class Result<out A> : Serializable {
             }
     }
 
+    fun getOrElse(defaultValue: @UnsafeVariance A): A =
+        when (this) {
+            is Success -> this.value
+            is Failure -> defaultValue
+        }
+
     companion object {
         operator fun <A> invoke(a: A? = null): Result<A> =
             when (a) {
@@ -127,6 +133,14 @@ class EitherSpec : StringSpec() {
 
             val failure = Result.failure<Int>("error")
             failure.map { it * 3 }.toString() shouldBe "Failure(error)"
+        }
+
+        "returns the defaultValue if failure, value otherwise" {
+            val failure = Result.failure<Int>("error")
+            failure.getOrElse(4) shouldBe 4
+
+            val result = Result(5)
+            result.getOrElse(3) shouldBe 5
         }
     }
 }
