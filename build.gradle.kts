@@ -4,7 +4,7 @@ plugins {
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("com.diffplug.gradle.spotless") version "3.28.0"
-    id("io.gitlab.arturbosch.detekt").version("1.7.1")
+    id("io.gitlab.arturbosch.detekt").version("1.7.2")
     id("com.github.ben-manes.versions").version("0.28.0")
     application
 }
@@ -29,9 +29,9 @@ spotless {
 
 val arrowVersion = "0.10.4"
 val coroutinesVersion = "1.3.3"
-val exposedVersion = "0.22.1"
+val exposedVersion = "0.23.1"
 val klaxonVersion = "5.2"
-val kotestVersion = "4.0.0"
+val kotestVersion = "4.0.1"
 val openCsvVersion = "5.1"
 val kotlinFakerVersion = "1.1.1"
 val cliktVersion = "2.6.0"
