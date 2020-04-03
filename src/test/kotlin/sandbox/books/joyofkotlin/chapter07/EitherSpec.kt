@@ -3,6 +3,7 @@ package sandbox.books.joyofkotlin.chapter07
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.io.Serializable
+import java.lang.IllegalArgumentException
 import java.lang.IllegalStateException
 import java.lang.NullPointerException
 import sandbox.books.joyofkotlin.chapter05.List as LList
@@ -40,6 +41,7 @@ sealed class Result<out A> : Serializable {
     abstract fun <B> map(f: (A) -> B): Result<B>
     abstract fun <B> flatMap(f: (A) -> Result<B>): Result<B>
     abstract fun mapFailure(message: String): Result<A>
+    abstract fun forEach(effect: (A) -> Unit)
 
     internal data class Failure<out A>(internal val exception: RuntimeException) : Result<A>() {
         override fun toString(): String = "Failure(${exception.message})"
@@ -47,6 +49,8 @@ sealed class Result<out A> : Serializable {
         override fun <B> flatMap(f: (A) -> Result<B>): Result<B> = Failure(exception)
         override fun mapFailure(message: String): Result<A> =
             Failure(java.lang.RuntimeException(message, exception))
+
+        override fun forEach(effect: (A) -> Unit) {}
     }
 
     internal data class Success<out A>(internal val value: A) : Result<A>() {
@@ -69,6 +73,7 @@ sealed class Result<out A> : Serializable {
                 Failure(RuntimeException(e))
             }
         override fun mapFailure(message: String): Result<A> = this
+        override fun forEach(effect: (A) -> Unit): Unit = effect(value)
     }
 
     fun getOrElse(defaultValue: @UnsafeVariance A): A =
@@ -100,6 +105,7 @@ sealed class Result<out A> : Serializable {
         override fun <B> flatMap(f: (Nothing) -> Result<B>): Result<B> = Empty
         override fun toString(): String = "Empty"
         override fun mapFailure(message: String): Result<Nothing> = this
+        override fun forEach(effect: (Nothing) -> Unit) {}
     }
 
     companion object {
@@ -109,10 +115,28 @@ sealed class Result<out A> : Serializable {
                 else -> Success(a)
             }
         operator fun <A> invoke(): Result<A> = Empty
+        operator fun <A> invoke(a: A? = null, p: (A) -> Boolean): Result<A> =
+            when (a) {
+                null -> Failure(NullPointerException())
+                else -> when {
+                    p(a) -> Success(a)
+                    else -> Empty
+                }
+            }
+        operator fun <A> invoke(a: A? = null, message: String, p: (A) -> Boolean): Result<A> =
+            when (a) {
+                null -> Failure(NullPointerException())
+                else -> when {
+                    p(a) -> Success(a)
+                    else -> Failure(IllegalArgumentException("Argument $a does not match condition: $message"))
+                }
+            }
 
         fun <A> failure(message: String): Result<A> = Failure(IllegalStateException(message))
         fun <A> failure(exception: RuntimeException): Result<A> = Failure(exception)
         fun <A> failure(exception: Exception): Result<A> = Failure(IllegalStateException(exception))
+
+        fun <A, B> lift(f: (A) -> B): (Result<A>) -> Result<B> = { it.map(f) }
     }
 }
 
@@ -250,6 +274,19 @@ class EitherSpec : StringSpec() {
 
             val success = Result(3)
             success.mapFailure("hello").toString() shouldBe "Success(3)"
+        }
+
+        "use factory functions" {
+            val result = Result(2) { it > 0 }
+
+            result shouldBe Result(2)
+        }
+
+        "can turn one result into another with lift" {
+            val result = Result(3)
+
+            val liftedResult = Result.lift<Int, String> { it.toString() }(result)
+            liftedResult shouldBe Result("3")
         }
     }
 }
