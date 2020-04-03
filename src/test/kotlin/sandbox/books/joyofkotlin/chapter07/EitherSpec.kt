@@ -137,6 +137,35 @@ sealed class Result<out A> : Serializable {
         fun <A> failure(exception: Exception): Result<A> = Failure(IllegalStateException(exception))
 
         fun <A, B> lift(f: (A) -> B): (Result<A>) -> Result<B> = { it.map(f) }
+
+        fun <A, B, C> lift2(f: (A) -> (B) -> C):
+            (Result<A>) -> (Result<B>) -> Result<C> = { a ->
+                { b ->
+                    a.map(f).flatMap { b.map(it) }
+                }
+            }
+
+        fun <A, B, C, D> lift3(f: (A) -> (B) -> (C) -> D):
+                (Result<A>) -> (Result<B>) -> (Result<C>) -> Result<D> = { a ->
+                { b ->
+                    { c ->
+                        a.map(f).flatMap { b.map(it) }.flatMap { c.map(it) }
+                    }
+                }
+            }
+
+        fun <A, B, C> map2(
+            a: Result<A>,
+            b: Result<B>,
+            f: (A) -> (B) -> C
+        ): Result<C> = lift2(f)(a)(b)
+
+        fun <A, B, C, D> map3(
+            a: Result<A>,
+            b: Result<B>,
+            c: Result<C>,
+            f: (A) -> (B) -> (C) -> D
+        ): Result<D> = lift3(f)(a)(b)(c)
     }
 }
 
@@ -287,6 +316,23 @@ class EitherSpec : StringSpec() {
 
             val liftedResult = Result.lift<Int, String> { it.toString() }(result)
             liftedResult shouldBe Result("3")
+
+            val result2 = Result("4")
+            val fn = { x: Int -> { y: String -> "$x and $y" } }
+            val liftedResult2 = Result.lift2(fn)(result)(result2)
+            liftedResult2 shouldBe Result("3 and 4")
+        }
+
+        "examples for using lift3 to initialize object from functions" {
+            val getFirstName = { Result("Mickey") }
+            val getLastName = { Result("Mouse") }
+            val getMail = { Result("mickey@disney.com") }
+
+            val createPerson: (String) -> (String) -> (String) -> Toon =
+                { x -> { y -> { z -> Toon(x, y, z) } } }
+
+            val toon = Result.lift3(createPerson)(getFirstName())(getLastName())(getMail())
+            toon shouldBe Result(Toon("Mickey", "Mouse", "mickey@disney.com"))
         }
     }
 }
