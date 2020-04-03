@@ -52,7 +52,7 @@ object App {
     }
 
     fun run(runMode: RunMode) =
-        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+        EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
             App.connectToDatabase()
 
             val people = ! CsvUserImporter.importUsers

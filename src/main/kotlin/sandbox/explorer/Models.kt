@@ -50,7 +50,7 @@ data class GitHubUserInfo(
             EitherT(IO.fx {
                 val result = createKlaxon().parse<GitHubUserInfo>(userInfoData)
                 result!!.right()
-            }.handleError { Left(AppError.JSONDeserializaitonError) })
+            }.handleError { Left(AppError.JSONDeserializationError) })
     }
 }
 

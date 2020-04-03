@@ -38,6 +38,6 @@ class ModelsSpec : StringSpec({
         val userInfo =
             GitHubUserInfo.deserializeFromJson2("something").value().fix().unsafeRunSync()
 
-        userInfo shouldBe Left(AppError.JSONDeserializaitonError)
+        userInfo shouldBe Left(AppError.JSONDeserializationError)
     }
 })

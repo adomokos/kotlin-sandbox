@@ -52,7 +52,7 @@ class FunctorSpec : DescribeSpec({
             val result = Option(1).map { it * 2 }
 
             Option.fx {
-                val (calcResult) = result
+                val calcResult = ! result
                 calcResult shouldBe 2
             }
         }
@@ -82,7 +82,7 @@ class FunctorSpec : DescribeSpec({
         it("can map over") {
             var ioCalc = IO<Int> { 1 }.map { it * 2 }
             IO.fx {
-                val (result) = ioCalc
+                val result = ! ioCalc
                 result shouldBe Right(2)
             }
         }

@@ -13,19 +13,19 @@ import arrow.mtl.fix
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
-typealias EitherTIO<A> = EitherT<ForIO, AppError, A>
+typealias EitherTIO<A> = EitherT<AppError, ForIO, A>
 
 class EitherTSpec : StringSpec() {
-    private fun one(): EitherT<ForIO, AppError, Int> =
+    private fun one(): EitherT<AppError, ForIO, Int> =
         EitherT(IO { Right(1) })
-    private fun two(inputString: String): EitherT<ForIO, AppError, Int> =
+    private fun two(inputString: String): EitherT<AppError, ForIO, Int> =
         toInt(inputString)
-    private fun toInt(str: String): EitherT<ForIO, AppError, Int> =
+    private fun toInt(str: String): EitherT<AppError, ForIO, Int> =
         EitherT(IO { Right(str.toInt()) }.handleError { Left(AppError) })
 
     // https://stackoverflow.com/a/53747937
-    private fun result(inputString: String): EitherT<ForIO, AppError, Int> =
-        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+    private fun result(inputString: String): EitherT<AppError, ForIO, Int> =
+        EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
             val oneInt = ! one()
             val twoInt = ! two(inputString)
             oneInt + twoInt
@@ -40,7 +40,7 @@ class EitherTSpec : StringSpec() {
         EitherTIO(IO { Right(str.toInt()) }.handleError { Left(AppError) })
 
     private fun resultT(inputString: String): EitherTIO<Int> =
-        EitherTIO.monad<ForIO, AppError>(IO.monad()).fx.monad {
+        EitherTIO.monad<AppError, ForIO>(IO.monad()).fx.monad {
             val oneInt = ! oneT()
             val twoInt = ! twoT(inputString)
             oneInt + twoInt

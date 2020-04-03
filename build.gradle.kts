@@ -27,7 +27,7 @@ spotless {
     }
 }
 
-val arrowVersion = "0.10.4"
+val arrowVersion = "0.10.5"
 val coroutinesVersion = "1.3.3"
 val exposedVersion = "0.23.1"
 val klaxonVersion = "5.2"

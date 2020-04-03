@@ -82,10 +82,10 @@ fun phoneNumberFrom(phone: String): Either<Exception, PhoneNumber> {
     matched?.let {
         val values = it.groupValues.toList().takeLast(4)
         return Either.fx {
-            val (countryCode) = values[0].safeToInt()
-            val (areaCode) = values[1].safeToInt()
-            val (prefix) = values[2].safeToInt()
-            val (lineNumber) = values[3].safeToInt()
+            val countryCode = ! values[0].safeToInt()
+            val areaCode = ! values[1].safeToInt()
+            val prefix = ! values[2].safeToInt()
+            val lineNumber = ! values[3].safeToInt()
 
             PhoneNumber(countryCode, areaCode, prefix, lineNumber)
         }
@@ -100,8 +100,8 @@ fun String.safeToInt(): Either<Exception, Int> =
 
 fun domainUserFrom(rawUser: RawUser): Either<Exception, DomainUser> {
     return Either.fx {
-        val (maybePerson) = personFrom(rawUser.fullName)
-        val (maybePhoneNumber) = phoneNumberFrom(rawUser.phone)
+        val maybePerson = ! personFrom(rawUser.fullName)
+        val maybePhoneNumber = ! phoneNumberFrom(rawUser.phone)
         DomainUser(maybePerson, maybePhoneNumber)
     }
 }

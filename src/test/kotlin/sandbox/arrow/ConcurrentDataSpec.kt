@@ -36,8 +36,8 @@ fun findUserInfo(i: Int): IO<UserInfo> =
 val program1 = IO.fx {
     val fiberA = !effect { findUserInfo(1) }.fork(dispatchers().default())
     val fiberB = !effect { findUserInfo(2) }.fork(dispatchers().default())
-    val (userInfo1) = !fiberA.join()
-    val (userInfo2) = !fiberB.join()
+    val userInfo1 = !fiberA.join()
+    val userInfo2 = !fiberB.join()
     !effect { listOf(userInfo1, userInfo2) }
 }
 

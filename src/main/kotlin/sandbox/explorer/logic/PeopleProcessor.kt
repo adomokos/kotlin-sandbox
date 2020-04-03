@@ -33,7 +33,7 @@ object PeopleProcessor {
         })
 
     fun processPeople(people: List<Person>): EitherIO<List<GitHubMetric>> =
-        EitherT.monad<ForIO, AppError>(IO.monad()).fx.monad {
+        EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
             people.map { aPerson ->
                 val result = ! processPerson(aPerson)
                 result

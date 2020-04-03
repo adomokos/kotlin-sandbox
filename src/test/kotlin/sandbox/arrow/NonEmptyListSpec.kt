@@ -43,9 +43,9 @@ class NonEmptyListSpec : StringSpec({
         val nelThree: NonEmptyList<Int> = NonEmptyList.of(3)
 
         val res = NonEmptyList.fx {
-            val (one) = nelOne
-            val (two) = nelTwo
-            val (three) = nelThree
+            val one = ! nelOne
+            val two = ! nelTwo
+            val three = ! nelThree
             one + two + three
         }
 

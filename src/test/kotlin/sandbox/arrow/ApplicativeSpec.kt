@@ -18,7 +18,7 @@ class ApplicativeSpec : DescribeSpec({
         it("can map over applicative instance") {
             val addNumbers = fun(x: Int, y: Int) = x + y
 
-            val result = Option.applicative().map(Some(3), Some(4)) { (x, y) -> addNumbers(x, y) }
+            val result = Option.applicative().mapN(Some(3), Some(4)) { (x, y) -> addNumbers(x, y) }
             result shouldBe Some(7)
         }
 
