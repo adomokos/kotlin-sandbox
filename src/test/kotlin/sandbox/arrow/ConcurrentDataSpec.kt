@@ -3,10 +3,12 @@ package sandbox.arrow
 import arrow.core.Tuple5
 import arrow.fx.IO
 import arrow.fx.extensions.fx
+import arrow.fx.extensions.io.concurrent.parMapN
 import io.github.serpro69.kfaker.Faker
 import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.collections.shouldContainAll
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.Dispatchers
 
 // parMapN
 data class UserInfo(
@@ -43,13 +45,14 @@ val program1 = IO.fx {
 
 val program2 = IO.fx {
     val result =
-        !dispatchers().default().parMapN(
+        !parMapN(
+            Dispatchers.Default,
             findUserInfo(1),
             findUserInfo(2),
             findUserInfo(3),
             findUserInfo(4),
             findUserInfo(5),
-            ::Tuple5
+            { (a, b, c, d, e) -> Tuple5(a, b, c, d, e) }
         )
 
     result

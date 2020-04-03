@@ -11,9 +11,9 @@ import io.kotest.matchers.shouldBe
 class MonadSpec : StringSpec({
     "works with the Option type - Some values" {
         val result = Option.fx {
-            val (a) = Some(1)
-            val (b) = Some(1 + a)
-            val (c) = Some(1 + b)
+            val a = ! Some(1)
+            val b = ! Some(1 + a)
+            val c = ! Some(1 + b)
             a + b + c
         }
 
@@ -22,9 +22,9 @@ class MonadSpec : StringSpec({
 
     "works with the Option type - None value" {
         val result = Option.fx {
-            val (a) = none<Int>()
-            val (b) = Some(1 + a)
-            val (c) = Some(1 + b)
+            val a = ! none<Int>()
+            val b = ! Some(1 + a)
+            val c = ! Some(1 + b)
             a + b + c
         }
 

@@ -14,7 +14,7 @@ fun returnLastElement(): Int {
 
 fun secondOperation(): Int {
     return IO.fx {
-        val (a) = IO.invoke { 1 }
+        val a = ! IO.invoke { 1 }
         a + 1
     }.fix().unsafeRunSync()
 }
