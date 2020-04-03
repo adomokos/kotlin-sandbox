@@ -39,11 +39,14 @@ sealed class Either<out A, out B> {
 sealed class Result<out A> : Serializable {
     abstract fun <B> map(f: (A) -> B): Result<B>
     abstract fun <B> flatMap(f: (A) -> Result<B>): Result<B>
+    abstract fun mapFailure(message: String): Result<A>
 
     internal data class Failure<out A>(internal val exception: RuntimeException) : Result<A>() {
         override fun toString(): String = "Failure(${exception.message})"
         override fun <B> map(f: (A) -> B): Result<B> = Failure(exception)
         override fun <B> flatMap(f: (A) -> Result<B>): Result<B> = Failure(exception)
+        override fun mapFailure(message: String): Result<A> =
+            Failure(java.lang.RuntimeException(message, exception))
     }
 
     internal data class Success<out A>(internal val value: A) : Result<A>() {
@@ -65,6 +68,7 @@ sealed class Result<out A> : Serializable {
             } catch (e: Exception) {
                 Failure(RuntimeException(e))
             }
+        override fun mapFailure(message: String): Result<A> = this
     }
 
     fun getOrElse(defaultValue: @UnsafeVariance A): A =
@@ -95,6 +99,7 @@ sealed class Result<out A> : Serializable {
         override fun <B> map(f: (Nothing) -> B): Result<B> = Empty
         override fun <B> flatMap(f: (Nothing) -> Result<B>): Result<B> = Empty
         override fun toString(): String = "Empty"
+        override fun mapFailure(message: String): Result<Nothing> = this
     }
 
     companion object {
@@ -236,6 +241,15 @@ class EitherSpec : StringSpec() {
 
             val emptyEmail = toons.getResultWithDefault("Minnie").flatMap { it.email }
             emptyEmail shouldBe Result.Empty
+        }
+
+        "map failures into a new one with mapFailure" {
+            val failure = Result.failure<Int>("Not good")
+
+            failure.mapFailure("switched to this").toString() shouldBe "Failure(switched to this)"
+
+            val success = Result(3)
+            success.mapFailure("hello").toString() shouldBe "Success(3)"
         }
     }
 }
