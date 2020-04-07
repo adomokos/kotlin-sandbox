@@ -62,7 +62,7 @@ fun hasJInIt(name: String): Either<BizError, String> =
 
 fun sayInIO(s: String): IO<Unit> =
     IO.fx {
-        val (result) = getName().map(::allUpper).map(::hasJInIt)
+        val result = !getName().map(::allUpper).map(::hasJInIt)
 
         when (result) {
             is Either.Left -> println("No 'J' was found in the name")
