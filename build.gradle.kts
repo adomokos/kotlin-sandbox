@@ -3,8 +3,8 @@ plugins {
     kotlin("kapt") version "1.3.71"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-    id("com.diffplug.gradle.spotless") version "3.28.0"
-    id("io.gitlab.arturbosch.detekt").version("1.7.2")
+    id("com.diffplug.gradle.spotless") version "3.28.1"
+    id("io.gitlab.arturbosch.detekt").version("1.7.4")
     id("com.github.ben-manes.versions").version("0.28.0")
     application
 }
