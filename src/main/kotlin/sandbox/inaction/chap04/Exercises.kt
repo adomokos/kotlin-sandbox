@@ -35,10 +35,10 @@ class Button : Clickable, Focusable {
 // This class is open
 open class RichButton : Clickable {
     // This function is final, can't be overridden
-    fun disable() {}
-    open fun animate() {}
+    fun disable() = Unit
+    open fun animate() = Unit
     // This function overrides an open function and is open as well
-    final override fun click() {}
+    final override fun click() = Unit
 }
 
 // Classes are closed by default

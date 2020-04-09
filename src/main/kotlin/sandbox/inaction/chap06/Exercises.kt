@@ -1,3 +1,6 @@
+// Make detekt happy
+@file:Suppress("TooManyFunctions")
+
 package sandbox.inaction.chap06
 
 import java.io.BufferedReader

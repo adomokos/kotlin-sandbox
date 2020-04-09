@@ -1,3 +1,6 @@
+// Make detekt happy
+@file:Suppress("TooManyFunctions")
+
 package sandbox.inaction.chap07
 
 import java.time.LocalDate
