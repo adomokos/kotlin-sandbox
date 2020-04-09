@@ -117,8 +117,10 @@ tasks {
 }
 
 detekt {
-    toolVersion = "1.2.2"
+    debug = true
     input = files("src/main/kotlin", "src/test/kotlin")
+    buildUponDefaultConfig = true
+    config = files("resources/detekt-config.yml")
     // filters = ".*/resources/.*,.*/build/.*"
     // baseline = file("my-detekt-baseline.xml") // Just if you want to create a baseline file.
 }

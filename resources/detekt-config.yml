@@ -1,0 +1,6 @@
+complexity:
+    TooManyFunctions:
+        thresholdInFiles: 20
+style:
+    MagicNumber:
+        active: false
