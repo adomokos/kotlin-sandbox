@@ -137,6 +137,9 @@ sealed class List<A> {
 
         fun <A> lastSafe(list: List<A>): Result<A> =
             foldLeft(Result(), list) { _: Result<A> -> { y: A -> Result(y) } }
+
+        fun <A> headSafe(list: List<A>): Result<A> =
+            foldRight(list, Result()) { x: A -> { _: Result<A> -> Result(x) } }
     }
 }
 
@@ -162,6 +165,11 @@ class AdvancedListSpec : StringSpec() {
 
             val emptyList = List<Int>()
             List.lastSafe(emptyList) shouldBe Result()
+        }
+
+        "can use foldRight to find the first element - not very efficient" {
+            val list = List(1, 2, 3)
+            List.headSafe(list) shouldBe Result(1)
         }
     }
 }
