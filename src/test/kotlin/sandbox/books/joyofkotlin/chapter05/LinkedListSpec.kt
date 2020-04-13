@@ -136,6 +136,17 @@ sealed class List<A> {
                 is Cons -> f(list.head) (foldRight(list.tail, identityVal, f))
             }
 
+        tailrec fun <A, B> coFoldRight(
+            acc: B,
+            list: List<A>,
+            identity: B,
+            f: (A) -> (B) -> B
+        ): B =
+            when (list) {
+                List.Nil -> acc
+                is List.Cons -> coFoldRight(f(list.head)(acc), list.tail, identity, f)
+            }
+
         // This is stack safe and corecursive
         tailrec fun <A, B> foldLeft(acc: B, list: List<A>, f: (B) -> (A) -> B): B =
             when (list) {
@@ -152,19 +163,23 @@ sealed class List<A> {
 
 //        fun <A> flattenResult(list: List<Result<A>>): List<A> =
 //            list.flatMap { ra -> ra.map { List(it) }}.getOrElse(list)
+
+        fun <A> flatten(list: List<List<A>>): List<A> =
+            list.foldRight(Nil as List<A>) { x -> x::concat }
     }
 
-    /*
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
-     */
 
     fun <B> foldRight(identityVal: B, f: (A) -> (B) -> B): B =
         List.foldRight(this, identityVal, f)
 
-    fun concat(list: List<A>): List<A> = List.concat(this, list)
+    fun <B> coFoldRight(identity: B, f: (A) -> (B) -> B): B =
+        List.coFoldRight(identity, this.reverse(), identity, f)
 
-//    fun flatten(list: List<List<A>>): List<A> =
-//        list.foldRight(Nil) { x -> x::concat }
+    fun <B> map(f: (A) -> B): List<B> =
+        coFoldRight(Nil as List<B>) { h -> { t: List<B> -> Cons(f(h), t) } }
+
+    fun concat(list: List<A>): List<A> = List.concat(this, list)
 }
 
 class LinkedListSpec : StringSpec() {
@@ -261,6 +276,21 @@ class LinkedListSpec : StringSpec() {
 
             listLength(list) shouldBe 4
             listLength2(list) shouldBe 4
+        }
+
+        "can map over a list with a function" {
+            val list = List(1, 2, 3, 4)
+            val result = list.map { it + 2 }
+
+            result.toString() shouldBe "[3, 4, 5, 6, NIL]"
+        }
+
+        "can flatMap a list" {
+            val list = List(1, 2, 3)
+            val f: (Int) -> List<Int> = { x -> List(x, -x) }
+            val result = list.flatMap(f)
+
+            result.toString() shouldBe "[1, -1, 2, -2, 3, -3, NIL]"
         }
     }
 }
