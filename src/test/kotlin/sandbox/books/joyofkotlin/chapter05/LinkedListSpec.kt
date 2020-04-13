@@ -161,18 +161,32 @@ sealed class List<A> {
         fun <A> headSafe(list: List<A>): Result<A> =
             foldRight(list, Result()) { x: A -> { _: Result<A> -> Result(x) } }
 
+        @Suppress("UNCHECKED_CAST")
         fun <A> flattenResult(list: List<Result<A>>): List<A> =
             list.flatMap { ra -> ra.map { List(it) }.getOrElse(Nil as List<A>) }
 
+        @Suppress("UNCHECKED_CAST")
         fun <A> flatten(list: List<List<A>>): List<A> =
             list.foldRight(Nil as List<A>) { x -> x::concat }
 
+        @Suppress("UNCHECKED_CAST")
         fun <A> sequence(list: List<Result<A>>): Result<List<A>> =
             list.foldRight(Result(Nil as List<A>)) { x ->
                 { y: Result<List<A>> ->
                     Result.map2(x, y) { a -> { b: List<A> -> b.cons(a) } }
                 }
             }
+
+        @Suppress("UNCHECKED_CAST")
+        fun <A> sequence2(list: List<Result<A>>): Result<List<A>> =
+            list.filter { !it.isEmpty() }
+                .foldRight(Result(Nil as List<A>)) { x ->
+                    { y: Result<List<A>> ->
+                        Result.map2(x, y) { a -> { b: List<A> ->
+                            b.cons(a)
+                        } }
+                    }
+                }
     }
 
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
@@ -183,10 +197,17 @@ sealed class List<A> {
     fun <B> coFoldRight(identity: B, f: (A) -> (B) -> B): B =
         List.coFoldRight(identity, this.reverse(), identity, f)
 
+    @Suppress("UNCHECKED_CAST")
     fun <B> map(f: (A) -> B): List<B> =
         coFoldRight(Nil as List<B>) { h -> { t: List<B> -> Cons(f(h), t) } }
 
     fun concat(list: List<A>): List<A> = List.concat(this, list)
+
+    @Suppress("UNCHECKED_CAST")
+    fun filter(p: (A) -> Boolean): List<A> =
+        coFoldRight(Nil as List<A>) { h -> { t: List<A> ->
+            if (p(h)) Cons(h, t) else t }
+        }
 }
 
 class LinkedListSpec : StringSpec() {

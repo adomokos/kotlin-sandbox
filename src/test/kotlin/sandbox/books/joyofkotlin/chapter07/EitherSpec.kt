@@ -42,6 +42,7 @@ sealed class Result<out A> : Serializable {
     abstract fun <B> flatMap(f: (A) -> Result<B>): Result<B>
     abstract fun mapFailure(message: String): Result<A>
     abstract fun forEach(effect: (A) -> Unit)
+    abstract fun isEmpty(): Boolean
 
     internal data class Failure<out A>(internal val exception: RuntimeException) : Result<A>() {
         override fun toString(): String = "Failure(${exception.message})"
@@ -51,6 +52,7 @@ sealed class Result<out A> : Serializable {
             Failure(java.lang.RuntimeException(message, exception))
 
         override fun forEach(effect: (A) -> Unit) = Unit
+        override fun isEmpty() = false
     }
 
     internal data class Success<out A>(internal val value: A) : Result<A>() {
@@ -74,6 +76,7 @@ sealed class Result<out A> : Serializable {
             }
         override fun mapFailure(message: String): Result<A> = this
         override fun forEach(effect: (A) -> Unit): Unit = effect(value)
+        override fun isEmpty() = false
     }
 
     fun getOrElse(defaultValue: @UnsafeVariance A): A =
@@ -106,6 +109,7 @@ sealed class Result<out A> : Serializable {
         override fun toString(): String = "Empty"
         override fun mapFailure(message: String): Result<Nothing> = this
         override fun forEach(effect: (Nothing) -> Unit) = Unit
+        override fun isEmpty() = true
     }
 
     companion object {

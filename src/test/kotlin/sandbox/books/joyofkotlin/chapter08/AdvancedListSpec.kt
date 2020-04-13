@@ -48,9 +48,11 @@ class AdvancedListSpec : StringSpec() {
             val list2 = List(Result(1), Result(2), Result(3))
             val result2 = List.sequence(list2)
 
-            println("hello")
-            println(result2)
             result2.toString() shouldBe "Success([1, 2, 3, NIL])"
+
+            val result3 = List.sequence2(list2)
+
+            result3.toString() shouldBe "Success([1, 2, 3, NIL])"
         }
     }
 }
