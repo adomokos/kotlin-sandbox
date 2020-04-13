@@ -54,5 +54,16 @@ class AdvancedListSpec : StringSpec() {
 
             result3.toString() shouldBe "Success([1, 2, 3, NIL])"
         }
+
+        "can traverse a list" {
+            val list = List(1, 2, 3, 4)
+
+            val f: (Int) -> Result<Int> = { x -> if (x % 2 == 0) Result(x) else Result() }
+            val result = List.traverse(list, f)
+            val list2 = List(2, 4, 6)
+            val result2 = List.traverse(list2, f)
+
+            result2.toString() shouldBe "Success([2, 4, 6, NIL])"
+        }
     }
 }

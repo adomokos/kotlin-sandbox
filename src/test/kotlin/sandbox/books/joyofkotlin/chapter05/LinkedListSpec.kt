@@ -187,6 +187,14 @@ sealed class List<A> {
                         } }
                     }
                 }
+
+        @Suppress("UNCHECKED_CAST")
+        fun <A, B> traverse(list: List<A>, f: (A) -> Result<B>): Result<List<B>> =
+            list.foldRight((Result(Nil as List<B>))) { x ->
+                { y: Result<List<B>> ->
+                    Result.map2(f(x), y) { a -> { b: List<B> -> b.cons(a) } }
+                }
+            }
     }
 
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
