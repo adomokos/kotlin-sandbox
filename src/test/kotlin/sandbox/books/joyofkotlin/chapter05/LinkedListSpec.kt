@@ -166,6 +166,13 @@ sealed class List<A> {
 
         fun <A> flatten(list: List<List<A>>): List<A> =
             list.foldRight(Nil as List<A>) { x -> x::concat }
+
+        fun <A> sequence(list: List<Result<A>>): Result<List<A>> =
+            list.foldRight(Result(Nil as List<A>)) { x ->
+                { y: Result<List<A>> ->
+                    Result.map2(x, y) { a -> { b: List<A> -> b.cons(a) } }
+                }
+            }
     }
 
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))

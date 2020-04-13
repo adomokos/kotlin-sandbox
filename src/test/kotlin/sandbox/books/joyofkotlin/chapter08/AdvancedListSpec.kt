@@ -38,5 +38,19 @@ class AdvancedListSpec : StringSpec() {
             val list = List(Result(1), Result(), Result(2))
             List.flattenResult(list).toString() shouldBe "[1, 2, NIL]"
         }
+
+        "can sequence through a list of Results" {
+            val list = List(Result(1), Result(), Result(2))
+            val result = List.sequence(list)
+
+            result shouldBe Result.Empty
+
+            val list2 = List(Result(1), Result(2), Result(3))
+            val result2 = List.sequence(list2)
+
+            println("hello")
+            println(result2)
+            result2.toString() shouldBe "Success([1, 2, 3, NIL])"
+        }
     }
 }
