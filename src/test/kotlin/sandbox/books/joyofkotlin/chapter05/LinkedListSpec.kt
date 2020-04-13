@@ -3,6 +3,7 @@ package sandbox.books.joyofkotlin.chapter05
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.lang.IllegalArgumentException
+import sandbox.books.joyofkotlin.chapter07.Result
 
 /*
 Collections can be classified as:
@@ -19,6 +20,8 @@ sealed class List<A> {
     abstract fun drop(n: Int): List<A>
     abstract fun dropWhile(p: (A) -> Boolean): List<A>
     abstract fun reverse(): List<A>
+    abstract fun lengthMemoized(): Int
+    abstract fun headSafe(): Result<A>
 
     object Nil : List<Nothing>() {
         override fun isEmpty() = true
@@ -34,15 +37,16 @@ sealed class List<A> {
                 invoke(),
                 this
             )
+        override fun lengthMemoized(): Int = 0
+        override fun headSafe() = Result<Nothing>()
     }
-
-    fun cons(a: A): List<A> =
-        Cons(a, this)
 
     class Cons<A>(
         internal val head: A,
         internal val tail: List<A>
     ) : List<A>() {
+        private val length: Int = tail.lengthMemoized() + 1
+
         override fun isEmpty() = false
 
         override fun toString(): String = "[${toString("", this)}NIL]"
@@ -69,7 +73,14 @@ sealed class List<A> {
                 Nil -> acc
                 is Cons -> toString("$acc${list.head}, ", list.tail)
             }
+
+        override fun lengthMemoized(): Int = length
+
+        override fun headSafe() = Result(head)
     }
+
+    fun cons(a: A): List<A> =
+        Cons(a, this)
 
     companion object {
         @Suppress("UNCHECKED_CAST")
@@ -131,7 +142,29 @@ sealed class List<A> {
                 Nil -> acc
                 is Cons -> foldLeft(f(acc) (list.head), list.tail, f)
             }
+
+        fun <A> lastSafe(list: List<A>): Result<A> =
+            foldLeft(Result(), list) { _: Result<A> -> { y: A -> Result(y) } }
+
+        // A different way to call headSafe
+        fun <A> headSafe(list: List<A>): Result<A> =
+            foldRight(list, Result()) { x: A -> { _: Result<A> -> Result(x) } }
+
+//        fun <A> flattenResult(list: List<Result<A>>): List<A> =
+//            list.flatMap { ra -> ra.map { List(it) }}.getOrElse(list)
     }
+
+    /*
+    fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
+     */
+
+    fun <B> foldRight(identityVal: B, f: (A) -> (B) -> B): B =
+        List.foldRight(this, identityVal, f)
+
+    fun concat(list: List<A>): List<A> = List.concat(this, list)
+
+//    fun flatten(list: List<List<A>>): List<A> =
+//        list.foldRight(Nil) { x -> x::concat }
 }
 
 class LinkedListSpec : StringSpec() {

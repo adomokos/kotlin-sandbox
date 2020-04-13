@@ -2,9 +2,10 @@ package sandbox.books.joyofkotlin.chapter08
 
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
-import java.lang.IllegalArgumentException
+import sandbox.books.joyofkotlin.chapter05.List
 import sandbox.books.joyofkotlin.chapter07.Result
 
+/*
 sealed class List<A> {
     abstract fun isEmpty(): Boolean
     abstract fun setHead(a: A): List<A>
@@ -140,8 +141,17 @@ sealed class List<A> {
 
         fun <A> headSafe(list: List<A>): Result<A> =
             foldRight(list, Result()) { x: A -> { _: Result<A> -> Result(x) } }
+
+        fun <A> flattenResult(list: List<Result<A>>): List<A> =
+            list.flatMap { ra -> ra.map { List(it) }}.getOrElse(list)
     }
+
+    fun <A> flatten(list: List<List<A>>): List<A> =
+        List.foldRight(this, Nil) { x -> x::concat }
+
+    fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
 }
+*/
 
 class AdvancedListSpec : StringSpec() {
     init {
@@ -171,5 +181,12 @@ class AdvancedListSpec : StringSpec() {
             val list = List(1, 2, 3)
             List.headSafe(list) shouldBe Result(1)
         }
+
+        /*
+        "can map Success items into a resulting list" {
+            val list = List(Result(1), Result(), Result(2))
+            List.flattenResult(list) shouldBe listOf(1, 2)
+        }
+        */
     }
 }
