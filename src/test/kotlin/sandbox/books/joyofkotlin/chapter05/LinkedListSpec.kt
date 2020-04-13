@@ -161,8 +161,8 @@ sealed class List<A> {
         fun <A> headSafe(list: List<A>): Result<A> =
             foldRight(list, Result()) { x: A -> { _: Result<A> -> Result(x) } }
 
-//        fun <A> flattenResult(list: List<Result<A>>): List<A> =
-//            list.flatMap { ra -> ra.map { List(it) }}.getOrElse(list)
+        fun <A> flattenResult(list: List<Result<A>>): List<A> =
+            list.flatMap { ra -> ra.map { List(it) }.getOrElse(Nil as List<A>) }
 
         fun <A> flatten(list: List<List<A>>): List<A> =
             list.foldRight(Nil as List<A>) { x -> x::concat }

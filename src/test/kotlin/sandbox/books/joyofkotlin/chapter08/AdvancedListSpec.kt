@@ -34,11 +34,9 @@ class AdvancedListSpec : StringSpec() {
             List.headSafe(list) shouldBe Result(1)
         }
 
-        /*
         "can map Success items into a resulting list" {
             val list = List(Result(1), Result(), Result(2))
-            List.flattenResult(list) shouldBe listOf(1, 2)
+            List.flattenResult(list).toString() shouldBe "[1, 2, NIL]"
         }
-        */
     }
 }
