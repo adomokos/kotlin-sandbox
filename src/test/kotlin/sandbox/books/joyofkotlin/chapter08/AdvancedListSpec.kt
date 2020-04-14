@@ -65,5 +65,18 @@ class AdvancedListSpec : StringSpec() {
 
             result2.toString() shouldBe "Success([2, 4, 6, NIL])"
         }
+
+        "can zip two lists with a function" {
+            val list1 = List(1, 2, 3)
+            val list2 = List('.', '?', '!', ';')
+            val f: (Int) -> (Char) -> String = { x -> { y -> "$x$y" } }
+
+            val result = List.zipWith(list1, list2, f)
+            result.toString() shouldBe "[1., 2?, 3!, NIL]"
+
+            val list3 = List<Int>()
+            val result2 = List.zipWith(list3, list2, f)
+            result2.toString() shouldBe "[NIL]"
+        }
     }
 }

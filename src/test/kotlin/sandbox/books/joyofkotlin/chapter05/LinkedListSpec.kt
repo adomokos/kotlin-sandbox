@@ -83,12 +83,14 @@ sealed class List<A> {
         Cons(a, this)
 
     companion object {
-        @Suppress("UNCHECKED_CAST")
         operator fun <A> invoke(vararg az: A): List<A> =
-            az.foldRight(Nil as List<A>) {
+            az.foldRight(invoke()) {
                     a: A, list: List<A> ->
                 Cons(a, list)
             }
+
+        @Suppress("UNCHECKED_CAST")
+        operator fun <A> invoke(): List<A> = Nil as List<A>
 
         tailrec fun <A> drop(list: List<A>, n: Int): List<A> =
             when (list) {
@@ -161,26 +163,22 @@ sealed class List<A> {
         fun <A> headSafe(list: List<A>): Result<A> =
             foldRight(list, Result()) { x: A -> { _: Result<A> -> Result(x) } }
 
-        @Suppress("UNCHECKED_CAST")
         fun <A> flattenResult(list: List<Result<A>>): List<A> =
-            list.flatMap { ra -> ra.map { List(it) }.getOrElse(Nil as List<A>) }
+            list.flatMap { ra -> ra.map { List(it) }.getOrElse(invoke()) }
 
-        @Suppress("UNCHECKED_CAST")
         fun <A> flatten(list: List<List<A>>): List<A> =
-            list.foldRight(Nil as List<A>) { x -> x::concat }
+            list.foldRight(invoke()) { x -> x::concat }
 
-        @Suppress("UNCHECKED_CAST")
         fun <A> sequence(list: List<Result<A>>): Result<List<A>> =
-            list.foldRight(Result(Nil as List<A>)) { x ->
+            list.foldRight(Result(invoke())) { x ->
                 { y: Result<List<A>> ->
                     Result.map2(x, y) { a -> { b: List<A> -> b.cons(a) } }
                 }
             }
 
-        @Suppress("UNCHECKED_CAST")
         fun <A> sequence2(list: List<Result<A>>): Result<List<A>> =
             list.filter { !it.isEmpty() }
-                .foldRight(Result(Nil as List<A>)) { x ->
+                .foldRight(Result(invoke())) { x ->
                     { y: Result<List<A>> ->
                         Result.map2(x, y) { a -> { b: List<A> ->
                             b.cons(a)
@@ -188,13 +186,26 @@ sealed class List<A> {
                     }
                 }
 
-        @Suppress("UNCHECKED_CAST")
         fun <A, B> traverse(list: List<A>, f: (A) -> Result<B>): Result<List<B>> =
-            list.foldRight((Result(Nil as List<B>))) { x ->
+            list.foldRight((Result(invoke()))) { x ->
                 { y: Result<List<B>> ->
                     Result.map2(f(x), y) { a -> { b: List<B> -> b.cons(a) } }
                 }
             }
+
+        fun <A, B, C> zipWith(list1: List<A>, list2: List<B>, f: (A) -> (B) -> C): List<C> {
+            tailrec
+            fun zipWith(acc: List<C>, list1: List<A>, list2: List<B>): List<C> =
+                when (list1) {
+                    List.Nil -> acc
+                    is List.Cons -> when (list2) {
+                        List.Nil -> acc
+                        is List.Cons -> zipWith(acc.cons(f(list1.head) (list2.head)),
+                            list1.tail, list2.tail)
+                    }
+                }
+            return zipWith(invoke(), list1, list2).reverse()
+        }
     }
 
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
