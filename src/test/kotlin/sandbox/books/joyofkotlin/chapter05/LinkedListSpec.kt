@@ -206,6 +206,16 @@ sealed class List<A> {
                 }
             return zipWith(invoke(), list1, list2).reverse()
         }
+
+        fun <A, B, C> product(list1: List<A>, list2: List<B>, f: (A) -> (B) -> C): List<C> =
+            list1.flatMap { a -> list2.map { b -> f(a) (b) } }
+
+        fun <A, B> unzip(list: List<Pair<A, B>>): Pair<List<A>, List<B>> =
+            list.coFoldRight(Pair(invoke(), invoke())) { pair ->
+                { listPair: Pair<List<A>, List<B>> ->
+                    Pair(listPair.first.cons(pair.first), listPair.second.cons(pair.second))
+                }
+            }
     }
 
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))

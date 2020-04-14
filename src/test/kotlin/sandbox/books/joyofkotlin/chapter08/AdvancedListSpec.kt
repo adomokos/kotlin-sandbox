@@ -78,5 +78,22 @@ class AdvancedListSpec : StringSpec() {
             val result2 = List.zipWith(list3, list2, f)
             result2.toString() shouldBe "[NIL]"
         }
+
+        "can calculate all permutations with product" {
+            val list1 = List(1, 2, 3)
+            val list2 = List('.', '?', '!')
+            val f: (Int) -> (Char) -> String = { x -> { y -> "$x$y" } }
+
+            val result = List.product(list1, list2, f)
+            result.toString() shouldBe "[1., 1?, 1!, 2., 2?, 2!, 3., 3?, 3!, NIL]"
+        }
+
+        "can unzip a list of pairs into a pair of lists" {
+            val list = List(Pair("a", 1), Pair("b", 2), Pair("c", 3))
+            val (x, y) = List.unzip(list)
+
+            x.toString() shouldBe "[a, b, c, NIL]"
+            y.toString() shouldBe "[1, 2, 3, NIL]"
+        }
     }
 }
