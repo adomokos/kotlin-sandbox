@@ -95,5 +95,13 @@ class AdvancedListSpec : StringSpec() {
             x.toString() shouldBe "[a, b, c, NIL]"
             y.toString() shouldBe "[1, 2, 3, NIL]"
         }
+
+        "retrieve item by index recursively" {
+            val list1 = List(1, 2, 3)
+
+            list1.getAt(1) shouldBe Result(2)
+            list1.getAtNoNilCheck(2) shouldBe Result(3)
+            list1.getAtViaFoldLeft(0) shouldBe Result(1)
+        }
     }
 }

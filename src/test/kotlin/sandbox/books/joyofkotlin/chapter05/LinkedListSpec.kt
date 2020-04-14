@@ -65,8 +65,8 @@ sealed class List<A> {
                 this
             )
 
-        fun <B> foldLeft(acc: B, f: (B) -> (A) -> B): B =
-            List.foldLeft(acc, this, f)
+//        fun <B> myFoldLeft(acc: B, f: (B) -> (A) -> B): B =
+//            List.foldLeft(acc, this, f)
 
         private tailrec fun toString(acc: String, list: List<A>): String =
             when (list) {
@@ -218,10 +218,59 @@ sealed class List<A> {
             }
     }
 
+    fun getAt(index: Int): Result<A> {
+        tailrec
+        fun <A> getAt(list: List<A>, index: Int): Result<A> =
+            when (list) {
+                Nil -> Result.failure("Dead code. Should never execute.")
+                is Cons ->
+                    if (index == 0)
+                        Result(list.head)
+                    else
+                        getAt(list.tail, index - 1)
+            }
+        return if (index < 0 || index >= lengthMemoized())
+            Result.failure("Index out of bound")
+        else
+            getAt(this, index)
+    }
+
+    @Suppress("UNCHECKED_CAST")
+    fun getAtNoNilCheck(index: Int): Result<A> {
+        tailrec
+        fun <A> getAt(list: Cons<A>, index: Int): Result<A> =
+            if (index == 0)
+                Result(list.head)
+            else
+                getAt(list.tail as Cons, index - 1)
+        return if (index < 0 || index >= lengthMemoized())
+            Result.failure("Index out of bound")
+        else
+            getAt(this as Cons, index)
+    }
+
+    fun getAtViaFoldLeft(index: Int): Result<A> =
+        Pair(Result.failure<A>("Index out of bound"), index).let {
+            if (index < 0 || index >= lengthMemoized())
+                it
+            else
+                foldLeft(it) { ta ->
+                    { a ->
+                        if (ta.second < 0)
+                            ta
+                        else
+                            Pair(Result(a), ta.second - 1)
+                    }
+                }
+        }.first
+
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
 
     fun <B> foldRight(identityVal: B, f: (A) -> (B) -> B): B =
         List.foldRight(this, identityVal, f)
+
+    fun <B> foldLeft(acc: B, f: (B) -> (A) -> B): B =
+        List.foldLeft(acc, this, f)
 
     fun <B> coFoldRight(identity: B, f: (A) -> (B) -> B): B =
         List.coFoldRight(identity, this.reverse(), identity, f)
