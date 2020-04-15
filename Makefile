@@ -26,7 +26,8 @@ single-test: ## Run a sigle test, pass TEST=something.MySpec to run it
 .PHONY: tests
 
 run: ## Run app locally
-	./gradlew run --args="--app=Either --username=adomokos1"
+	./gradlew run --args="parallel"
+	# ./gradlew run --args="--app=Either --username=adomokos1" - to run the github.explorer app
 .PHONY: run
 
 run-all: ## Run  all the examples

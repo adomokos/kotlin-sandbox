@@ -1,7 +1,7 @@
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.default
 import com.github.ajalt.clikt.parameters.options.option
-// import sandbox.explorer.main as runExplorerApp
+import sandbox.explorer.main as runExplorerApp
 import sandbox.github.explorer.EitherApp.run as runEitherApp
 import sandbox.github.explorer.EitherIOApp.run as runEitherIOApp
 import sandbox.github.explorer.NullableApp.run as runNullableApp
@@ -26,6 +26,6 @@ class Hello : CliktCommand() {
 }
 
 suspend fun main(args: Array<String>) {
-    Hello().main(args)
-    // runExplorerApp(args)
+    // Hello().main(args)
+    runExplorerApp(args)
 }
