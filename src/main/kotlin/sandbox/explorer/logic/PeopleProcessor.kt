@@ -42,8 +42,9 @@ object PeopleProcessor {
 
     fun processPerson(aPerson: Person): EitherIO<GitHubMetric> =
         GitHubApiCaller.callApi(aPerson.gitHubUsername).flatMap(IO.monad()) { gitHubInfo ->
-            var result = GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap(IO.monad()) { gitHubUserInfo ->
-                GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
+            var result =
+                GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap(IO.monad()) { gitHubUserInfo ->
+                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
             }
             result
         }

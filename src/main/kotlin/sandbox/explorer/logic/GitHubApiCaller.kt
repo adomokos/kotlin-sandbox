@@ -42,6 +42,11 @@ object GitHubApiCaller {
                 .left()
         }
 
+        if (response.statusCode() != 200) {
+            return AppError.GitHubApiError("Received a status code that is not 200: ${response.statusCode()}")
+                .left()
+        }
+
         return when (val body: Option<String> = response.body().toOption()) {
             is None -> AppError.GitHubApiError("Response body was null").left()
             is Some -> body.t.right()
