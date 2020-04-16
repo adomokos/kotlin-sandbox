@@ -4,9 +4,15 @@
 package sandbox.explorer
 
 import arrow.core.Either
+import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.fx
+import arrow.fx.extensions.io.monad.monad
+import arrow.fx.fix
 import arrow.fx.handleError
+import arrow.mtl.EitherT
+import arrow.mtl.extensions.eithert.monad.monad
+import arrow.mtl.value
 import java.io.File
 import java.sql.Connection
 import org.jetbrains.exposed.sql.Database
@@ -46,24 +52,34 @@ object App {
         return db
     }
 
-    fun run(runMode: RunMode) =
-        IO.fx {
+    fun run(runMode: RunMode): IO<Either<AppError, List<GitHubMetric>>> =
+        EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
             App.connectToDatabase()
 
-            val eitherPeople = ! CsvUserImporter.importUsers
+            val people = ! EitherT(CsvUserImporter.importUsers)
 
-            val result = when (eitherPeople) {
-                is Either.Left -> eitherPeople
-                is Either.Right ->
-                    ! if (runMode == RunMode.PARALLEL) {
-                        println("::: Running in parallel :::")
-                        PeopleProcessor.processPeopleParallel(eitherPeople.b)
-                    } else {
-                        println("::: Running normal :::")
-                        PeopleProcessor.processPeople(eitherPeople.b)
-                    }
-            }
+            val result =
+                ! if (runMode == RunMode.PARALLEL) {
+                    println("::: Running in parallel :::")
+                    EitherT(PeopleProcessor.processPeopleParallel(people))
+                } else {
+                    println("::: Running normal :::")
+                    EitherT(PeopleProcessor.processPeople(people))
+                }
 
             result
-        }
+        }.value().fix()
 }
+
+/*
+// Short example for EitherT
+data class Failure(val reason: String)
+fun x() : IO<Either<Failure,String>> = IO { "x".right() }
+fun y(xResult: String) : IO<Either<Failure,Int>> { return IO { Failure(xResult).left() } }
+fun z(yResult: Int) : IO<Either<Failure,String>> { return IO { "$yResult".right() } }
+fun compute(): IO<Either<Failure, String>> = EitherT.monad<Failure, ForIO>(IO.monad()).fx.monad {
+    val xResult = ! EitherT(x())
+    val yResult = ! EitherT(y(xResult))
+    ! EitherT(z(yResult))
+}.value().fix()
+ */
