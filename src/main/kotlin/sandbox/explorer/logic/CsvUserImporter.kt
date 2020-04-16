@@ -1,32 +1,30 @@
 package sandbox.explorer.logic
 
+import arrow.core.Either
 import arrow.core.Left
 import arrow.core.Right
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import arrow.fx.extensions.io.monad.monad
 import arrow.fx.handleError
-import arrow.mtl.EitherT
 import com.opencsv.CSVReaderHeaderAware
 import java.io.FileReader
 import org.jetbrains.exposed.sql.StdOutSqlLogger
 import org.jetbrains.exposed.sql.addLogger
 import org.jetbrains.exposed.sql.transactions.transaction
 import sandbox.explorer.AppError
-import sandbox.explorer.EitherIO
 import sandbox.explorer.Person
 
 object CsvUserImporter {
-    fun readUserData(fileName: String): EitherIO<List<Array<String>>> =
-        EitherT(IO.fx {
+    fun readUserData(fileName: String): IO<Either<AppError, List<Array<String>>>> =
+        IO.fx {
             val csvReader = CSVReaderHeaderAware(FileReader(fileName))
             val records: List<Array<String>> = csvReader.readAll()
 
             Right(records)
-        }.handleError { Left(AppError.CsvImportError) })
+        }.handleError { Left(AppError.CsvImportError) }
 
-    private fun persistUserInfo(userData: List<Array<String>>): EitherIO<List<Person>> =
-        EitherT(IO.fx {
+    private fun persistUserInfo(userData: List<Array<String>>): IO<Either<AppError, List<Person>>> =
+        IO.fx {
             val result = transaction {
                 addLogger(StdOutSqlLogger)
                 userData.map {
@@ -44,11 +42,15 @@ object CsvUserImporter {
             AppError.PersonInsertError(
                 err.message ?: "No message"
             )
-        ) })
+        ) }
 
-    val importUsers: EitherIO<List<Person>> =
-        readUserData("resources/users.csv")
-            .flatMap(IO.monad()) { userData ->
-                persistUserInfo(userData)
+    val importUsers: IO<Either<AppError, List<Person>>> =
+        IO.fx {
+            val eitherUserData = !readUserData("resources/users.csv")
+            val result2 = when (eitherUserData) {
+                is Either.Left -> eitherUserData
+                is Either.Right -> !persistUserInfo(eitherUserData.b)
+            }
+            result2
         }
 }
