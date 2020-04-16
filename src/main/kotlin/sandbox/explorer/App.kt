@@ -4,15 +4,9 @@
 package sandbox.explorer
 
 import arrow.core.Either
-import arrow.fx.ForIO
 import arrow.fx.IO
 import arrow.fx.extensions.fx
-import arrow.fx.extensions.io.monad.monad
-import arrow.fx.fix
 import arrow.fx.handleError
-import arrow.mtl.EitherT
-import arrow.mtl.extensions.eithert.monad.monad
-import arrow.mtl.value
 import java.io.File
 import java.sql.Connection
 import org.jetbrains.exposed.sql.Database
@@ -32,7 +26,8 @@ suspend fun main(args: Array<String>) =
             RunMode.NORMAL
         }
 
-        val result = ! App.run(runMode).value().fix()
+        // val result = ! App.run(runMode).value().fix()
+        val result = ! App.run(runMode)
 
         when (result) {
             is Either.Left -> println("Error occurred - ${result.a}")
@@ -52,18 +47,23 @@ object App {
     }
 
     fun run(runMode: RunMode) =
-        EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
+        IO.fx {
             App.connectToDatabase()
 
-            val people = ! CsvUserImporter.importUsers
+            val eitherPeople = ! CsvUserImporter.importUsers
 
-            val result = ! if (runMode == RunMode.PARALLEL) {
-                println("::: Running in parallel :::")
-                PeopleProcessor.processPeopleParallel(people)
-            } else {
-                println("::: Running normal :::")
-                PeopleProcessor.processPeople(people)
+            val result = when (eitherPeople) {
+                is Either.Left -> eitherPeople
+                is Either.Right ->
+                    ! if (runMode == RunMode.PARALLEL) {
+                        println("::: Running in parallel :::")
+                        PeopleProcessor.processPeopleParallel(eitherPeople.b)
+                    } else {
+                        println("::: Running normal :::")
+                        PeopleProcessor.processPeople(eitherPeople.b)
+                    }
             }
+
             result
         }
 }

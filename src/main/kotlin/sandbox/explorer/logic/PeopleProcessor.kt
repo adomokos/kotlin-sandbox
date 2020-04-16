@@ -4,48 +4,45 @@ import arrow.core.Either
 import arrow.core.extensions.either.applicative.applicative
 import arrow.core.extensions.list.traverse.traverse
 import arrow.core.fix
-import arrow.core.k
-import arrow.fx.ForIO
 import arrow.fx.IO
+import arrow.fx.extensions.fx
 import arrow.fx.extensions.io.concurrent.parTraverse
-import arrow.fx.extensions.io.monad.monad
-import arrow.fx.fix
-import arrow.mtl.EitherT
-import arrow.mtl.extensions.eithert.monad.monad
-import arrow.mtl.fix
 import sandbox.explorer.AppError
-import sandbox.explorer.EitherIO
 import sandbox.explorer.GitHubMetric
 import sandbox.explorer.GitHubUserInfo
 import sandbox.explorer.Person
 
 object PeopleProcessor {
-    fun processPeopleParallel(people: List<Person>): EitherIO<List<GitHubMetric>> =
-        EitherT(people.k().parTraverse { aPerson ->
-            val result = processPerson(aPerson).value().fix()
+    fun processPeopleParallel(people: List<Person>): IO<Either<AppError, List<GitHubMetric>>> =
+        people.parTraverse { aPerson ->
+            val result = processPerson(aPerson)
             result
-        } // Do some type conversion gymnastics to return EitherIO<List<GitHubMetric>>
-            .map { item ->
-            item
-                .traverse(Either.applicative()) { it }
-                .fix()
-                .map { it.fix().toList() }
-        })
+        }.map { item ->
+            item.traverse(Either.applicative()) { it }.fix().map { it.fix().toList() }
+        }
 
-    fun processPeople(people: List<Person>): EitherIO<List<GitHubMetric>> =
-        EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
+    fun processPeople(people: List<Person>): IO<Either<AppError, List<GitHubMetric>>> =
+        IO.fx {
             people.map { aPerson ->
                 val result = ! processPerson(aPerson)
                 result
-            }
-        }.fix()
+            }.traverse(Either.applicative()) { it }.fix().map { it.fix().toList() }
+        }
 
-    fun processPerson(aPerson: Person): EitherIO<GitHubMetric> =
-        GitHubApiCaller.callApi(aPerson.gitHubUsername).flatMap(IO.monad()) { gitHubInfo ->
-            var result =
-                GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap(IO.monad()) { gitHubUserInfo ->
-                    GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
+    fun processPerson(aPerson: Person): IO<Either<AppError, GitHubMetric>> =
+        IO.fx {
+            val eitherGHInfo = ! GitHubApiCaller.callApi(aPerson.gitHubUsername)
+
+            val eitherUserInfo = when (eitherGHInfo) {
+                is Either.Left -> eitherGHInfo
+                is Either.Right -> ! GitHubUserInfo.deserializeFromJson2(eitherGHInfo.b)
             }
+
+            val result = when (eitherUserInfo) {
+                is Either.Left -> eitherUserInfo
+                is Either.Right -> ! GitHubMetricConverter.convertAndSaveData(eitherUserInfo.b, aPerson)
+            }
+
             result
         }
 }

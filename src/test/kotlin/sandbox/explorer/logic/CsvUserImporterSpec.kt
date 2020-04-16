@@ -1,7 +1,6 @@
 package sandbox.explorer.logic
 
 import arrow.core.Left
-import arrow.fx.fix
 import io.kotest.assertions.arrow.either.shouldNotBeLeft
 import io.kotest.core.listeners.TestListener
 import io.kotest.core.spec.style.StringSpec
@@ -19,7 +18,7 @@ class CsvUserImporterSpec : StringSpec() {
     init {
         "returns Left when the file path is not found" {
             val result =
-                CsvUserImporter.readUserData("somefile.csv").value().fix().unsafeRunSync()
+                CsvUserImporter.readUserData("somefile.csv").unsafeRunSync()
 
             result shouldBe Left(AppError.CsvImportError)
         }
@@ -32,7 +31,7 @@ class CsvUserImporterSpec : StringSpec() {
                     addLogger(StdOutSqlLogger)
 
                     val people =
-                        CsvUserImporter.importUsers.value().fix().unsafeRunSync()
+                        CsvUserImporter.importUsers.unsafeRunSync()
 
                     // println(Person.all().forEach { println(it) })
                     people.shouldNotBeLeft()
