@@ -35,6 +35,8 @@ val kotestVersion = "4.0.3"
 val openCsvVersion = "5.1"
 val kotlinFakerVersion = "1.1.1"
 val cliktVersion = "2.6.0"
+val ktorVersion = "1.3.2"
+val logbackVersion = "1.2.3"
 
 dependencies {
     implementation(kotlin("stdlib"))
@@ -60,6 +62,14 @@ dependencies {
     implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
     implementation("io.arrow-kt:arrow-mtl:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
+
+    // Ktor
+    implementation("io.ktor:ktor-server-core:$ktorVersion")
+    implementation("io.ktor:ktor-server-netty:$ktorVersion")
+    implementation("io.ktor:ktor-jackson:$ktorVersion")
+
+    // Logging
+    compile("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
@@ -89,6 +99,7 @@ tasks {
         }
     }
 
+    /*
     withType<Jar> {
         archiveClassifier.set("uber")
 
@@ -109,6 +120,7 @@ tasks {
             }
         })
     }
+    */
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
