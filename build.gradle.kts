@@ -69,7 +69,7 @@ dependencies {
     implementation("io.ktor:ktor-jackson:$ktorVersion")
 
     // Logging
-    compile("ch.qos.logback:logback-classic:$logbackVersion")
+    implementation("ch.qos.logback:logback-classic:$logbackVersion")
 
     // Coroutines
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
@@ -99,7 +99,6 @@ tasks {
         }
     }
 
-    /*
     withType<Jar> {
         archiveClassifier.set("uber")
 
@@ -109,6 +108,7 @@ tasks {
         from(sourceSets.main.get().output)
 
         dependsOn(configurations.runtimeClasspath)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         from({
             exclude("META-INF/LICENSE.txt")
             exclude("META-INF/NOTICE.txt")
@@ -120,7 +120,6 @@ tasks {
             }
         })
     }
-    */
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
