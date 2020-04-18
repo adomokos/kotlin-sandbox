@@ -1,6 +1,6 @@
 plugins {
-    kotlin("jvm") version "1.3.71"
-    kotlin("kapt") version "1.3.71"
+    kotlin("jvm") version "1.3.72"
+    kotlin("kapt") version "1.3.72"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
     id("com.diffplug.gradle.spotless") version "3.28.1"
@@ -28,7 +28,7 @@ spotless {
 }
 
 val arrowVersion = "0.10.5"
-val coroutinesVersion = "1.3.3"
+val coroutinesVersion = "1.3.5"
 val exposedVersion = "0.23.1"
 val klaxonVersion = "5.2"
 val kotestVersion = "4.0.3"
