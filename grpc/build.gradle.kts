@@ -8,5 +8,8 @@ application {
 }
 
 dependencies {
+    // testCompile rootProject
+    // rootProject
+    implementation(project(":"))
     implementation(kotlin("stdlib"))
 }

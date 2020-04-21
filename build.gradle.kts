@@ -100,6 +100,7 @@ tasks {
         }
     }
 
+    /*
     withType<Jar> {
         archiveClassifier.set("uber")
 
@@ -121,6 +122,7 @@ tasks {
             }
         })
     }
+    */
 
     withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
         kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
