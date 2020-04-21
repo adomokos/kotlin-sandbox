@@ -1,10 +1,18 @@
 
-ê
-hello_world.protogrpc.examples.helloworld""
+©
+hello_world.protogrpc.examples.helloworld"@
+
+AddRequest
+numberA (RnumberA
+numberB (RnumberB""
+AddReply
+result (Rresult""
 HelloRequest
 name (	Rname"&
 
 HelloReply
-message (	Rmessage2c
+message (	Rmessage2»
 GreeterX
-SayHello&.grpc.examples.helloworld.HelloRequest$.grpc.examples.helloworld.HelloReplyBPbproto3
+SayHello&.grpc.examples.helloworld.HelloRequest$.grpc.examples.helloworld.HelloReplyV
+
+AddNumbers$.grpc.examples.helloworld.AddRequest".grpc.examples.helloworld.AddReplyBPbproto3

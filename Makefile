@@ -72,6 +72,17 @@ grpc-call-endpoint: ## Calls the gRPC endpoint via grpcurl
 	grpcurl -v -plaintext -d '{"name":"Attila"}'  --protoset ./grpc/src/main/proto/hello_world.protoset localhost:50051 grpc.examples.helloworld.Greeter/SayHello
 .PHONY: grpc-call-endpoint
 
+grpc-call-addition-endpoint: ## Calls the AddNumbers gRPC endpoint via grpcurl
+	grpcurl -v -plaintext -d '{"numberA":1,"numberB":2}'  --protoset ./grpc/src/main/proto/hello_world.protoset localhost:50051 grpc.examples.helloworld.Greeter/AddNumbers
+.PHONY: grpc-call-addition-endpoint
+
+grpc-generate-protoset: ## Generates the protoset file
+	protoc --proto_path=./grpc/src/main/proto/ \
+		 --descriptor_set_out=./grpc/src/main/proto/hello_world.protoset \
+		 --include_imports \
+		 ./grpc/src/main/proto/hello_world.proto
+.PHONY: grpc-generate-protoset
+
 help: ## Prints this help command
 	@grep -E '^[a-zA-Z0-9\._-]+:.*?## .*$$' $(MAKEFILE_LIST) |\
 		sort | \

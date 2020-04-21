@@ -8,6 +8,20 @@ option java_multiple_files = true;
 service Greeter {
   // Sends a greeting
   rpc SayHello (HelloRequest) returns (HelloReply);
+
+  // Adds two numbers together
+  rpc AddNumbers(AddRequest) returns (AddReply);
+}
+
+// The request message to add numbers
+message AddRequest {
+    int32 numberA = 1;
+    int32 numberB = 2;
+}
+
+// The response message containing the result
+message AddReply {
+    int32 result = 1;
 }
 
 // The request message containing the user's name.

@@ -1,5 +1,7 @@
 package grpc
 
+import grpc.examples.helloworld.AddReply
+import grpc.examples.helloworld.AddRequest
 import io.grpc.Server
 import io.grpc.ServerBuilder
 import sandbox.arrow.datatypes.playWithOption
@@ -36,9 +38,15 @@ class HelloWorldServer constructor(
     }
 
     private class HelloWorldService : GreeterGrpcKt.GreeterCoroutineImplBase() {
-        override suspend fun sayHello(request: HelloRequest) = HelloReply
+        // Custom logic
+        override suspend fun sayHello(request: HelloRequest): HelloReply = HelloReply
             .newBuilder()
             .setMessage("Hello ${request.name}")
+            .build()
+
+        override suspend fun addNumbers(request: AddRequest): AddReply = AddReply
+            .newBuilder()
+            .setResult(request.numberA + request.numberB)
             .build()
     }
 }
