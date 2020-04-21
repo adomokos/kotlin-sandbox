@@ -47,6 +47,10 @@ run-jar: ## Run the app locally as Jar
 	java -jar build/libs/kotlin-sandbox-uber.jar
 .PHONY: run-jar
 
+run-grpc: ## Runs the grpc subproject
+	./gradlew :grpc:run
+.PHONY: run-grpc
+
 fix-style: ## Fixed ktlint errors with spotless
 	./gradlew spotlessApply
 .PHONY: fix-style

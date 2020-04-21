@@ -137,10 +137,12 @@ detekt {
     // baseline = file("my-detekt-baseline.xml") // Just if you want to create a baseline file.
 }
 
-repositories {
-    mavenCentral()
-    jcenter()
-    maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
-    maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
-    maven(url = "https://dl.bintray.com/serpro69/maven/")
+allprojects {
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
+        maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
+        maven(url = "https://dl.bintray.com/serpro69/maven/")
+    }
 }
