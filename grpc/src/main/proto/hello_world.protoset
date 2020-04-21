@@ -1,0 +1,10 @@
+
+ê
+hello_world.protogrpc.examples.helloworld""
+HelloRequest
+name (	Rname"&
+
+HelloReply
+message (	Rmessage2c
+GreeterX
+SayHello&.grpc.examples.helloworld.HelloRequest$.grpc.examples.helloworld.HelloReplyBPbproto3

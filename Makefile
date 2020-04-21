@@ -47,10 +47,6 @@ run-jar: ## Run the app locally as Jar
 	java -jar build/libs/kotlin-sandbox-uber.jar
 .PHONY: run-jar
 
-run-grpc: ## Runs the grpc subproject
-	./gradlew :grpc:run
-.PHONY: run-grpc
-
 fix-style: ## Fixed ktlint errors with spotless
 	./gradlew spotlessApply
 .PHONY: fix-style
@@ -62,6 +58,19 @@ complexity: ## Calculates Code Complexity
 update-check: ## Checks for updates with used libraries
 	./gradlew dependencyUpdates -Drevision=release
 .PHONY: update-check
+
+### gRPC related tasks
+run-grpc: ## Runs the grpc subproject
+	./gradlew :grpc:run
+.PHONY: run-grpc
+
+discover-grpc: ## Discovers grpc using grpcurl
+	grpcurl --protoset ./grpc/src/main/proto/hello_world.protoset describe grpc.examples.helloworld.Greeter
+.PHONY: discover-grpc
+
+call-grpc-endpoint: ## Calls the gRPC endpoint via grpcurl
+	grpcurl -v -plaintext -d '{"name":"Attila"}'  --protoset ./grpc/src/main/proto/hello_world.protoset localhost:50051 grpc.examples.helloworld.Greeter/SayHello
+.PHONY: call-grpc-endpoint
 
 help: ## Prints this help command
 	@grep -E '^[a-zA-Z0-9\._-]+:.*?## .*$$' $(MAKEFILE_LIST) |\
