@@ -60,17 +60,17 @@ update-check: ## Checks for updates with used libraries
 .PHONY: update-check
 
 ### gRPC related tasks
-run-grpc: ## Runs the grpc subproject
+grpc-run-server: ## Runs the grpc subproject
 	./gradlew :grpc:run
-.PHONY: run-grpc
+.PHONY: grpc-run-server
 
-discover-grpc: ## Discovers grpc using grpcurl
+grpc-discover: ## Discovers grpc using grpcurl - protoset needed
 	grpcurl --protoset ./grpc/src/main/proto/hello_world.protoset describe grpc.examples.helloworld.Greeter
-.PHONY: discover-grpc
+.PHONY: grpc-discover
 
-call-grpc-endpoint: ## Calls the gRPC endpoint via grpcurl
+grpc-call-endpoint: ## Calls the gRPC endpoint via grpcurl
 	grpcurl -v -plaintext -d '{"name":"Attila"}'  --protoset ./grpc/src/main/proto/hello_world.protoset localhost:50051 grpc.examples.helloworld.Greeter/SayHello
-.PHONY: call-grpc-endpoint
+.PHONY: grpc-call-endpoint
 
 help: ## Prints this help command
 	@grep -E '^[a-zA-Z0-9\._-]+:.*?## .*$$' $(MAKEFILE_LIST) |\
