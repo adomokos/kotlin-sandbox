@@ -10,8 +10,8 @@ application {
     mainClassName = "grpc.MainKt"
 }
 
-val grpcVersion = "1.28.0" // CURRENT_grpcVersion
-val protobufVersion = "3.11.0"
+val grpcVersion = "1.29.0" // CURRENT_grpcVersion
+val protobufVersion = "3.11.4"
 val grpcKotlinVersion = "0.1.1"
 val coroutinesVersion = "1.3.5"
 
@@ -29,9 +29,9 @@ dependencies {
     compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
       // Grpc and Protobuf
-    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.11")
+    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.12")
     implementation("com.google.protobuf:protobuf-java:$protobufVersion")
-    implementation("com.google.protobuf:protobuf-java-util:3.11.1")
+    implementation("com.google.protobuf:protobuf-java-util:3.11.4")
     implementation("io.grpc:grpc-netty-shaded:$grpcVersion")
     implementation("io.grpc:grpc-protobuf:$grpcVersion")
     implementation("io.grpc:grpc-stub:$grpcVersion")
