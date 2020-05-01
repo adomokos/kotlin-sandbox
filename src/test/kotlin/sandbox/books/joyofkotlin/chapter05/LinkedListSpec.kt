@@ -286,6 +286,28 @@ sealed class List<A> {
         coFoldRight(Nil as List<A>) { h -> { t: List<A> ->
             if (p(h)) Cons(h, t) else t }
         }
+
+    @Suppress("UNCHECKED_CAST")
+    fun splitAt(index: Int): Pair<List<A>, List<A>> {
+        tailrec fun splitAt(
+            acc: List<A>,
+            list: List<A>,
+            i: Int
+        ): Pair<List<A>, List<A>> =
+            when (list) {
+                Nil -> Pair(list.reverse(), acc)
+                is Cons -> if (i == 0)
+                    Pair(list.reverse(), acc)
+                else
+                    splitAt(acc.cons(list.head), list.tail, i - 1)
+            }
+
+            return when {
+                index < 0 -> splitAt(0)
+                index > lengthMemoized() -> splitAt(lengthMemoized())
+                else -> splitAt(Nil as List<A>, this.reverse(), this.lengthMemoized() - index)
+            }
+    }
 }
 
 class LinkedListSpec : StringSpec() {

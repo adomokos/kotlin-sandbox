@@ -103,5 +103,17 @@ class AdvancedListSpec : StringSpec() {
             list1.getAtNoNilCheck(2) shouldBe Result(3)
             list1.getAtViaFoldLeft(0) shouldBe Result(1)
         }
+
+        "splits the list by index" {
+            val list = List(1, 2, 3)
+
+            val result = list.splitAt(1)
+            result.first.toString() shouldBe "[1, NIL]"
+            result.second.toString() shouldBe "[2, 3, NIL]"
+
+            val result2 = list.splitAt(3)
+            result2.first.toString() shouldBe "[1, 2, 3, NIL]"
+            result2.second.toString() shouldBe "[NIL]"
+        }
     }
 }
