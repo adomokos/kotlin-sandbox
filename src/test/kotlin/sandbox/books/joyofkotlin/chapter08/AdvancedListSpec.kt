@@ -115,5 +115,16 @@ class AdvancedListSpec : StringSpec() {
             result2.first.toString() shouldBe "[1, 2, 3, NIL]"
             result2.second.toString() shouldBe "[NIL]"
         }
+
+        "checks if a list is a sublist of another one" {
+            val list = List(1, 2, 3, 4)
+            val sub = List(2, 3)
+            val sub2 = List<Int>()
+            val sub3 = List(6, 7, 8)
+
+            list.hasSubList(sub) shouldBe true
+            list.hasSubList(sub2) shouldBe true
+            list.hasSubList(sub3) shouldBe false
+        }
     }
 }

@@ -16,6 +16,8 @@ Collections can be classified as:
 // is implicitly private
 sealed class List<A> {
     abstract fun isEmpty(): Boolean
+    abstract val head: A
+    abstract val tail: List<A>
     abstract fun setHead(a: A): List<A>
     abstract fun drop(n: Int): List<A>
     abstract fun dropWhile(p: (A) -> Boolean): List<A>
@@ -25,6 +27,10 @@ sealed class List<A> {
 
     object Nil : List<Nothing>() {
         override fun isEmpty() = true
+        override val head: Nothing
+            get() = throw IllegalArgumentException("head called on an empty list")
+        override val tail
+            get() = throw IllegalArgumentException("tail called on an empty list")
         override fun setHead(a: Nothing): List<Nothing> =
             throw IllegalArgumentException("setHead called on an empty list")
         override fun drop(n: Int) =
@@ -42,8 +48,8 @@ sealed class List<A> {
     }
 
     class Cons<A>(
-        internal val head: A,
-        internal val tail: List<A>
+        override val head: A,
+        override val tail: List<A>
     ) : List<A>() {
         private val length: Int = tail.lengthMemoized() + 1
 
@@ -307,6 +313,33 @@ sealed class List<A> {
                 index > lengthMemoized() -> splitAt(lengthMemoized())
                 else -> splitAt(Nil as List<A>, this.reverse(), this.lengthMemoized() - index)
             }
+    }
+
+    fun startsWith(sub: List<@UnsafeVariance A>): Boolean {
+        tailrec fun startsWith(list: List<A>, sub: List<A>): Boolean =
+            when (sub) {
+                Nil -> true
+                is Cons -> if (list.head == sub.head)
+                    startsWith(list.tail, sub.tail)
+                else
+                    false
+            }
+
+        return startsWith(this, sub)
+    }
+
+    fun hasSubList(sub: List<@UnsafeVariance A>): Boolean {
+        tailrec
+        fun <A> hasSubList(list: List<A>, sub: List<A>): Boolean =
+            when (list) {
+                Nil -> sub.isEmpty()
+                is Cons ->
+                    if (list.startsWith(sub))
+                        true
+                    else
+                        hasSubList(list.tail, sub)
+            }
+        return hasSubList(this, sub)
     }
 }
 
