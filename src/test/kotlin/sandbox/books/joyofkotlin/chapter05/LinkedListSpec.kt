@@ -14,11 +14,11 @@ Collections can be classified as:
 
 // Sealed classes are implicitly abstract and their constructor
 // is implicitly private
-sealed class List<A> {
+sealed class List<out A> {
     abstract fun isEmpty(): Boolean
     abstract val head: A
     abstract val tail: List<A>
-    abstract fun setHead(a: A): List<A>
+    abstract fun setHead(a: @UnsafeVariance A): List<A>
     abstract fun drop(n: Int): List<A>
     abstract fun dropWhile(p: (A) -> Boolean): List<A>
     abstract fun reverse(): List<A>
@@ -85,7 +85,7 @@ sealed class List<A> {
         override fun headSafe() = Result(head)
     }
 
-    fun cons(a: A): List<A> =
+    fun cons(a: @UnsafeVariance A): List<A> =
         Cons(a, this)
 
     companion object {
@@ -285,7 +285,7 @@ sealed class List<A> {
     fun <B> map(f: (A) -> B): List<B> =
         coFoldRight(Nil as List<B>) { h -> { t: List<B> -> Cons(f(h), t) } }
 
-    fun concat(list: List<A>): List<A> = List.concat(this, list)
+    fun concat(list: List<@UnsafeVariance A>): List<A> = List.concat(this, list)
 
     @Suppress("UNCHECKED_CAST")
     fun filter(p: (A) -> Boolean): List<A> =
@@ -341,6 +341,25 @@ sealed class List<A> {
             }
         return hasSubList(this, sub)
     }
+
+    fun <B> groupBy(f: (A) -> B): Map<B, List<A>> =
+        reverse().foldLeft(mapOf<B, List<A>>()) { mt: Map<B, List<A>> ->
+            { t: A ->
+                f(t).let {
+                    mt + (it to (mt.getOrDefault(it, Nil)).cons(t))
+                }
+            }
+        }
+
+//    fun <B> groupBy(f: (A) -> B): Map<B, List<A>> =
+//        reverse().foldLeft(mapOf()) { mt: Map<B, List<A>> ->
+//            { t ->
+//                val key = f(t)
+//                val value = mt.getOrDefault(key, Nil)
+//                val res = mt + (key to value.cons(t))
+//                res as Map<B, List<A>>
+//            }
+//        }
 }
 
 class LinkedListSpec : StringSpec() {

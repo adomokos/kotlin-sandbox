@@ -5,6 +5,8 @@ import io.kotest.matchers.shouldBe
 import sandbox.books.joyofkotlin.chapter05.List
 import sandbox.books.joyofkotlin.chapter07.Result
 
+data class Payment(val name: String, val amount: Int)
+
 class AdvancedListSpec : StringSpec() {
     init {
         "can return the memoized length of the List" {
@@ -125,6 +127,18 @@ class AdvancedListSpec : StringSpec() {
             list.hasSubList(sub) shouldBe true
             list.hasSubList(sub2) shouldBe true
             list.hasSubList(sub3) shouldBe false
+        }
+
+        "can group items by a function" {
+            val list = List(
+                Payment("John", 25),
+                Payment("Paul", 18),
+                Payment("John", 32)
+            )
+
+            val result = list.groupBy { x -> x.name }
+            val keys = result.keys
+            result.keys shouldBe setOf("John", "Paul")
         }
     }
 }
