@@ -366,4 +366,13 @@ sealed class List<out A> {
         foldLeft(false, this) { x ->
             { y: A -> x || p(y) }
         }
+
+    fun forAll(p: (A) -> Boolean): Boolean =
+        foldLeft(true, this) { x ->
+            { y: A -> x && p(y) }
+        }
+
+    // Or using exists
+    fun forAllWithExists(p: (A) -> Boolean) =
+        !exists { !p(it) }
 }

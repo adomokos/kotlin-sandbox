@@ -173,5 +173,14 @@ class AdvancedListSpec : StringSpec() {
 
             result shouldBe true
         }
+
+        "can check if all elements evaluates to the provided predicate" {
+            val list = List(1, 2, 3, 4)
+            val result = list.forAll { it < 5 }
+            val result2 = list.forAllWithExists { it < 5 }
+
+            result shouldBe true
+            result2 shouldBe true
+        }
     }
 }
