@@ -3,6 +3,7 @@ package sandbox.books.joyofkotlin.chapter08
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import sandbox.books.joyofkotlin.chapter05.List
+import sandbox.books.joyofkotlin.chapter06.Option
 import sandbox.books.joyofkotlin.chapter07.Result
 
 data class Payment(val name: String, val amount: Int)
@@ -139,6 +140,17 @@ class AdvancedListSpec : StringSpec() {
             val result = list.groupBy { x -> x.name }
             val keys = result.keys
             result.keys shouldBe setOf("John", "Paul")
+        }
+
+        "can unfold into a list" {
+            val list = List.unfold(0) { i ->
+                if (i < 5)
+                    Option(Pair(i, i + 1))
+                else
+                    Option()
+            }
+
+            list.toString() shouldBe "[0, 1, 2, 3, 4, NIL]"
         }
     }
 }

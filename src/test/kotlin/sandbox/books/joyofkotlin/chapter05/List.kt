@@ -221,6 +221,18 @@ sealed class List<out A> {
                     Pair(listPair.first.cons(pair.first), listPair.second.cons(pair.second))
                 }
             }
+
+        fun <A, S> unfold(z: S, getNext: (S) -> Option<Pair<A, S>>): List<A> {
+            tailrec fun unfold(acc: List<A>, z: S): List<A> {
+                val next = getNext(z)
+                return when (next) {
+                    is Option.None -> acc
+                    is Option.Some ->
+                        unfold(acc.cons(next.value.first), next.value.second)
+                }
+            }
+            return unfold(List.Nil, z).reverse()
+        }
     }
 
     fun getAt(index: Int): Result<A> {
@@ -349,16 +361,4 @@ sealed class List<out A> {
                 }
             }
         }
-
-    fun <A, S> unfold(z: S, getNext: (S) -> Option<Pair<A, S>>): List<A> {
-        tailrec fun unfold(acc: List<A>, z: S): List<A> {
-            val next = getNext(z)
-            return when (next) {
-                is Option.None -> acc
-                is Option.Some ->
-                    unfold(acc.cons(next.value.first), next.value.second)
-            }
-        }
-        return unfold(List.Nil, z).reverse()
-    }
 }
