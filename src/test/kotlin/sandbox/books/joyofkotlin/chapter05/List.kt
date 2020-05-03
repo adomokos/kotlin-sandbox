@@ -1,7 +1,8 @@
 package sandbox.books.joyofkotlin.chapter05
 
-import sandbox.books.joyofkotlin.chapter07.Result
 import java.lang.IllegalArgumentException
+import sandbox.books.joyofkotlin.chapter06.Option
+import sandbox.books.joyofkotlin.chapter07.Result
 
 /*
 Collections can be classified as:
@@ -348,4 +349,16 @@ sealed class List<out A> {
                 }
             }
         }
+
+    fun <A, S> unfold(z: S, getNext: (S) -> Option<Pair<A, S>>): List<A> {
+        tailrec fun unfold(acc: List<A>, z: S): List<A> {
+            val next = getNext(z)
+            return when (next) {
+                is Option.None -> acc
+                is Option.Some ->
+                    unfold(acc.cons(next.value.first), next.value.second)
+            }
+        }
+        return unfold(List.Nil, z).reverse()
+    }
 }
