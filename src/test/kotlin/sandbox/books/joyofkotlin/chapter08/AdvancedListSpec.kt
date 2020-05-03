@@ -152,5 +152,19 @@ class AdvancedListSpec : StringSpec() {
 
             list.toString() shouldBe "[0, 1, 2, 3, 4, NIL]"
         }
+
+        "can create a range with unfold" {
+            val range: (Int, Int) -> List<Int> = { start: Int, end: Int ->
+                List.unfold(start) { i ->
+                    if (i < end)
+                        Option(Pair(i, i + 1))
+                    else
+                        Option()
+                }
+            }
+
+            val list = range(10, 15)
+            list.toString() shouldBe "[10, 11, 12, 13, 14, NIL]"
+        }
     }
 }
