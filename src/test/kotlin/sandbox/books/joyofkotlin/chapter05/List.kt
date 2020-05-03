@@ -361,4 +361,9 @@ sealed class List<out A> {
                 }
             }
         }
+
+    fun exists(p: (A) -> Boolean): Boolean =
+        foldLeft(false, this) { x ->
+            { y: A -> x || p(y) }
+        }
 }

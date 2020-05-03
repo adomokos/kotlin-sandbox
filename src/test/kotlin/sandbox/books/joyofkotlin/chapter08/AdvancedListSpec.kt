@@ -166,5 +166,12 @@ class AdvancedListSpec : StringSpec() {
             val list = range(10, 15)
             list.toString() shouldBe "[10, 11, 12, 13, 14, NIL]"
         }
+
+        "can accept a predicate to see if an item exists in a list" {
+            val list = List(1, 2, 3, 4)
+            val result = list.exists { it == 3 }
+
+            result shouldBe true
+        }
     }
 }
