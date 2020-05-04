@@ -32,7 +32,21 @@ class Lazy {
 class Lazy<out A>(function: () -> A) : () -> A {
     private val value: A by lazy(function)
     override operator fun invoke(): A = value
+
+    // Functor
+    fun <B> map(f: (A) -> B): Lazy<B> = Lazy { f(value) }
+
+    // Monad
+    fun <B> flatMap(f: (A) -> Lazy<B>): Lazy<B> = f(value)
 }
+
+// Lazy is just another computational context
+private fun <A, B, C> lift2Generic(f: ((A) -> (B) -> C)): (Lazy<A>) -> (Lazy<B>) -> Lazy<C> =
+    { ls1 ->
+        { ls2 ->
+            Lazy { f(ls1())(ls2()) }
+        }
+    }
 
 class LazinessSpec : StringSpec() {
     init {
@@ -103,6 +117,49 @@ class LazinessSpec : StringSpec() {
 
             val message3 = curriedConstructMessage(greetings)(name1)
             message3() shouldBe "Hello, Mickey!"
+        }
+
+        "can lift2 the arguments into the Lazy context" {
+            val consMessage: (String) -> (String) -> String =
+                { greetings ->
+                    { name ->
+                        "$greetings, $name!"
+                    }
+                }
+
+            val lift2: ((String) -> (String) -> String) ->
+            (Lazy<String>) ->
+                (Lazy<String>) -> Lazy<String> =
+                { f ->
+                    { ls1 ->
+                        { ls2 ->
+                           Lazy { f(ls1())(ls2()) }
+                        }
+                    }
+                }
+
+            val result = lift2(consMessage)(Lazy { "Hello" })(Lazy { "World" })()
+            val result2 = lift2Generic(consMessage)(Lazy { "Hello" })(Lazy { "World" })()
+
+            result shouldBe "Hello, World!"
+            result2 shouldBe "Hello, World!"
+        }
+
+        "can use map as functor on Lazy" {
+            val greets: (String) -> String = { "Hello, $it!" }
+
+            val name: Lazy<String> = Lazy { "Mickey" }
+
+            val result = name.map(greets)()
+            result shouldBe "Hello, Mickey!"
+        }
+
+        "can use flatMap as monad on Lazy" {
+            val greets: (String) -> Lazy<String> =  { Lazy { "Hello, $it!" } }
+
+            val name: Lazy<String> = Lazy { "John" }
+
+            name.flatMap(greets)() shouldBe "Hello, John!"
         }
     }
 }
