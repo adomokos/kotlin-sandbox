@@ -4,6 +4,7 @@ import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.lang.IllegalStateException
+import sandbox.books.joyofkotlin.chapter05.List
 
 /*
 Notes:
@@ -41,12 +42,14 @@ class Lazy<out A>(function: () -> A) : () -> A {
 }
 
 // Lazy is just another computational context
-private fun <A, B, C> lift2Generic(f: ((A) -> (B) -> C)): (Lazy<A>) -> (Lazy<B>) -> Lazy<C> =
-    { ls1 ->
+private fun <A, B, C> lift2Generic(f: ((A) -> (B) -> C)): (Lazy<A>) -> (Lazy<B>) -> Lazy<C> = { ls1 ->
         { ls2 ->
             Lazy { f(ls1())(ls2()) }
         }
     }
+
+private fun <A> sequence(lst: List<Lazy<A>>): Lazy<List<A>> =
+    Lazy { lst.map { it() } }
 
 class LazinessSpec : StringSpec() {
     init {
@@ -133,7 +136,7 @@ class LazinessSpec : StringSpec() {
                 { f ->
                     { ls1 ->
                         { ls2 ->
-                           Lazy { f(ls1())(ls2()) }
+                            Lazy { f(ls1())(ls2()) }
                         }
                     }
                 }
@@ -155,11 +158,21 @@ class LazinessSpec : StringSpec() {
         }
 
         "can use flatMap as monad on Lazy" {
-            val greets: (String) -> Lazy<String> =  { Lazy { "Hello, $it!" } }
+            val greets: (String) -> Lazy<String> = { Lazy { "Hello, $it!" } }
 
             val name: Lazy<String> = Lazy { "John" }
 
             name.flatMap(greets)() shouldBe "Hello, John!"
+        }
+
+        "can use sequence operation on Lazy" {
+            val name1: Lazy<String> = Lazy { "Mickey" }
+            val name2: Lazy<String> = Lazy { "Donald" }
+            val name3: Lazy<String> = Lazy { "Goofy" }
+
+            val list = sequence(List(name1, name2, name3))()
+
+            list.toString() shouldBe "[Mickey, Donald, Goofy, NIL]"
         }
     }
 }
