@@ -11,9 +11,9 @@ application {
 }
 
 val grpcVersion = "1.29.0" // CURRENT_grpcVersion
-val protobufVersion = "3.11.4"
-val grpcKotlinVersion = "0.1.1"
-val coroutinesVersion = "1.3.5"
+val protobufVersion = "3.12.1"
+val grpcKotlinVersion = "0.1.2"
+val coroutinesVersion = "1.3.7"
 
 dependencies {
     // rootProject
