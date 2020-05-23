@@ -40,6 +40,7 @@ val logbackVersion = "1.2.3"
 
 allprojects {
     apply(plugin = "java")
+    apply(plugin = "com.adarshr.test-logger")
 
     dependencies {
         implementation(kotlin("stdlib"))
@@ -60,7 +61,58 @@ allprojects {
 
         testImplementation("io.github.serpro69:kotlin-faker:$kotlinFakerVersion")
     }
+
+    repositories {
+        mavenCentral()
+        jcenter()
+        maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
+        maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
+        maven(url = "https://dl.bintray.com/serpro69/maven/")
+    }
+
+    tasks {
+        withType<Test> {
+            useJUnitPlatform()
+
+            testlogger {
+                setTheme("mocha") // project level
+                // setShowSimpleNames(true)
+                // setShowStandardStreams(true)
+            }
+        }
+
+        withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+            kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
+            kotlinOptions.jvmTarget = "1.8"
+        }
+    }
 }
+
+// tasks {
+    /*
+    withType<Jar> {
+        archiveClassifier.set("uber")
+
+        manifest {
+            attributes["Main-Class"] = application.mainClassName
+        }
+        from(sourceSets.main.get().output)
+
+        dependsOn(configurations.runtimeClasspath)
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        from({
+            exclude("META-INF/LICENSE.txt")
+            exclude("META-INF/NOTICE.txt")
+            configurations.runtimeClasspath.get().map {
+                if (it.isDirectory)
+                    it
+                else
+                    zipTree(it)
+            }
+        })
+    }
+    */
+// }
 
 dependencies {
     // Exposed - db access
@@ -90,47 +142,6 @@ dependencies {
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
 }
 
-tasks {
-    withType<Test> {
-        useJUnitPlatform()
-
-        testlogger {
-            setTheme("mocha") // project level
-            // setShowSimpleNames(true)
-            // setShowStandardStreams(true)
-        }
-    }
-
-    /*
-    withType<Jar> {
-        archiveClassifier.set("uber")
-
-        manifest {
-            attributes["Main-Class"] = application.mainClassName
-        }
-        from(sourceSets.main.get().output)
-
-        dependsOn(configurations.runtimeClasspath)
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-        from({
-            exclude("META-INF/LICENSE.txt")
-            exclude("META-INF/NOTICE.txt")
-            configurations.runtimeClasspath.get().map {
-                if (it.isDirectory)
-                    it
-                else
-                    zipTree(it)
-            }
-        })
-    }
-    */
-
-    withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
-        kotlinOptions.freeCompilerArgs += "-Xuse-experimental=kotlin.Experimental"
-        kotlinOptions.jvmTarget = "1.8"
-    }
-}
-
 detekt {
     debug = true
     input = files("src/main/kotlin", "src/test/kotlin")
@@ -138,14 +149,4 @@ detekt {
     config = files("resources/detekt-config.yml")
     // filters = ".*/resources/.*,.*/build/.*"
     // baseline = file("my-detekt-baseline.xml") // Just if you want to create a baseline file.
-}
-
-allprojects {
-    repositories {
-        mavenCentral()
-        jcenter()
-        maven(url = "https://dl.bintray.com/arrow-kt/arrow-kt/")
-        maven(url = "https://oss.jfrog.org/artifactory/oss-snapshot-local/") // for shapshot builds
-        maven(url = "https://dl.bintray.com/serpro69/maven/")
-    }
 }

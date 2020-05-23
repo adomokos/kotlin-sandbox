@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     application
+    // id("com.adarshr.test-logger")
 }
 
 application {
