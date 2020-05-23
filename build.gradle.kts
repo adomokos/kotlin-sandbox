@@ -38,9 +38,31 @@ val cliktVersion = "2.6.0"
 val ktorVersion = "1.3.2"
 val logbackVersion = "1.2.3"
 
-dependencies {
-    implementation(kotlin("stdlib"))
+allprojects {
+    apply(plugin = "java")
 
+    dependencies {
+        implementation(kotlin("stdlib"))
+
+        // Arrow
+        implementation("io.arrow-kt:arrow-core:$arrowVersion")
+        implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
+        implementation("io.arrow-kt:arrow-fx:$arrowVersion")
+        implementation("io.arrow-kt:arrow-optics:$arrowVersion")
+        implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
+        implementation("io.arrow-kt:arrow-mtl:$arrowVersion")
+
+        // kotest
+        testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
+        testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
+        testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+        testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+
+        testImplementation("io.github.serpro69:kotlin-faker:$kotlinFakerVersion")
+    }
+}
+
+dependencies {
     // Exposed - db access
     implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
@@ -54,20 +76,7 @@ dependencies {
     // CSV Parsing
     implementation("com.opencsv:opencsv:$openCsvVersion")
 
-    // Arrow
-    implementation("io.arrow-kt:arrow-core:$arrowVersion")
-    implementation("io.arrow-kt:arrow-syntax:$arrowVersion")
-    implementation("io.arrow-kt:arrow-fx:$arrowVersion")
-    implementation("io.arrow-kt:arrow-optics:$arrowVersion")
-    implementation("io.arrow-kt:arrow-fx-rx2:$arrowVersion")
-    implementation("io.arrow-kt:arrow-mtl:$arrowVersion")
     kapt("io.arrow-kt:arrow-meta:$arrowVersion")
-
-    // Ktor
-    implementation("io.ktor:ktor-server-core:$ktorVersion")
-    implementation("io.ktor:ktor-server-netty:$ktorVersion")
-    implementation("io.ktor:ktor-jackson:$ktorVersion")
-    testImplementation("io.ktor:ktor-server-test-host:$ktorVersion")
 
     // Logging
     implementation("ch.qos.logback:logback-classic:$logbackVersion")
@@ -78,15 +87,7 @@ dependencies {
     // clikt - for command line args parsing
     implementation("com.github.ajalt:clikt:$cliktVersion")
 
-    // kotest
-    testImplementation("io.kotest:kotest-runner-junit5-jvm:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
-    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
-    testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
-
     kaptTest("io.arrow-kt:arrow-meta:$arrowVersion")
-
-    testImplementation("io.github.serpro69:kotlin-faker:$kotlinFakerVersion")
 }
 
 tasks {

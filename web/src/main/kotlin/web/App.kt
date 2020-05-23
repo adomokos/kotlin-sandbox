@@ -1,4 +1,4 @@
-package sandbox.web
+package web
 
 import arrow.Kind
 import arrow.fx.ForIO
@@ -64,7 +64,7 @@ class EmployeeRouting<F>(
     }
 }
 
-fun run(args: Array<String>) {
+fun main(args: Array<String>) {
     val employeeRouting =
         EmployeeRouting(IOEmployeeRepository(), IO.suspendable())
 

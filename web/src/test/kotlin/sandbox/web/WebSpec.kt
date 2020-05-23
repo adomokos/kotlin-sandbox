@@ -1,4 +1,4 @@
-package sandbox.web
+package web
 
 import arrow.Kind
 import arrow.core.ForId

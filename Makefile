@@ -26,7 +26,7 @@ single-test: ## Run a sigle test, pass TEST=something.MySpec to run it
 .PHONY: tests
 
 run: ## Run app locally
-	./gradlew run --args="parallel"
+	./gradlew :run # --args="parallel"
 	# ./gradlew run --args="--app=Either --username=adomokos1" - to run the github.explorer app
 .PHONY: run
 
@@ -59,22 +59,27 @@ update-check: ## Checks for updates with used libraries
 	./gradlew dependencyUpdates -Drevision=release
 .PHONY: update-check
 
+### web related tasks
+web.run: ## Runs the web project
+	./gradlew :web:run
+.PHONY: web.run
+
 ### gRPC related tasks
-grpc-run-server: ## Runs the grpc subproject
+grpc.run-server: ## Runs the grpc subproject
 	./gradlew :grpc:run
-.PHONY: grpc-run-server
+.PHONY: grpc.run-server
 
-grpc-discover: ## Discovers grpc using grpcurl - protoset needed
+grpc.discover: ## Discovers grpc using grpcurl - protoset needed
 	grpcurl --protoset ./grpc/src/main/proto/hello_world.protoset describe grpc.examples.helloworld.Greeter
-.PHONY: grpc-discover
+.PHONY: grpc.discover
 
-grpc-call-endpoint: ## Calls the gRPC endpoint via grpcurl
+grpc.call-endpoint: ## Calls the gRPC endpoint via grpcurl
 	grpcurl -v -plaintext -d '{"name":"Attila"}'  --protoset ./grpc/src/main/proto/hello_world.protoset localhost:50051 grpc.examples.helloworld.Greeter/SayHello
-.PHONY: grpc-call-endpoint
+.PHONY: grpc.call-endpoint
 
-grpc-call-addition-endpoint: ## Calls the AddNumbers gRPC endpoint via grpcurl
+grpc.call-addition-endpoint: ## Calls the AddNumbers gRPC endpoint via grpcurl
 	grpcurl -v -plaintext -d '{"numberA":1,"numberB":2}'  --protoset ./grpc/src/main/proto/hello_world.protoset localhost:50051 grpc.examples.helloworld.Greeter/AddNumbers
-.PHONY: grpc-call-addition-endpoint
+.PHONY: grpc.call-addition-endpoint
 
 grpc-generate-protoset: ## Generates the protoset file
 	protoc --proto_path=./grpc/src/main/proto/ \

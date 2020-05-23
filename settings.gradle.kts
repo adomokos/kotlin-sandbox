@@ -1,3 +1,3 @@
 rootProject.name = "sandbox"
 
-include("grpc")
+include("grpc", "web")

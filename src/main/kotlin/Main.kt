@@ -6,7 +6,6 @@ import sandbox.github.explorer.EitherApp.run as runEitherApp
 import sandbox.github.explorer.EitherIOApp.run as runEitherIOApp
 import sandbox.github.explorer.NullableApp.run as runNullableApp
 import sandbox.github.explorer.OptionApp.run as runOptionApp
-import sandbox.web.run as runKtorServer
 
 class Hello : CliktCommand() {
     val app: String by option(help = "App name").default("Nullable")
@@ -27,7 +26,5 @@ class Hello : CliktCommand() {
 }
 
 suspend fun main(args: Array<String>) {
-    // Hello().main(args)
-    // runExplorerApp(args)
-    runKtorServer(args)
+    Hello().main(args)
 }
