@@ -5,6 +5,7 @@ import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 import java.lang.IllegalStateException
 import sandbox.books.joyofkotlin.chapter05.List
+import sandbox.books.joyofkotlin.chapter07.Result
 
 /*
 Notes:
@@ -50,6 +51,12 @@ private fun <A, B, C> lift2Generic(f: ((A) -> (B) -> C)): (Lazy<A>) -> (Lazy<B>)
 
 private fun <A> sequence(lst: List<Lazy<A>>): Lazy<List<A>> =
     Lazy { lst.map { it() } }
+
+private fun <A> sequenceResult(lst: List<Lazy<A>>): Lazy<Result<List<A>>> {
+    val result = lst.map { Result.of(it) }
+    val result2 = Result.sequence(result)
+    return Lazy { result2 }
+}
 
 class LazinessSpec : StringSpec() {
     init {
@@ -173,6 +180,21 @@ class LazinessSpec : StringSpec() {
             val list = sequence(List(name1, name2, name3))()
 
             list.toString() shouldBe "[Mickey, Donald, Goofy, NIL]"
+        }
+
+        "creates a Result list from a Lazy sequence" {
+            val name1: Lazy<String> = Lazy { "Mickey" }
+            val name2: Lazy<String> = Lazy { "Donald" }
+            val name3: Lazy<String> = Lazy { "Goofy" }
+            val name4 = Lazy {
+                throw IllegalStateException("Exception while evaluating name4")
+            }
+
+            val list1 = sequenceResult(List(name1, name2, name3))
+            val list2 = sequenceResult(List(name1, name2, name3, name4))
+
+            list1().toString() shouldBe "Success([Mickey, Donald, Goofy, NIL])"
+            list2().toString() shouldBe "Failure(java.lang.IllegalStateException: Exception while evaluating name4)"
         }
     }
 }

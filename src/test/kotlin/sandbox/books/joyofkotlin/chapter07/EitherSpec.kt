@@ -170,6 +170,20 @@ sealed class Result<out A> : Serializable {
             c: Result<C>,
             f: (A) -> (B) -> (C) -> D
         ): Result<D> = lift3(f)(a)(b)(c)
+
+        fun <A> of(f: () -> A): Result<A> =
+            try {
+                Result(f())
+            } catch (e: Exception) {
+                Result.failure(e)
+            }
+
+        fun <A> sequence(list: LList<Result<A>>): Result<LList<A>> =
+            list.foldRight(Result(LList())) { x ->
+                { y: Result<LList<A>> ->
+                    map2(x, y) { a -> { b: LList<A> -> b.cons(a) } }
+                }
+            }
     }
 }
 
