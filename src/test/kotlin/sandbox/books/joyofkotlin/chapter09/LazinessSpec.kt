@@ -62,18 +62,24 @@ sealed class Stream<out A> {
     abstract fun isEmpty(): Boolean
     abstract fun head(): Result<A>
     abstract fun tail(): Result<Stream<A>>
+    abstract fun takeAtMost(n: Int): Stream<A>
 
-    private object Empty: Stream<Nothing>() {
+    private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
         override fun tail(): Result<Nothing> = Result()
         override fun isEmpty(): Boolean = true
+        override fun takeAtMost(n: Int): Stream<Nothing> = Empty
     }
 
-    private class Cons<out A> (internal val hd: Lazy<A>,
-                               internal val tl: Lazy<Stream<A>>): Stream<A>() {
+    private class Cons<out A> (
+        internal val hd: Lazy<A>,
+        internal val tl: Lazy<Stream<A>>
+    ) : Stream<A>() {
         override fun head(): Result<A> = Result(hd())
         override fun tail(): Result<Stream<A>> = Result(tl())
         override fun isEmpty(): Boolean = false
+        override fun takeAtMost(n: Int): Stream<A> =
+            cons(hd, Lazy { tl().takeAtMost(n - 1) })
     }
 
     companion object {
@@ -81,8 +87,8 @@ sealed class Stream<out A> {
 
         operator fun <A> invoke(): Stream<A> = Empty
 
-        fun from(i: Int) : Stream<Int> =
-            cons(Lazy { i }, Lazy { from(i + 1)})
+        fun from(i: Int): Stream<Int> =
+            cons(Lazy { i }, Lazy { from(i + 1) })
 
         fun <A> repeat(f: () -> A): Stream<A> =
             cons(Lazy { f() }, Lazy { repeat(f) })
@@ -231,21 +237,33 @@ class LazinessSpec : StringSpec() {
         "works lazily with Streams" {
             val stream = Stream.from(1)
             val list = mutableListOf<Int>()
-            stream.head().forEach { list.add(it)  }
+            stream.head().forEach { list.add(it) }
             stream.tail().flatMap { it.head() }.forEach { list.add(it) }
             stream.tail().flatMap {
                 it.tail().flatMap { it.head() }
             }.forEach { list.add(it) }
 
-            list shouldBe listOf(1,2,3)
+            list shouldBe listOf(1, 2, 3)
         }
 
         "repeat provides the same items in a stream" {
             val stream = Stream.repeat { 2 }
-
             stream.head() shouldBe Result(2)
+
             val nextItem = stream.tail().flatMap { it.head() }
             nextItem shouldBe Result(2)
+        }
+
+        "takeAtMost(n) behaves like take, but lazy" {
+            val stream = Stream.from(1)
+            val result = stream.takeAtMost(3)
+            result.head() shouldBe Result(1)
+
+            val nextItem = stream.tail()
+            nextItem.flatMap { it.head() } shouldBe Result(2)
+
+            val thirdItem = nextItem.flatMap { it.tail() }
+            thirdItem.flatMap { it.head() } shouldBe Result(3)
         }
     }
 }
