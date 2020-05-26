@@ -58,6 +58,37 @@ private fun <A> sequenceResult(lst: List<Lazy<A>>): Lazy<Result<List<A>>> {
     return Lazy { result2 }
 }
 
+sealed class Stream<out A> {
+    abstract fun isEmpty(): Boolean
+    abstract fun head(): Result<A>
+    abstract fun tail(): Result<Stream<A>>
+
+    private object Empty: Stream<Nothing>() {
+        override fun head(): Result<Nothing> = Result()
+        override fun tail(): Result<Nothing> = Result()
+        override fun isEmpty(): Boolean = true
+    }
+
+    private class Cons<out A> (internal val hd: Lazy<A>,
+                               internal val tl: Lazy<Stream<A>>): Stream<A>() {
+        override fun head(): Result<A> = Result(hd())
+        override fun tail(): Result<Stream<A>> = Result(tl())
+        override fun isEmpty(): Boolean = false
+    }
+
+    companion object {
+        fun <A> cons(hd: Lazy<A>, tl: Lazy<Stream<A>>): Stream<A> = Cons(hd, tl)
+
+        operator fun <A> invoke(): Stream<A> = Empty
+
+        fun from(i: Int) : Stream<Int> =
+            cons(Lazy { i }, Lazy { from(i + 1)})
+
+        fun <A> repeat(f: () -> A): Stream<A> =
+            cons(Lazy { f() }, Lazy { repeat(f) })
+    }
+}
+
 class LazinessSpec : StringSpec() {
     init {
         "will throw exception as arguments evaluated before passed to function" {
@@ -195,6 +226,26 @@ class LazinessSpec : StringSpec() {
 
             list1().toString() shouldBe "Success([Mickey, Donald, Goofy, NIL])"
             list2().toString() shouldBe "Failure(java.lang.IllegalStateException: Exception while evaluating name4)"
+        }
+
+        "works lazily with Streams" {
+            val stream = Stream.from(1)
+            val list = mutableListOf<Int>()
+            stream.head().forEach { list.add(it)  }
+            stream.tail().flatMap { it.head() }.forEach { list.add(it) }
+            stream.tail().flatMap {
+                it.tail().flatMap { it.head() }
+            }.forEach { list.add(it) }
+
+            list shouldBe listOf(1,2,3)
+        }
+
+        "repeat provides the same items in a stream" {
+            val stream = Stream.repeat { 2 }
+
+            stream.head() shouldBe Result(2)
+            val nextItem = stream.tail().flatMap { it.head() }
+            nextItem shouldBe Result(2)
         }
     }
 }
