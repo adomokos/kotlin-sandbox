@@ -10,9 +10,9 @@ application {
     mainClassName = "grpc.MainKt"
 }
 
-val grpcVersion = "1.29.0" // CURRENT_grpcVersion
-val protobufVersion = "3.12.1"
-val grpcKotlinVersion = "0.1.2"
+val grpcVersion = "1.30.0" // CURRENT_grpcVersion
+val protobufVersion = "3.12.3"
+val grpcKotlinVersion = "0.1.3"
 val coroutinesVersion = "1.3.7"
 
 dependencies {
@@ -23,15 +23,15 @@ dependencies {
     implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
 
     // KGen needed
-    implementation("com.github.googleapis.gax-kotlin:kgax-grpc:master-SNAPSHOT")
+    implementation("com.github.googleapis.gax-kotlin:kgax-grpc:0.6.0")
 
     // Java
     compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
       // Grpc and Protobuf
     implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.12")
-    implementation("com.google.protobuf:protobuf-java:$protobufVersion")
-    implementation("com.google.protobuf:protobuf-java-util:3.11.4")
+    implementation("com.google.protobuf:protobuf-java:3.12.2")
+    implementation("com.google.protobuf:protobuf-java-util:3.12.2")
     implementation("io.grpc:grpc-netty-shaded:$grpcVersion")
     implementation("io.grpc:grpc-protobuf:$grpcVersion")
     implementation("io.grpc:grpc-stub:$grpcVersion")
