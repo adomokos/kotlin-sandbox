@@ -65,6 +65,7 @@ sealed class Stream<out A> {
     abstract fun takeAtMost(n: Int): Stream<A>
     abstract fun dropAtMost(n: Int): Stream<A>
     abstract fun toList(): List<A>
+    abstract fun takeWhile(p: (A) -> Boolean): Stream<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -73,6 +74,7 @@ sealed class Stream<out A> {
         override fun takeAtMost(n: Int): Stream<Nothing> = Empty
         override fun dropAtMost(n: Int): Stream<Nothing> = this
         override fun toList(): List<Nothing> = List()
+        override fun takeWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
     }
 
     private class Cons<out A> (
@@ -97,6 +99,11 @@ sealed class Stream<out A> {
                 }
             return toList(List(), this).reverse()
         }
+        override fun takeWhile(p: (A) -> Boolean): Stream<A> =
+            when {
+                p(hd()) -> cons(hd, Lazy { tl().takeWhile(p) })
+                else -> Empty
+            }
     }
 
     companion object {
@@ -307,6 +314,14 @@ class LazinessSpec : StringSpec() {
         "toList uses tailrec to convert a stream to list safely" {
             val result = Stream.dropAtMostTailRec(60, Stream.from(0)).takeAtMost(60)
             result.head() shouldBe Result(60)
+        }
+
+        "takeWhile extracts values until the condition is true" {
+            val stream = Stream.from(2)
+            val result = stream.takeWhile { it < 10 }
+            result.head() shouldBe Result(2)
+            val list = result.toList()
+            list.lengthMemoized() shouldBe 8
         }
     }
 }
