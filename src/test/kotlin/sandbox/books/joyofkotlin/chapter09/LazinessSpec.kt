@@ -64,6 +64,7 @@ sealed class Stream<out A> {
     abstract fun tail(): Result<Stream<A>>
     abstract fun takeAtMost(n: Int): Stream<A>
     abstract fun dropAtMost(n: Int): Stream<A>
+    abstract fun toList(): List<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -71,6 +72,7 @@ sealed class Stream<out A> {
         override fun isEmpty(): Boolean = true
         override fun takeAtMost(n: Int): Stream<Nothing> = Empty
         override fun dropAtMost(n: Int): Stream<Nothing> = this
+        override fun toList(): List<Nothing> = List()
     }
 
     private class Cons<out A> (
@@ -87,6 +89,14 @@ sealed class Stream<out A> {
                 n > 0 -> tl().dropAtMost(n - 1)
                 else -> this
             }
+        override fun toList(): List<A> {
+            tailrec fun <A> toList(list: List<A>, stream: Stream<A>): List<A> =
+                when (stream) {
+                    Empty -> list
+                    is Cons -> toList(list.cons(stream.hd()), stream.tl())
+                }
+            return toList(List(), this).reverse()
+        }
     }
 
     companion object {
@@ -289,6 +299,11 @@ class LazinessSpec : StringSpec() {
 
             val result2 = Stream.dropAtMostTailRec(50000, stream)
             result2.head() shouldBe Result(50002)
+        }
+
+        "toList uses tailrec to convert a stream to list safely" {
+            val result = Stream.dropAtMostTailRec(60, Stream.from(0)).takeAtMost(60)
+            result.head() shouldBe Result(60)
         }
     }
 }
