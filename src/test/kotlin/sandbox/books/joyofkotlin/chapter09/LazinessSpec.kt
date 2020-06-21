@@ -66,6 +66,7 @@ sealed class Stream<out A> {
     abstract fun dropAtMost(n: Int): Stream<A>
     abstract fun toList(): List<A>
     abstract fun takeWhile(p: (A) -> Boolean): Stream<A>
+    abstract fun dropWhile(p: (A) -> Boolean): Stream<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -75,6 +76,7 @@ sealed class Stream<out A> {
         override fun dropAtMost(n: Int): Stream<Nothing> = this
         override fun toList(): List<Nothing> = List()
         override fun takeWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
+        override fun dropWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
     }
 
     private class Cons<out A> (
@@ -104,6 +106,18 @@ sealed class Stream<out A> {
                 p(hd()) -> cons(hd, Lazy { tl().takeWhile(p) })
                 else -> Empty
             }
+        override fun dropWhile(p: (A) -> Boolean): Stream<A> {
+            tailrec fun <A> dropWhile(stream: Stream<A>, p: (A) -> Boolean): Stream<A> =
+                when (stream) {
+                    is Empty -> stream
+                    is Cons -> when {
+                        p(stream.hd()) -> dropWhile(stream.tl(), p)
+                        else -> stream
+                    }
+            }
+
+            return dropWhile(this, p)
+        }
     }
 
     companion object {
@@ -322,6 +336,12 @@ class LazinessSpec : StringSpec() {
             result.head() shouldBe Result(2)
             val list = result.toList()
             list.lengthMemoized() shouldBe 8
+        }
+
+        "dropWhile skips values until the condition is true" {
+            val stream = Stream.from(2)
+            val result = stream.dropWhile { it < 10 }
+            result.head() shouldBe Result(10)
         }
     }
 }
