@@ -99,6 +99,15 @@ sealed class Stream<out A> {
 
         fun <A> repeat(f: () -> A): Stream<A> =
             cons(Lazy { f() }, Lazy { repeat(f) })
+
+        tailrec fun <A> dropAtMostTailRec(n: Int, stream: Stream<A>): Stream<A> =
+            when {
+                n > 0 -> when (stream) {
+                    is Empty -> stream
+                    is Cons -> dropAtMostTailRec(n - 1, stream.tl())
+                }
+                else -> stream
+            }
     }
 }
 
@@ -277,6 +286,9 @@ class LazinessSpec : StringSpec() {
             val stream = Stream.from(2)
             val result = stream.dropAtMost(3)
             result.head() shouldBe Result(5)
+
+            val result2 = Stream.dropAtMostTailRec(50000, stream)
+            result2.head() shouldBe Result(50002)
         }
     }
 }
