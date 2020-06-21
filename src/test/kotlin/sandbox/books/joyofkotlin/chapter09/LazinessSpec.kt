@@ -63,12 +63,14 @@ sealed class Stream<out A> {
     abstract fun head(): Result<A>
     abstract fun tail(): Result<Stream<A>>
     abstract fun takeAtMost(n: Int): Stream<A>
+    abstract fun dropAtMost(n: Int): Stream<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
         override fun tail(): Result<Nothing> = Result()
         override fun isEmpty(): Boolean = true
         override fun takeAtMost(n: Int): Stream<Nothing> = Empty
+        override fun dropAtMost(n: Int): Stream<Nothing> = this
     }
 
     private class Cons<out A> (
@@ -80,6 +82,11 @@ sealed class Stream<out A> {
         override fun isEmpty(): Boolean = false
         override fun takeAtMost(n: Int): Stream<A> =
             cons(hd, Lazy { tl().takeAtMost(n - 1) })
+        override fun dropAtMost(n: Int): Stream<A> =
+            when {
+                n > 0 -> tl().dropAtMost(n - 1)
+                else -> this
+            }
     }
 
     companion object {
@@ -264,6 +271,12 @@ class LazinessSpec : StringSpec() {
 
             val thirdItem = nextItem.flatMap { it.tail() }
             thirdItem.flatMap { it.head() } shouldBe Result(3)
+        }
+
+        "dropAtMost(n) behaves like drop, but lazy" {
+            val stream = Stream.from(2)
+            val result = stream.dropAtMost(3)
+            result.head() shouldBe Result(5)
         }
     }
 }
