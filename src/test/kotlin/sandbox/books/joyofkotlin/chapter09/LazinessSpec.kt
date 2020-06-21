@@ -67,6 +67,7 @@ sealed class Stream<out A> {
     abstract fun toList(): List<A>
     abstract fun takeWhile(p: (A) -> Boolean): Stream<A>
     abstract fun dropWhile(p: (A) -> Boolean): Stream<A>
+    abstract fun exists(p: (A) -> Boolean): Boolean
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -77,6 +78,7 @@ sealed class Stream<out A> {
         override fun toList(): List<Nothing> = List()
         override fun takeWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
         override fun dropWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
+        override fun exists(p: (Nothing) -> Boolean): Boolean = false
     }
 
     private class Cons<out A> (
@@ -117,6 +119,18 @@ sealed class Stream<out A> {
             }
 
             return dropWhile(this, p)
+        }
+
+        override fun exists(p: (A) -> Boolean): Boolean {
+            tailrec fun <A> exists(stream: Stream<A>, p: (A) -> Boolean): Boolean =
+                when (stream) {
+                    Empty -> false
+                    is Cons -> when {
+                        p(stream.hd()) -> true
+                        else -> exists(stream.tl(), p)
+                    }
+                }
+            return exists(this, p)
         }
     }
 
@@ -342,6 +356,12 @@ class LazinessSpec : StringSpec() {
             val stream = Stream.from(2)
             val result = stream.dropWhile { it < 10 }
             result.head() shouldBe Result(10)
+        }
+
+        "exists can find out if a value is an element of a Stream" {
+            val stream = Stream.from(2)
+            val result = stream.exists { it == 2 }
+            result shouldBe true
         }
     }
 }
