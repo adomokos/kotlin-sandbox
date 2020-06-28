@@ -3,8 +3,8 @@ plugins {
     kotlin("kapt") version "1.3.72"
     id("com.adarshr.test-logger") version "2.0.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-    id("com.diffplug.gradle.spotless") version "4.3.0"
-    id("io.gitlab.arturbosch.detekt").version("1.9.1")
+    id("com.diffplug.gradle.spotless") version "4.4.0"
+    id("io.gitlab.arturbosch.detekt").version("1.10.0")
     id("com.github.ben-manes.versions").version("0.28.0")
     application
 }
@@ -29,9 +29,9 @@ spotless {
 
 val arrowVersion = "0.10.5"
 val coroutinesVersion = "1.3.7"
-val exposedVersion = "0.25.1"
+val exposedVersion = "0.26.1"
 val klaxonVersion = "5.2"
-val kotestVersion = "4.0.6"
+val kotestVersion = "4.1.0"
 val openCsvVersion = "5.2"
 val kotlinFakerVersion = "1.3.1"
 val cliktVersion = "2.6.0"
@@ -120,7 +120,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jodatime:$exposedVersion")
-    implementation("org.xerial:sqlite-jdbc:3.31.1")
+    implementation("org.xerial:sqlite-jdbc:3.32.3")
 
     // JSON parsing
     implementation("com.beust:klaxon:$klaxonVersion")

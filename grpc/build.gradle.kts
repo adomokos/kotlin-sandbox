@@ -10,9 +10,9 @@ application {
     mainClassName = "grpc.MainKt"
 }
 
-val grpcVersion = "1.30.0" // CURRENT_grpcVersion
+val grpcVersion = "1.30.2" // CURRENT_grpcVersion
 val protobufVersion = "3.12.3"
-val grpcKotlinVersion = "0.1.3"
+val grpcKotlinVersion = "0.1.4"
 val coroutinesVersion = "1.3.7"
 
 dependencies {
