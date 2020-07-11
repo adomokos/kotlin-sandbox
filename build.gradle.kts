@@ -1,9 +1,9 @@
 plugins {
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
-    id("com.adarshr.test-logger") version "2.0.0"
+    id("com.adarshr.test-logger") version "2.1.0"
     id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
-    id("com.diffplug.gradle.spotless") version "4.4.0"
+    id("com.diffplug.gradle.spotless") version "4.5.1"
     id("io.gitlab.arturbosch.detekt").version("1.10.0")
     id("com.github.ben-manes.versions").version("0.28.0")
     application
@@ -31,9 +31,9 @@ val arrowVersion = "0.10.5"
 val coroutinesVersion = "1.3.7"
 val exposedVersion = "0.26.1"
 val klaxonVersion = "5.2"
-val kotestVersion = "4.1.0"
+val kotestVersion = "4.1.1"
 val openCsvVersion = "5.2"
-val kotlinFakerVersion = "1.3.1"
+val kotlinFakerVersion = "1.4.0"
 val cliktVersion = "2.6.0"
 val ktorVersion = "1.3.2"
 val logbackVersion = "1.2.3"
