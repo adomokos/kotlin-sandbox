@@ -72,6 +72,7 @@ sealed class Stream<out A> {
     abstract fun takeWhileViaFoldRight(p: (A) -> Boolean): Stream<A>
     abstract fun headSafeViaFoldRight(): Result<A>
     abstract fun <B> map(f: (A) -> B): Stream<B>
+    abstract fun filter(p: (A) -> Boolean): Stream<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -87,6 +88,7 @@ sealed class Stream<out A> {
         override fun takeWhileViaFoldRight(p: (Nothing) -> Boolean): Stream<Nothing> = this
         override fun headSafeViaFoldRight(): Result<Nothing> = Result()
         override fun <B> map(f: (Nothing) -> B): Stream<B> = this
+        override fun filter(p: (Nothing) -> Boolean): Stream<Nothing> = Empty
     }
 
     private class Cons<out A> (
@@ -161,6 +163,13 @@ sealed class Stream<out A> {
             foldRight(Lazy { Empty }) { a ->
                 { b: Lazy<Stream<B>> ->
                     cons(Lazy { f(a) }, b)
+                }
+            }
+
+        override fun filter(p: (A) -> Boolean): Stream<A> =
+            foldRight(Lazy { Empty }) { a ->
+                { b: Lazy<Stream<A>> ->
+                    if (p(a)) cons(Lazy { a }, b) else b()
                 }
             }
     }
@@ -417,6 +426,16 @@ class LazinessSpec : StringSpec() {
 
             result.toList().lengthMemoized() shouldBe 98
             result.headSafeViaFoldRight() shouldBe Result("2")
+        }
+
+        "can filter a Stream" {
+            val result =
+                Stream.from(2)
+                    .filter { it % 2 == 0 }
+                    .takeWhileViaFoldRight { it < 200 }
+                    .toList()
+
+            result.lengthMemoized() shouldBe 99
         }
     }
 }
