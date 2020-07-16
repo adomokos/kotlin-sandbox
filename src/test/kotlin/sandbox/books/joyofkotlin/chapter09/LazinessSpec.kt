@@ -71,6 +71,7 @@ sealed class Stream<out A> {
     abstract fun <B> foldRight(z: Lazy<B>, f: (A) -> (Lazy<B>) -> B): B
     abstract fun takeWhileViaFoldRight(p: (A) -> Boolean): Stream<A>
     abstract fun headSafeViaFoldRight(): Result<A>
+    abstract fun <B> map(f: (A) -> B): Stream<B>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -85,6 +86,7 @@ sealed class Stream<out A> {
         override fun <B> foldRight(z: Lazy<B>, f: (Nothing) -> (Lazy<B>) -> B): B = z()
         override fun takeWhileViaFoldRight(p: (Nothing) -> Boolean): Stream<Nothing> = this
         override fun headSafeViaFoldRight(): Result<Nothing> = Result()
+        override fun <B> map(f: (Nothing) -> B): Stream<B> = this
     }
 
     private class Cons<out A> (
@@ -154,6 +156,13 @@ sealed class Stream<out A> {
 
         override fun headSafeViaFoldRight(): Result<A> =
             foldRight(Lazy { Result<A>() }) { a -> { Result(a) } }
+
+        override fun <B> map(f: (A) -> B): Stream<B> =
+            foldRight(Lazy { Empty }) { a ->
+                { b: Lazy<Stream<B>> ->
+                    cons(Lazy { f(a) }, b)
+                }
+            }
     }
 
     companion object {
@@ -398,6 +407,16 @@ class LazinessSpec : StringSpec() {
             val stream = Stream.from(2)
 
             stream.headSafeViaFoldRight() shouldBe Result(2)
+        }
+
+        "can map the values of a Stream lazily" {
+            val result =
+                Stream.from(2)
+                    .takeWhileViaFoldRight { it < 100 }
+                    .map { it.toString() }
+
+            result.toList().lengthMemoized() shouldBe 98
+            result.headSafeViaFoldRight() shouldBe Result("2")
         }
     }
 }
