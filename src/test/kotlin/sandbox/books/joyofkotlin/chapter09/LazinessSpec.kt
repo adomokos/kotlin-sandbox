@@ -70,6 +70,7 @@ sealed class Stream<out A> {
     abstract fun exists(p: (A) -> Boolean): Boolean
     abstract fun <B> foldRight(z: Lazy<B>, f: (A) -> (Lazy<B>) -> B): B
     abstract fun takeWhileViaFoldRight(p: (A) -> Boolean): Stream<A>
+    abstract fun headSafeViaFoldRight(): Result<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -83,6 +84,7 @@ sealed class Stream<out A> {
         override fun exists(p: (Nothing) -> Boolean): Boolean = false
         override fun <B> foldRight(z: Lazy<B>, f: (Nothing) -> (Lazy<B>) -> B): B = z()
         override fun takeWhileViaFoldRight(p: (Nothing) -> Boolean): Stream<Nothing> = this
+        override fun headSafeViaFoldRight(): Result<Nothing> = Result()
     }
 
     private class Cons<out A> (
@@ -149,6 +151,9 @@ sealed class Stream<out A> {
                         Empty
                 }
             }
+
+        override fun headSafeViaFoldRight(): Result<A> =
+            foldRight(Lazy { Result<A>() }) { a -> { Result(a) } }
     }
 
     companion object {
@@ -383,12 +388,16 @@ class LazinessSpec : StringSpec() {
 
         "folds a stream from the right" {
             val stream = Stream.from(2)
-
             val result = stream.takeWhileViaFoldRight { it < 1000 }
 
-            result.head() shouldBe Result(2 )
-
+            result.head() shouldBe Result(2)
             result.toList().lengthMemoized() shouldBe 998
+        }
+
+        "can get head via foldRight" {
+            val stream = Stream.from(2)
+
+            stream.headSafeViaFoldRight() shouldBe Result(2)
         }
     }
 }
