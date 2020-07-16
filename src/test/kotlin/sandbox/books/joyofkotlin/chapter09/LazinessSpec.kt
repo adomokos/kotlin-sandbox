@@ -68,6 +68,8 @@ sealed class Stream<out A> {
     abstract fun takeWhile(p: (A) -> Boolean): Stream<A>
     abstract fun dropWhile(p: (A) -> Boolean): Stream<A>
     abstract fun exists(p: (A) -> Boolean): Boolean
+    abstract fun <B> foldRight(z: Lazy<B>, f: (A) -> (Lazy<B>) -> B): B
+    abstract fun takeWhileViaFoldRight(p: (A) -> Boolean): Stream<A>
 
     private object Empty : Stream<Nothing>() {
         override fun head(): Result<Nothing> = Result()
@@ -79,6 +81,8 @@ sealed class Stream<out A> {
         override fun takeWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
         override fun dropWhile(p: (Nothing) -> Boolean): Stream<Nothing> = this
         override fun exists(p: (Nothing) -> Boolean): Boolean = false
+        override fun <B> foldRight(z: Lazy<B>, f: (Nothing) -> (Lazy<B>) -> B): B = z()
+        override fun takeWhileViaFoldRight(p: (Nothing) -> Boolean): Stream<Nothing> = this
     }
 
     private class Cons<out A> (
@@ -132,6 +136,19 @@ sealed class Stream<out A> {
                 }
             return exists(this, p)
         }
+
+        override fun <B> foldRight(z: Lazy<B>, f: (A) -> (Lazy<B>) -> B): B =
+            f(hd())(Lazy { tl().foldRight(z, f) })
+
+        override fun takeWhileViaFoldRight(p: (A) -> Boolean): Stream<A> =
+            foldRight(Lazy { Empty }) { a ->
+                { b: Lazy<Stream<A>> ->
+                    if (p(a))
+                        cons(Lazy { a }, b)
+                    else
+                        Empty
+                }
+            }
     }
 
     companion object {
@@ -362,6 +379,16 @@ class LazinessSpec : StringSpec() {
             val stream = Stream.from(2)
             val result = stream.exists { it == 2 }
             result shouldBe true
+        }
+
+        "folds a stream from the right" {
+            val stream = Stream.from(2)
+
+            val result = stream.takeWhileViaFoldRight { it < 1000 }
+
+            result.head() shouldBe Result(2 )
+
+            result.toList().lengthMemoized() shouldBe 998
         }
     }
 }
