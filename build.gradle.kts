@@ -41,6 +41,7 @@ val logbackVersion = "1.2.3"
 allprojects {
     apply(plugin = "java")
     apply(plugin = "com.adarshr.test-logger")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     dependencies {
         implementation(kotlin("stdlib"))

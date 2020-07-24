@@ -1,9 +1,23 @@
-import com.google.protobuf.gradle.*
+import com.google.protobuf.gradle.generateProtoTasks
+import com.google.protobuf.gradle.id
+import com.google.protobuf.gradle.ofSourceSet
+import com.google.protobuf.gradle.plugins
+import com.google.protobuf.gradle.protobuf
+import com.google.protobuf.gradle.protoc
 
 plugins {
     id("com.google.protobuf") version("0.8.12")
     kotlin("jvm")
     application
+}
+
+ktlint {
+    debug.set(true)
+    verbose.set(true)
+    enableExperimentalRules.set(true)
+    filter {
+        exclude { projectDir.toURI().relativize(it.file.toURI()).path.contains("/generated/") }
+    }
 }
 
 application {
@@ -13,7 +27,6 @@ application {
 val grpcVersion = "1.30.2" // CURRENT_grpcVersion
 val protobufVersion = "3.12.3"
 val grpcKotlinVersion = "0.1.4"
-val coroutinesVersion = "1.3.7"
 
 dependencies {
     // rootProject
@@ -22,20 +35,14 @@ dependencies {
 
     implementation("io.grpc:grpc-kotlin-stub:$grpcKotlinVersion")
 
-    // KGen needed
-    implementation("com.github.googleapis.gax-kotlin:kgax-grpc:0.6.0")
-
     // Java
     compileOnly("javax.annotation:javax.annotation-api:1.3.2")
 
-      // Grpc and Protobuf
-    implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.12")
-    implementation("com.google.protobuf:protobuf-java:3.12.2")
-    implementation("com.google.protobuf:protobuf-java-util:3.12.2")
-    implementation("io.grpc:grpc-netty-shaded:$grpcVersion")
+    // Grpc and Protobuf
+    // implementation("com.google.protobuf:protobuf-gradle-plugin:0.8.12")
+    // implementation("io.grpc:grpc-netty-shaded:$grpcVersion")
     implementation("io.grpc:grpc-protobuf:$grpcVersion")
     implementation("io.grpc:grpc-stub:$grpcVersion")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutinesVersion")
 }
 
 // Workaround for the Gradle bug issue:

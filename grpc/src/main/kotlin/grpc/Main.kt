@@ -4,7 +4,6 @@ import grpc.examples.helloworld.AddReply
 import grpc.examples.helloworld.AddRequest
 import io.grpc.Server
 import io.grpc.ServerBuilder
-import sandbox.arrow.datatypes.playWithOption
 import grpc.examples.helloworld.GreeterGrpcKt
 import grpc.examples.helloworld.HelloReply
 import grpc.examples.helloworld.HelloRequest
@@ -58,6 +57,6 @@ suspend fun main() {
     server.blockUntilShutdown()
 }
 
-//suspend fun main(args: Array<String>) {
+// suspend fun main(args: Array<String>) {
 //    playWithOption()
-//}
+// }
