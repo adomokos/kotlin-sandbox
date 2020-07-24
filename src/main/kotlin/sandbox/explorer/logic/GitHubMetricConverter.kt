@@ -20,22 +20,24 @@ import sandbox.explorer.Person
 
 object GitHubMetricConverter {
     fun convertAndSaveData(gitHubUserInfo: GitHubUserInfo, personValue: Person): EitherIO<GitHubMetric> =
-        EitherT(IO.fx {
-            transaction {
-                addLogger(StdOutSqlLogger)
+        EitherT(
+            IO.fx {
+                transaction {
+                    addLogger(StdOutSqlLogger)
 
-                GitHubMetric.new {
-                    login = gitHubUserInfo.username
-                    name = "${personValue.firstName} ${personValue.lastName}"
-                    publicGistsCount = gitHubUserInfo.publicGistCount
-                    publicReposCount = gitHubUserInfo.publicReposCount
-                    followersCount = gitHubUserInfo.followersCount
-                    followingCount = gitHubUserInfo.followingCount
-                    accountCreatedAt = convertToDate(gitHubUserInfo.memberSince!!)
-                    person = personValue
-                }.right()
-            }
-        }.handleError { err -> AppError.GitHubMetricSaveError(err.message.toString()).left() })
+                    GitHubMetric.new {
+                        login = gitHubUserInfo.username
+                        name = "${personValue.firstName} ${personValue.lastName}"
+                        publicGistsCount = gitHubUserInfo.publicGistCount
+                        publicReposCount = gitHubUserInfo.publicReposCount
+                        followersCount = gitHubUserInfo.followersCount
+                        followingCount = gitHubUserInfo.followingCount
+                        accountCreatedAt = convertToDate(gitHubUserInfo.memberSince!!)
+                        person = personValue
+                    }.right()
+                }
+            }.handleError { err -> AppError.GitHubMetricSaveError(err.message.toString()).left() }
+        )
 
     private fun convertToDate(dateTimeValue: LocalDateTime): DateTime {
         return DateTime(dateTimeValue.toInstant(ZoneOffset.UTC).toEpochMilli())

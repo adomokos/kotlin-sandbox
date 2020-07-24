@@ -39,8 +39,8 @@ suspend fun main(args: Array<String>) =
             is Either.Right -> println("Success!! - ${result.b}")
         }
     }
-    .handleError { err -> println("::: Fatal error occurred: ${err.message} ") }
-    .suspended()
+        .handleError { err -> println("::: Fatal error occurred: ${err.message} ") }
+        .suspended()
 
 object App {
     fun connectToDatabase(): Database {

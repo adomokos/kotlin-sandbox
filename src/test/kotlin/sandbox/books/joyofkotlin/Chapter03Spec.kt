@@ -94,13 +94,17 @@ class Chapter03Spec : StringSpec() {
 
         "calculates the correct total price and weight" {
             val toothPaste =
-                EnhancedProduct("Tooth paste",
-                                Price(1.5),
-                                Weight(0.5))
+                EnhancedProduct(
+                    "Tooth paste",
+                    Price(1.5),
+                    Weight(0.5)
+                )
             val toothBrush =
-                EnhancedProduct("Tooth brush",
-                                Price(3.5),
-                                Weight(0.3))
+                EnhancedProduct(
+                    "Tooth brush",
+                    Price(3.5),
+                    Weight(0.3)
+                )
 
             val orderLines = listOf(
                 EnhancedOrderLine(toothPaste, 2),
@@ -108,11 +112,13 @@ class Chapter03Spec : StringSpec() {
             )
 
             val weight: Weight = orderLines.fold(Weight.identity) {
-                    a, b -> a + b.weight()
+                a, b ->
+                a + b.weight()
             }
 
             val price: Price = orderLines.fold(Price.identity) {
-                    a, b -> a + b.amount()
+                a, b ->
+                a + b.amount()
             }
 
             weight shouldBe Weight(1.9)

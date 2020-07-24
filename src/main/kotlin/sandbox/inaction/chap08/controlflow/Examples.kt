@@ -47,26 +47,32 @@ fun lookForAliceWithFnName(people: List<Person>) {
 }
 
 fun labeledExpression() {
-    println(StringBuilder().apply sb@{
-        listOf(1, 2, 3).apply {
-        this@sb.append(this.toString())
+    println(
+        StringBuilder().apply sb@{
+            listOf(1, 2, 3).apply {
+                this@sb.append(this.toString())
+            }
         }
-    })
+    )
 }
 
 // Anonymus functions
 fun lookForAliceAnonymousFn(people: List<Person>) {
-    people.forEach(fun (person) {
-        if (person.name == "Alice") return // return refers to the closest function
-        println("${person.name} is not Alice")
-    })
+    people.forEach(
+        fun (person) {
+            if (person.name == "Alice") return // return refers to the closest function
+            println("${person.name} is not Alice")
+        }
+    )
 }
 
 fun filterPplWithAnonymousFn(people: List<Person>) {
     // Block body for anonymous function needs a return type
-    val youngPpl = people.filter(fun (person): Boolean {
-        return person.age < 30
-    })
+    val youngPpl = people.filter(
+        fun (person): Boolean {
+            return person.age < 30
+        }
+    )
     // Expression body does not need a return type
     // Something like this:
     /*

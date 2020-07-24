@@ -9,9 +9,10 @@ fun compositionExample() {
     val multiplyBy2 = { i: Int -> i * 2 }
     val idOdd = { x: Int -> x % 2 != 0 }
 
-    val composed: (Int) -> Option<Int> = { i: Int -> Option.just(i)
-        .filter(idOdd)
-        .map(add5.andThen(multiplyBy2))
+    val composed: (Int) -> Option<Int> = { i: Int ->
+        Option.just(i)
+            .filter(idOdd)
+            .map(add5.andThen(multiplyBy2))
     }
 
     println(composed(3))

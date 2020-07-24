@@ -18,13 +18,17 @@ class CurryingSpec : DescribeSpec({
     fun <A, B, C> partialA(a: A, f: (A) -> (B) -> C): (B) -> C = f(a)
 
     fun <A, B, C> partialB(b: B, f: (A) -> (B) -> C): (A) -> C = {
-        a: A -> f(a)(b)
+        a: A ->
+        f(a)(b)
     }
 
     fun <A, B, C> explicitCurried(): (A) -> (B) -> (C) -> String = {
-        a: A -> {
-            b: B -> {
-                c: C -> "$a $b $c"
+        a: A ->
+        {
+            b: B ->
+            {
+                c: C ->
+                "$a $b $c"
             }
         }
     }

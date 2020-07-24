@@ -25,9 +25,11 @@ class QuickSortSpec : DescribeSpec({
         }
 
         it("can sort a list of chars in a string") {
-            quickSort("Hello World!"
-                        .split(""))
-                        .joinToString("") shouldBe " !HWdelor"
+            quickSort(
+                "Hello World!"
+                    .split("")
+            )
+                .joinToString("") shouldBe " !HWdelor"
         }
     }
 })

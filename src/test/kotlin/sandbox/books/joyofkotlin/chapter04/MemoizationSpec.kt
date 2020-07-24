@@ -31,7 +31,8 @@ class MemoizationSpec : StringSpec() {
             list.isEmpty() -> ""
             list.tail().isEmpty() -> list.first().toString()
             else -> list.first().toString() + foldLeft(list.tail(), "") {
-                    x, y -> x + separator + y
+                x, y ->
+                x + separator + y
             }
         }
 
@@ -47,10 +48,12 @@ class MemoizationSpec : StringSpec() {
                 BigInteger.ONE -> acc + (acc1 + acc2)
                 else -> fibo(acc + (acc1 + acc2), acc2, acc1 + acc2, x - BigInteger.ONE)
             }
-        val list = fibo(listOf(),
-                                        BigInteger.ONE,
-                                        BigInteger.ZERO,
-                                        BigInteger.valueOf(number.toLong()))
+        val list = fibo(
+            listOf(),
+            BigInteger.ONE,
+            BigInteger.ZERO,
+            BigInteger.valueOf(number.toLong())
+        )
         return makeString<BigInteger>(list, ", ")
     }
 

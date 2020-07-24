@@ -142,9 +142,11 @@ fun alphabet4() = buildString {
 }
 
 fun runChap05() {
-    val people = listOf(Person("Alice", 26),
-                        Person("Bob", 31),
-                        Person("Carol", 31))
+    val people = listOf(
+        Person("Alice", 26),
+        Person("Bob", 31),
+        Person("Carol", 31)
+    )
     findOldestJavaStyle(people)
 
     // And the Kotlin style
@@ -172,8 +174,10 @@ fun runChap05() {
     val errors = listOf("403 Forbidden", "404 Not Found")
     printMessagesWithPrefix(errors, "Error: ")
 
-    val responses = listOf("200 OK", "418 I'm a teapot",
-                            "500 Internal Server Error")
+    val responses = listOf(
+        "200 OK", "418 I'm a teapot",
+        "500 Internal Server Error"
+    )
 
     printProblemCounts(responses)
 

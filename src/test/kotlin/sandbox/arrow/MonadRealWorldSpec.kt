@@ -75,7 +75,8 @@ fun personFrom(name: String): Either<Exception, Person> {
     return Left(Exception("Can't extract first and last names from $name"))
 }
 
-val incorrectPattern = """(\d)-(\d{3})-(\d{3})-(.{4})""".toRegex()
+val incorrectPattern =
+    """(\d)-(\d{3})-(\d{3})-(.{4})""".toRegex()
 
 fun phoneNumberFrom(phone: String): Either<Exception, PhoneNumber> {
     val matched = incorrectPattern.matchEntire(phone)
@@ -121,12 +122,17 @@ class MonadRealWorldSpec : StringSpec({
         val firstUser = result[0]
         val expectedUser =
             DomainUser(
-                person = Person(firstName = "Roth",
-                    lastName = "Drake"),
-                phoneNumber = PhoneNumber(countryCode = 1,
+                person = Person(
+                    firstName = "Roth",
+                    lastName = "Drake"
+                ),
+                phoneNumber = PhoneNumber(
+                    countryCode = 1,
                     areaCode = 230,
                     prefix = 665,
-                    lineNumber = 4456))
+                    lineNumber = 4456
+                )
+            )
         firstUser shouldBeRight expectedUser
 
         val secondUser = result[1]

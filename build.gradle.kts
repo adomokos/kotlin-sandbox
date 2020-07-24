@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm") version "1.3.72"
     kotlin("kapt") version "1.3.72"
     id("com.adarshr.test-logger") version "2.1.0"
-    id("org.jlleitschuh.gradle.ktlint") version "9.2.1"
+    id("org.jlleitschuh.gradle.ktlint") version "9.3.0"
     id("com.diffplug.gradle.spotless") version "4.5.1"
     id("io.gitlab.arturbosch.detekt").version("1.10.0")
     id("com.github.ben-manes.versions").version("0.28.0")
@@ -120,7 +120,7 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
     implementation("org.jetbrains.exposed:exposed-jodatime:$exposedVersion")
-    implementation("org.xerial:sqlite-jdbc:3.32.3")
+    implementation("org.xerial:sqlite-jdbc:3.32.3.1")
 
     // JSON parsing
     implementation("com.beust:klaxon:$klaxonVersion")

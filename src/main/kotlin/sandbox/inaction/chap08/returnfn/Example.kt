@@ -19,8 +19,10 @@ fun runShippingCostCalculator() {
     println("Shipping costs ${calculator(Order(3))}")
     val standardShippingCalculator =
         getShippingCostCalculator(Delivery.STANDARD)
-    println("Standard shipping costs " +
-        "${standardShippingCalculator(Order(3))}")
+    println(
+        "Standard shipping costs " +
+            "${standardShippingCalculator(Order(3))}"
+    )
 }
 
 // Another GUI-related example
@@ -37,19 +39,24 @@ class ContactListFilters {
 
     fun getPredicate(): (Person) -> Boolean {
         val startsWithPrefix = { p: Person ->
-        p.firstName.startsWith(prefix) ||
-            p.lastName.startsWith(prefix) }
-        if (!onlyWithPhoneNumber) {
-        return startsWithPrefix
+            p.firstName.startsWith(prefix) ||
+                p.lastName.startsWith(prefix)
         }
-        return { startsWithPrefix(it) &&
-                it.phoneNumber != null }
+        if (!onlyWithPhoneNumber) {
+            return startsWithPrefix
+        }
+        return {
+            startsWithPrefix(it) &&
+                it.phoneNumber != null
+        }
     }
 }
 
 fun runPersonFiltering() {
-    val contacts = listOf(Person("John", "Lennon", "123-4567"),
-                            Person("Paul", "McCartney", null))
+    val contacts = listOf(
+        Person("John", "Lennon", "123-4567"),
+        Person("Paul", "McCartney", null)
+    )
     val contactListFilters = ContactListFilters()
     with(contactListFilters) {
         prefix = "Jo"

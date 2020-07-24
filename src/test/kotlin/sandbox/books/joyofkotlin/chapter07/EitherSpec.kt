@@ -94,13 +94,14 @@ sealed class Result<out A> : Serializable {
     fun orElse(defaultValue: () -> Result<@UnsafeVariance A>): Result<A> =
         when (this) {
             is Success -> this
-            else -> try {
-                defaultValue()
-            } catch (e: RuntimeException) {
-                Result.failure<A>(e)
-            } catch (e: Exception) {
-                Result.failure<A>(RuntimeException(e))
-            }
+            else ->
+                try {
+                    defaultValue()
+                } catch (e: RuntimeException) {
+                    Result.failure<A>(e)
+                } catch (e: Exception) {
+                    Result.failure<A>(RuntimeException(e))
+                }
         }
 
     internal object Empty : Result<Nothing>() {
@@ -150,7 +151,7 @@ sealed class Result<out A> : Serializable {
             }
 
         fun <A, B, C, D> lift3(f: (A) -> (B) -> (C) -> D):
-                (Result<A>) -> (Result<B>) -> (Result<C>) -> Result<D> = { a ->
+            (Result<A>) -> (Result<B>) -> (Result<C>) -> Result<D> = { a ->
                 { b ->
                     { c ->
                         a.map(f).flatMap { b.map(it) }.flatMap { c.map(it) }
@@ -191,9 +192,11 @@ class EitherSpec : StringSpec() {
     fun <A : Comparable<A>> max(list: LList<A>): Either<String, A> =
         when (list) {
             is LList.Nil -> Either.left("max called on an empty list")
-            is LList.Cons -> Either.right(list.foldLeft(list.head) { x ->
-                { y -> if (x > y) x else y }
-            })
+            is LList.Cons -> Either.right(
+                list.foldLeft(list.head) { x ->
+                    { y -> if (x > y) x else y }
+                }
+            )
         }
 
     fun <K, V> Map<K, V>.getResult(key: K) =

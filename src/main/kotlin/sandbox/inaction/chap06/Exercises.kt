@@ -8,7 +8,7 @@ import java.io.StringReader
 // import java.io.ByteArrayInputStream
 
 fun strLen(s: String?): Int =
-        if (s != null) s.length else 0
+    if (s != null) s.length else 0
 
 fun printAllCaps(s: String?) {
     val allCaps: String? = s?.toUpperCase()
@@ -81,20 +81,20 @@ fun invokeSendEmailTo() {
 
 // Late-initialized properties
 // class MyService {
-    // fun performAction(): String = "foo"
+// fun performAction(): String = "foo"
 // }
 
 // class MyTest {
-    // private lateinit var myService: MyService
+// private lateinit var myService: MyService
 
-    // @Before fun setUp() {
-        // myService = MyService()
-    // }
+// @Before fun setUp() {
+// myService = MyService()
+// }
 
-    // @Test fun testAction() {
-        // Assert.assertEquals("foo",
-        // myService.performAction())
-    // }
+// @Test fun testAction() {
+// Assert.assertEquals("foo",
+// myService.performAction())
+// }
 // }
 
 // Extension for Nullable types

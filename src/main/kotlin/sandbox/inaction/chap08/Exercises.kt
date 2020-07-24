@@ -56,9 +56,13 @@ fun runJoinToString() {
     val letters = listOf("Alpha", "Beta")
     println(letters.joinToString())
     println(letters.joinToString { it.toLowerCase() })
-    println(letters.joinToString(separator = "! ",
-        postfix = "! ",
-        transform = { it.toUpperCase() }))
+    println(
+        letters.joinToString(
+            separator = "! ",
+            postfix = "! ",
+            transform = { it.toUpperCase() }
+        )
+    )
 }
 
 fun <T> Collection<T>.joinToStringNullable(
@@ -72,7 +76,7 @@ fun <T> Collection<T>.joinToStringNullable(
     for ((index, element) in this.withIndex()) {
         if (index > 0) result.append(separator)
         val str = transform?.invoke(element)
-        ?: element.toString()
+            ?: element.toString()
         result.append(str)
     }
     result.append(postfix)
@@ -83,10 +87,13 @@ fun runJoinToStringNullable() {
     val letters = listOf("Alpha", "Beta")
     println(letters.joinToStringNullable())
     println(letters.joinToStringNullable { it.toLowerCase() })
-    println(letters.joinToStringNullable(
-        separator = "! ",
-        postfix = "! ",
-        transform = { it.toUpperCase() }))
+    println(
+        letters.joinToStringNullable(
+            separator = "! ",
+            postfix = "! ",
+            transform = { it.toUpperCase() }
+        )
+    )
 }
 
 fun runChap08() {

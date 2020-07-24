@@ -44,10 +44,10 @@ class Lazy<out A>(function: () -> A) : () -> A {
 
 // Lazy is just another computational context
 private fun <A, B, C> lift2Generic(f: ((A) -> (B) -> C)): (Lazy<A>) -> (Lazy<B>) -> Lazy<C> = { ls1 ->
-        { ls2 ->
-            Lazy { f(ls1())(ls2()) }
-        }
+    { ls2 ->
+        Lazy { f(ls1())(ls2()) }
     }
+}
 
 private fun <A> sequence(lst: List<Lazy<A>>): Lazy<List<A>> =
     Lazy { lst.map { it() } }
@@ -126,7 +126,7 @@ sealed class Stream<out A> {
                         p(stream.hd()) -> dropWhile(stream.tl(), p)
                         else -> stream
                     }
-            }
+                }
 
             return dropWhile(this, p)
         }
@@ -280,7 +280,7 @@ class LazinessSpec : StringSpec() {
 
             val lift2: ((String) -> (String) -> String) ->
             (Lazy<String>) ->
-                (Lazy<String>) -> Lazy<String> =
+            (Lazy<String>) -> Lazy<String> =
                 { f ->
                     { ls1 ->
                         { ls2 ->

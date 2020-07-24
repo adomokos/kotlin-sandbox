@@ -68,10 +68,10 @@ fun computeWithOption(input: String): String {
         .map(::divideByTwo)
         .map(::squareNumber)
 
-        return when (result) {
-            is None -> "Not an even number"
-            is Some -> "The result of the number is ${result.t}"
-        }
+    return when (result) {
+        is None -> "Not an even number"
+        is Some -> "The result of the number is ${result.t}"
+    }
 }
 
 // Using the same example, but with Either

@@ -56,7 +56,8 @@ class RecursionSpec : StringSpec() {
             else
                 tailrecToString(
                     list.subList(1, list.size),
-                    append(s, list[0]))
+                    append(s, list[0])
+                )
 
         return tailrecToString(list, "")
     }
@@ -68,8 +69,10 @@ class RecursionSpec : StringSpec() {
             if (list.isEmpty())
                 s
             else
-                toString(list.subList(0, list.size - 1),
-                    prepend(list[list.size - 1], s))
+                toString(
+                    list.subList(0, list.size - 1),
+                    prepend(list[list.size - 1], s)
+                )
         return toString(list, "")
     }
 

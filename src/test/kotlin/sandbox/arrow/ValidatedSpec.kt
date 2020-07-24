@@ -67,13 +67,13 @@ fun <E, A, B, C> parallelValidate(
 ): Validated<NonEmptyList<E>, C> {
     return when {
         v1 is Validated.Valid && v2 is Validated.Valid
-            -> Validated.Valid(f(v1.a, v2.a))
+        -> Validated.Valid(f(v1.a, v2.a))
         v1 is Validated.Valid && v2 is Validated.Invalid
-            -> v2.toValidatedNel()
+        -> v2.toValidatedNel()
         v1 is Validated.Invalid && v2 is Validated.Valid
-            -> v1.toValidatedNel()
+        -> v1.toValidatedNel()
         v1 is Validated.Invalid && v2 is Validated.Invalid
-            -> Validated.Invalid(NonEmptyList(v1.e, listOf(v2.e)))
+        -> Validated.Invalid(NonEmptyList(v1.e, listOf(v2.e)))
         else -> throw IllegalStateException("Not possible value")
     }
 }
@@ -116,7 +116,8 @@ class ValidatedSpec : StringSpec({
     "can use Either for simpler validation" {
         val config = Config(mapOf("house_number" to "-42"))
         val houseNumber = config.parse(Read.intRead, "house_number").withEither {
-            either -> either.flatMap { positive("house_number", it) }
+            either ->
+            either.flatMap { positive("house_number", it) }
         }
 
         houseNumber shouldBe Invalid(ConfigError.ParseConfig(field = "house_number"))

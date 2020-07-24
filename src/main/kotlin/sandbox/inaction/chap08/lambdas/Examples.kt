@@ -35,6 +35,7 @@ fun runExamples() {
 
     val averageComplexDuration =
         log.averageDurationFor2 {
-        it.os == OS.WINDOWS && it.path == "/login" }
+            it.os == OS.WINDOWS && it.path == "/login"
+        }
     println("Average complex duration: $averageComplexDuration")
 }

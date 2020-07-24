@@ -21,16 +21,18 @@ import sandbox.explorer.Person
 
 object PeopleProcessor {
     fun processPeopleParallel(people: List<Person>): EitherIO<List<GitHubMetric>> =
-        EitherT(people.k().parTraverse { aPerson ->
-            val result = processPerson(aPerson).value().fix()
-            result
-        } // Do some type conversion gymnastics to return EitherIO<List<GitHubMetric>>
-            .map { item ->
-            item
-                .traverse(Either.applicative()) { it }
-                .fix()
-                .map { it.fix().toList() }
-        })
+        EitherT(
+            people.k().parTraverse { aPerson ->
+                val result = processPerson(aPerson).value().fix()
+                result
+            } // Do some type conversion gymnastics to return EitherIO<List<GitHubMetric>>
+                .map { item ->
+                    item
+                        .traverse(Either.applicative()) { it }
+                        .fix()
+                        .map { it.fix().toList() }
+                }
+        )
 
     fun processPeople(people: List<Person>): EitherIO<List<GitHubMetric>> =
         EitherT.monad<AppError, ForIO>(IO.monad()).fx.monad {
@@ -45,7 +47,7 @@ object PeopleProcessor {
             var result =
                 GitHubUserInfo.deserializeFromJson2(gitHubInfo).flatMap(IO.monad()) { gitHubUserInfo ->
                     GitHubMetricConverter.convertAndSaveData(gitHubUserInfo, aPerson)
-            }
+                }
             result
         }
 }

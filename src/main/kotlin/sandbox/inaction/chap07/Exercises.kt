@@ -27,8 +27,10 @@ class Person(
     val lastName: String
 ) : Comparable<Person> {
     override fun compareTo(other: Person): Int {
-        return compareValuesBy(this, other,
-        Person::lastName, Person::firstName)
+        return compareValuesBy(
+            this, other,
+            Person::lastName, Person::firstName
+        )
     }
 }
 
@@ -36,7 +38,7 @@ data class Rectangle(val upperLeft: Point, val lowerRight: Point)
 
 operator fun Rectangle.contains(p: Point): Boolean {
     return p.x in upperLeft.x until lowerRight.x &&
-            p.y in upperLeft.y until lowerRight.y
+        p.y in upperLeft.y until lowerRight.y
 }
 
 // Defining the operator as an extension function
@@ -66,8 +68,8 @@ operator fun Point.get(index: Int): Int {
     return when (index) {
         0 -> x
         1 -> y
-    else ->
-        throw IndexOutOfBoundsException("Invalid coordinate $index")
+        else ->
+            throw IndexOutOfBoundsException("Invalid coordinate $index")
     }
 }
 

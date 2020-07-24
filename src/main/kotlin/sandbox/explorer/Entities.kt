@@ -36,16 +36,16 @@ class Person(id: EntityID<Int>) : IntEntity(id) {
             ratingValue: Int,
             gitHubUsernameValue: String
         ): Person =
-                Person.find {
-                    People.email eq emailValue and (People.gitHubUsername eq gitHubUsernameValue)
-                }.singleOrNull()
-                        ?: Person.new {
-                            email = emailValue
-                            firstName = firstNameValue
-                            lastName = lastNameValue
-                            rating = ratingValue
-                            gitHubUsername = gitHubUsernameValue
-                        }
+            Person.find {
+                People.email eq emailValue and (People.gitHubUsername eq gitHubUsernameValue)
+            }.singleOrNull()
+                ?: Person.new {
+                    email = emailValue
+                    firstName = firstNameValue
+                    lastName = lastNameValue
+                    rating = ratingValue
+                    gitHubUsername = gitHubUsernameValue
+                }
     }
 
     var email by People.email

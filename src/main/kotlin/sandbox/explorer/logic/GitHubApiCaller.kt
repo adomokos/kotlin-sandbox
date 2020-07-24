@@ -19,22 +19,24 @@ import sandbox.explorer.EitherIO
 
 object GitHubApiCaller {
     fun callApi(username: String): EitherIO<String> =
-        EitherT(IO.fx {
-            val client = HttpClient.newBuilder().build()
-            val request =
-                HttpRequest
-                    .newBuilder()
-                    .uri(URI.create("https://api.github.com/users/$username"))
-                    .build()
+        EitherT(
+            IO.fx {
+                val client = HttpClient.newBuilder().build()
+                val request =
+                    HttpRequest
+                        .newBuilder()
+                        .uri(URI.create("https://api.github.com/users/$username"))
+                        .build()
 
-            val userInfoJsonData = IO.fx {
-                val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+                val userInfoJsonData = IO.fx {
+                    val response = client.send(request, HttpResponse.BodyHandlers.ofString())
 
-                processResponse(response, username)
-            }.handleError { AppError.GitHubApiError("Couldn't reach github.com").left() }.bind()
+                    processResponse(response, username)
+                }.handleError { AppError.GitHubApiError("Couldn't reach github.com").left() }.bind()
 
-            userInfoJsonData
-        })
+                userInfoJsonData
+            }
+        )
 
     fun processResponse(response: HttpResponse<String>, username: String): Either<AppError, String> {
         if (response.statusCode() == 404) {

@@ -90,22 +90,27 @@ fun mean(list: List<Double>): Option<Double> =
 
 fun variance(list: List<Double>): Option<Double> =
     mean(list).flatMap { m ->
-        mean(list.map { x ->
-            (x - m).pow(2.0)
-        })
+        mean(
+            list.map { x ->
+                (x - m).pow(2.0)
+            }
+        )
     }
 
 // Sequence List of Option values into Option List values
 fun <A> sequence(list: LList<Option<A>>): Option<LList<A>> =
     LList.foldRight(list, Option(LList())) { x ->
-        { y: Option<LList<A>> -> Option.map2(x, y) { a ->
-            { b: LList<A> -> b.cons(a) } }
+        { y: Option<LList<A>> ->
+            Option.map2(x, y) { a ->
+                { b: LList<A> -> b.cons(a) }
+            }
         }
     }
 
 fun <A, B> traverse(list: LList<A>, f: (A) -> Option<B>): Option<LList<B>> =
     LList.foldRight(list, Option(LList())) { x ->
-        { y: Option<LList<B>> -> Option.map2(f(x), y) { a ->
+        { y: Option<LList<B>> ->
+            Option.map2(f(x), y) { a ->
                 { b: LList<B> -> b.cons(a) }
             }
         }

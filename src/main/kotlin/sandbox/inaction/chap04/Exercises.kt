@@ -151,12 +151,15 @@ interface IUser2 {
 
 class ChangingUser(val name: String) {
     var address: String = "unspecified"
-    set(value: String) {
-        println("""
+        set(value: String) {
+            println(
+                """
         Address was changed for $name:
-        "$field" -> "$value".""".trimIndent())
-        field = value
-    }
+        "$field" -> "$value".
+                """.trimIndent()
+            )
+            field = value
+        }
 }
 
 // 4.2.5 - Changing accessor visibility
@@ -221,9 +224,11 @@ fun runChap04() {
     cset.addAll(listOf(1, 1, 2))
     println("${cset.objectsAdded} objects were added, ${cset.size} remain")
 
-    println(CaseInsensitiveFileComparator.compare(
-        File("/tmp"), File("/tmp")
-    ))
+    println(
+        CaseInsensitiveFileComparator.compare(
+            File("/tmp"), File("/tmp")
+        )
+    )
 
     val files = listOf(File("/z"), File("/a"))
     println(files.sortedWith(CaseInsensitiveFileComparator))

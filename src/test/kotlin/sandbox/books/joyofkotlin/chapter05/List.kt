@@ -90,7 +90,7 @@ sealed class List<out A> {
     companion object {
         operator fun <A> invoke(vararg az: A): List<A> =
             az.foldRight(invoke()) {
-                    a: A, list: List<A> ->
+                a: A, list: List<A> ->
                 Cons(a, list)
             }
 
@@ -185,9 +185,11 @@ sealed class List<out A> {
             list.filter { !it.isEmpty() }
                 .foldRight(Result(invoke())) { x ->
                     { y: Result<List<A>> ->
-                        Result.map2(x, y) { a -> { b: List<A> ->
-                            b.cons(a)
-                        } }
+                        Result.map2(x, y) { a ->
+                            { b: List<A> ->
+                                b.cons(a)
+                            }
+                        }
                     }
                 }
 
@@ -205,8 +207,11 @@ sealed class List<out A> {
                     List.Nil -> acc
                     is List.Cons -> when (list2) {
                         List.Nil -> acc
-                        is List.Cons -> zipWith(acc.cons(f(list1.head) (list2.head)),
-                            list1.tail, list2.tail)
+                        is List.Cons ->
+                            zipWith(
+                                acc.cons(f(list1.head) (list2.head)),
+                                list1.tail, list2.tail
+                            )
                     }
                 }
             return zipWith(invoke(), list1, list2).reverse()
@@ -300,8 +305,10 @@ sealed class List<out A> {
 
     @Suppress("UNCHECKED_CAST")
     fun filter(p: (A) -> Boolean): List<A> =
-        coFoldRight(Nil as List<A>) { h -> { t: List<A> ->
-            if (p(h)) Cons(h, t) else t }
+        coFoldRight(Nil as List<A>) { h ->
+            { t: List<A> ->
+                if (p(h)) Cons(h, t) else t
+            }
         }
 
     @Suppress("UNCHECKED_CAST")
@@ -313,10 +320,11 @@ sealed class List<out A> {
         ): Pair<List<A>, List<A>> =
             when (list) {
                 Nil -> Pair(list.reverse(), acc)
-                is Cons -> if (i == 0)
-                    Pair(list.reverse(), acc)
-                else
-                    splitAt(acc.cons(list.head), list.tail, i - 1)
+                is Cons ->
+                    if (i == 0)
+                        Pair(list.reverse(), acc)
+                    else
+                        splitAt(acc.cons(list.head), list.tail, i - 1)
             }
 
         return when {
@@ -330,10 +338,11 @@ sealed class List<out A> {
         tailrec fun startsWith(list: List<A>, sub: List<A>): Boolean =
             when (sub) {
                 Nil -> true
-                is Cons -> if (list.head == sub.head)
-                    startsWith(list.tail, sub.tail)
-                else
-                    false
+                is Cons ->
+                    if (list.head == sub.head)
+                        startsWith(list.tail, sub.tail)
+                    else
+                        false
             }
 
         return startsWith(this, sub)

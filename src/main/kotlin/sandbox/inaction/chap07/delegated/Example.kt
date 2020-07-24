@@ -9,13 +9,13 @@ open class PropertyChangeAware {
     protected val changeSupport =
         PropertyChangeSupport(this)
 
-        fun addPropertyChangeListener(listener: PropertyChangeListener) {
-            changeSupport.addPropertyChangeListener(listener)
-        }
+    fun addPropertyChangeListener(listener: PropertyChangeListener) {
+        changeSupport.addPropertyChangeListener(listener)
+    }
 
-        fun removePropertyChangeListener(listener: PropertyChangeListener) {
-            changeSupport.removePropertyChangeListener(listener)
-        }
+    fun removePropertyChangeListener(listener: PropertyChangeListener) {
+        changeSupport.removePropertyChangeListener(listener)
+    }
 }
 
 class ChangingPerson(
@@ -99,7 +99,8 @@ class ChangingPerson4(
 ) : PropertyChangeAware() {
     private val observer = {
         prop: KProperty<*>, oldValue: Int, newValue: Int
-        -> changeSupport.firePropertyChange(prop.name, oldValue, newValue)
+        ->
+        changeSupport.firePropertyChange(prop.name, oldValue, newValue)
     }
 
     var age: Int by Delegates.observable(age, observer)
@@ -110,8 +111,10 @@ fun runPropertyChange() {
     val p = ChangingPerson4("John", 34, 2000)
     p.addPropertyChangeListener(
         PropertyChangeListener { event ->
-        println("Property ${event.propertyName} changed " +
-                "from ${event.oldValue} to ${event.newValue}")
+            println(
+                "Property ${event.propertyName} changed " +
+                    "from ${event.oldValue} to ${event.newValue}"
+            )
         }
     )
 
