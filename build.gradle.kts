@@ -31,7 +31,7 @@ val arrowVersion = "0.10.5"
 val coroutinesVersion = "1.3.7"
 val exposedVersion = "0.26.1"
 val klaxonVersion = "5.2"
-val kotestVersion = "4.1.1"
+val kotestVersion = "4.1.3"
 val openCsvVersion = "5.2"
 val kotlinFakerVersion = "1.4.0"
 val cliktVersion = "2.6.0"
@@ -67,6 +67,7 @@ allprojects {
         testImplementation("io.kotest:kotest-assertions-arrow:$kotestVersion")
         testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
         testImplementation("io.kotest:kotest-property-jvm:$kotestVersion")
+        testImplementation("io.kotest:kotest-runner-console-jvm:$kotestVersion")
 
         testImplementation("io.github.serpro69:kotlin-faker:$kotlinFakerVersion")
     }
