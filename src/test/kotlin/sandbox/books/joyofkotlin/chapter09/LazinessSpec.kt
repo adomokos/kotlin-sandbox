@@ -149,10 +149,11 @@ sealed class Stream<out A> {
         override fun takeWhileViaFoldRight(p: (A) -> Boolean): Stream<A> =
             foldRight(Lazy { Empty }) { a ->
                 { b: Lazy<Stream<A>> ->
-                    if (p(a))
+                    if (p(a)) {
                         cons(Lazy { a }, b)
-                    else
+                    } else {
                         Empty
+                    }
                 }
             }
 

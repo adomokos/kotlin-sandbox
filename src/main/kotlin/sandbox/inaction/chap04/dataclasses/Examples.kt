@@ -2,8 +2,9 @@ package sandbox.inaction.chap04.dataclasses
 
 class Client(val name: String, val postalCode: Int) {
     override fun equals(other: Any?): Boolean {
-        if (other == null || other !is Client)
+        if (other == null || other !is Client) {
             return false
+        }
         return name == other.name && postalCode == other.postalCode
     }
 

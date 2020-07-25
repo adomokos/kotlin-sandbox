@@ -136,8 +136,9 @@ data class ThePerson(
     val age: Int? = null
 ) {
     fun isOlderThan(other: ThePerson): Boolean? {
-        if (age == null || other.age == null)
+        if (age == null || other.age == null) {
             return null
+        }
 
         return age > other.age
     }

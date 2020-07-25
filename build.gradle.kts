@@ -43,6 +43,12 @@ allprojects {
     apply(plugin = "com.adarshr.test-logger")
     apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
+    ktlint {
+        // debug.set(true)
+        // verbose.set(true)
+        enableExperimentalRules.set(true)
+    }
+
     dependencies {
         implementation(kotlin("stdlib"))
 

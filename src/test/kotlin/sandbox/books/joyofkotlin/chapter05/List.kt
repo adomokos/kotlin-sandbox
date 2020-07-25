@@ -246,44 +246,50 @@ sealed class List<out A> {
             when (list) {
                 Nil -> Result.failure("Dead code. Should never execute.")
                 is Cons ->
-                    if (index == 0)
+                    if (index == 0) {
                         Result(list.head)
-                    else
+                    } else {
                         getAt(list.tail, index - 1)
+                    }
             }
-        return if (index < 0 || index >= lengthMemoized())
+        return if (index < 0 || index >= lengthMemoized()) {
             Result.failure("Index out of bound")
-        else
+        } else {
             getAt(this, index)
+        }
     }
 
     @Suppress("UNCHECKED_CAST")
     fun getAtNoNilCheck(index: Int): Result<A> {
         tailrec
         fun <A> getAt(list: Cons<A>, index: Int): Result<A> =
-            if (index == 0)
+            if (index == 0) {
                 Result(list.head)
-            else
+            } else {
                 getAt(list.tail as Cons, index - 1)
-        return if (index < 0 || index >= lengthMemoized())
+            }
+        return if (index < 0 || index >= lengthMemoized()) {
             Result.failure("Index out of bound")
-        else
+        } else {
             getAt(this as Cons, index)
+        }
     }
 
     fun getAtViaFoldLeft(index: Int): Result<A> =
         Pair(Result.failure<A>("Index out of bound"), index).let {
-            if (index < 0 || index >= lengthMemoized())
+            if (index < 0 || index >= lengthMemoized()) {
                 it
-            else
+            } else {
                 foldLeft(it) { ta ->
                     { a ->
-                        if (ta.second < 0)
+                        if (ta.second < 0) {
                             ta
-                        else
+                        } else {
                             Pair(Result(a), ta.second - 1)
+                        }
                     }
                 }
+            }
         }.first
 
     fun <B> flatMap(f: (A) -> List<B>): List<B> = flatten(map(f))
@@ -321,10 +327,11 @@ sealed class List<out A> {
             when (list) {
                 Nil -> Pair(list.reverse(), acc)
                 is Cons ->
-                    if (i == 0)
+                    if (i == 0) {
                         Pair(list.reverse(), acc)
-                    else
+                    } else {
                         splitAt(acc.cons(list.head), list.tail, i - 1)
+                    }
             }
 
         return when {
@@ -339,10 +346,11 @@ sealed class List<out A> {
             when (sub) {
                 Nil -> true
                 is Cons ->
-                    if (list.head == sub.head)
+                    if (list.head == sub.head) {
                         startsWith(list.tail, sub.tail)
-                    else
+                    } else {
                         false
+                    }
             }
 
         return startsWith(this, sub)
@@ -354,10 +362,11 @@ sealed class List<out A> {
             when (list) {
                 Nil -> sub.isEmpty()
                 is Cons ->
-                    if (list.startsWith(sub))
+                    if (list.startsWith(sub)) {
                         true
-                    else
+                    } else {
                         hasSubList(list.tail, sub)
+                    }
             }
         return hasSubList(this, sub)
     }

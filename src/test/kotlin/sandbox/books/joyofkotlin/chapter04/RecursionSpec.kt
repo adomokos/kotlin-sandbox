@@ -20,44 +20,49 @@ Unlike Java, Kotlin eliminates Tail Call Elimination (TCE).
 */
 fun <T, U> foldLeft(list: List<T>, z: U, f: (U, T) -> U): U {
     tailrec fun foldLeft(list: List<T>, acc: U): U =
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             acc
-        else
+        } else {
             foldLeft(list.tail(), f(acc, list.head()))
+        }
 
     return foldLeft(list, z)
 }
 
 fun <T> List<T>.head(): T =
-    if (this.isEmpty())
+    if (this.isEmpty()) {
         throw IllegalArgumentException("head called on empty list")
-    else
+    } else {
         this[0]
+    }
 
 fun <T> List<T>.tail(): List<T> =
-    if (this.isEmpty())
+    if (this.isEmpty()) {
         throw IllegalArgumentException("tail called on empty list")
-    else
+    } else {
         this.drop(1)
+    }
 
 class RecursionSpec : StringSpec() {
     fun append(s: String, c: Char): String = "$s$c"
 
     fun toString(list: List<Char>, s: String): String =
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             s
-        else
+        } else {
             toString(list.subList(1, list.size), append(s, list[0]))
+        }
 
     fun tailrecToString(list: List<Char>): String {
         tailrec fun tailrecToString(list: List<Char>, s: String): String =
-            if (list.isEmpty())
+            if (list.isEmpty()) {
                 s
-            else
+            } else {
                 tailrecToString(
                     list.subList(1, list.size),
                     append(s, list[0])
                 )
+            }
 
         return tailrecToString(list, "")
     }
@@ -66,13 +71,14 @@ class RecursionSpec : StringSpec() {
 
     fun toString(list: List<Char>): String {
         fun toString(list: List<Char>, s: String): String =
-            if (list.isEmpty())
+            if (list.isEmpty()) {
                 s
-            else
+            } else {
                 toString(
                     list.subList(0, list.size - 1),
                     prepend(list[list.size - 1], s)
                 )
+            }
         return toString(list, "")
     }
 
@@ -89,10 +95,11 @@ class RecursionSpec : StringSpec() {
 
     fun sum2(n: Int): Int {
         tailrec fun sum(s: Int, i: Int): Int =
-            if (i > n)
+            if (i > n) {
                 s
-            else
+            } else {
                 sum(s + i, i + 1)
+            }
 
         return sum(0, 0)
     }
@@ -101,31 +108,35 @@ class RecursionSpec : StringSpec() {
     fun dec(n: Int) = n - 1
 
     tailrec fun add(x: Int, y: Int): Int =
-        if (y == 0)
+        if (y == 0) {
             x
-        else
+        } else {
             add(inc(x), dec(y))
+        }
     // Sum list by recursion
 
     fun recursiveSum(list: List<Int>): Int =
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             0
-        else
+        } else {
             list.head() + recursiveSum(list.tail())
+        }
 
     // Or with Arrow's NonEmptyList
     fun nolRecursiveSum(list: NonEmptyList<Int>): Int =
-        if (list.size == 1)
+        if (list.size == 1) {
             list.head
-        else
+        } else {
             list.head + nolRecursiveSum(NonEmptyList.fromListUnsafe(list.tail))
+        }
 
     fun tailrecSum(list: List<Int>): Int {
         tailrec fun sumTail(list: List<Int>, acc: Int): Int =
-            if (list.isEmpty())
+            if (list.isEmpty()) {
                 acc
-            else
+            } else {
                 sumTail(list.tail(), acc + list.head())
+            }
 
         return sumTail(list, 0)
     }

@@ -34,8 +34,9 @@ object Entities {
 
         companion object {
             fun deserializeFromJson(userInfoData: String): UserInfo? {
-                if (userInfoData.isBlank())
+                if (userInfoData.isBlank()) {
                     return null
+                }
 
                 return try {
                     createKlaxon().parse<UserInfo>(userInfoData)

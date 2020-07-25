@@ -21,7 +21,8 @@ private val faker = Faker()
 fun findUserInfo(i: Int): IO<UserInfo> =
     // Simulate DB calls
     IO.fx {
-//        Thread.sleep(300)
+        // Thread.sleep(300)
+
         when (i) {
             1 -> {
                 UserInfo("John", "Lennon")

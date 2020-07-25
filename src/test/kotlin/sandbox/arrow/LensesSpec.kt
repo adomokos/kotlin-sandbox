@@ -6,7 +6,9 @@ import io.kotest.core.spec.style.DescribeSpec
 import io.kotest.matchers.shouldBe
 
 @optics data class MemoryL(val size: GB) { companion object }
+
 @optics data class MotherBoardL(val brand: String, val memoryL: MemoryL) { companion object }
+
 @optics data class LaptopL(val price: Double, val motherBoardL: MotherBoardL) { companion object }
 
 class LensesSpec : DescribeSpec({

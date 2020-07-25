@@ -35,10 +35,11 @@ class MyDateColumnType(val time: Boolean) : ColumnType() {
             else -> error("Unexpected value: $value of ${value::class.qualifiedName}")
         }
 
-        return if (time)
+        return if (time) {
             "'${DEFAULT_DATE_TIME_STRING_FORMATTER.print(dateTime.toDateTime(DateTimeZone.getDefault()))}'"
-        else
+        } else {
             "'${DEFAULT_DATE_STRING_FORMATTER.print(dateTime)}'"
+        }
     }
 
     override fun valueFromDB(value: Any): Any = when (value) {

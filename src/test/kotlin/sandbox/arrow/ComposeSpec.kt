@@ -73,7 +73,7 @@ class ComposeSpec : DescribeSpec({
 
         it("works with complex workflow") {
             val salesSystem: (Quote) -> String =
-                ::calculatePrice andThen ::filterBills andThen :: splitter
+                ::calculatePrice andThen ::filterBills andThen ::splitter
 
             val result =
                 salesSystem(Quote(20.0, "Foo", "Shoes", 1))

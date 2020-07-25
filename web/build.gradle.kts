@@ -11,9 +11,10 @@ application {
 val ktorVersion = "1.3.2"
 
 dependencies {
+    implementation(kotlin("stdlib"))
+
     // rootProject
     implementation(project(":"))
-    implementation(kotlin("stdlib"))
 
     // Ktor
     implementation("io.ktor:ktor-server-core:$ktorVersion")

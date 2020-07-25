@@ -26,12 +26,13 @@ class Chapter03Spec : StringSpec() {
             val identity = Price(0.0)
 
             operator fun invoke(value: Double) =
-                if (value > 0)
+                if (value > 0) {
                     Price(value)
-                else
+                } else {
                     throw IllegalArgumentException(
                         "Price must be positive or null"
                     )
+                }
         }
     }
 
@@ -46,12 +47,13 @@ class Chapter03Spec : StringSpec() {
             val identity = Weight(0.0)
 
             operator fun invoke(value: Double) =
-                if (value > 0)
+                if (value > 0) {
                     Weight(value)
-                else
+                } else {
                     throw IllegalArgumentException(
                         "Price must be positive or null"
                     )
+                }
         }
     }
     // val priceAddition = { x, y -> x + y }
