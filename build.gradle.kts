@@ -37,6 +37,7 @@ val kotlinFakerVersion = "1.4.0"
 val cliktVersion = "2.6.0"
 val ktorVersion = "1.3.2"
 val logbackVersion = "1.2.3"
+val ktlintVersion = "0.37.2"
 
 allprojects {
     apply(plugin = "java")
@@ -46,6 +47,7 @@ allprojects {
     ktlint {
         // debug.set(true)
         // verbose.set(true)
+        version.set(ktlintVersion)
         enableExperimentalRules.set(true)
     }
 
