@@ -19,6 +19,10 @@ test: db.rebuild ## Run the tests
 	./gradlew test
 .PHONY: test
 
+check: db.rebuild ## Run the checks: detekt, ktlint and unit tests
+	./gradlew check
+.PHONY: check
+
 single-test: ## Run a sigle test, pass TEST=something.MySpec to run it
 	 @test $(TEST) || (echo "TEST argument is required" ; exit 1)
 	./gradlew test --tests "$(TEST)"

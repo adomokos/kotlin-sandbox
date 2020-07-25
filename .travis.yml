@@ -7,7 +7,7 @@ jdk: openjdk13
 
 script:
   - make build
-  - make test
+  - make check
 
 before_cache:
   - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
