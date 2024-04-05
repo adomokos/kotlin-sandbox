@@ -2,3 +2,4 @@
 build/
 db/explorer-db.sqlt
 .kotlintest/
+.idea
